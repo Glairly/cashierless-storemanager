@@ -1,0 +1,13 @@
+{
+    "name": "cashierless-storemanagement",
+    "version": "1.0.0",
+    "scripts": {
+        "install:dev": "cd backend && yarn && cd .. && cd frontend && yarn",
+        "serve": "cd backend && yarn serve && cd .. && cd frontend && yarn start",
+        "build": "cd backend && yarn build && cd .. && cd frontend && yarn build"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "typescript": "^4.8.3"
+    }
+}

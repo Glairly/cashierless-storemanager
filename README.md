@@ -17,4 +17,4 @@ Automatic Cashier For Your Next Store.
 
 
 ## System Architecture
-<image src="./assets/architecture.jpg" height=100% width=100%>
+<image src="./assets/Architecture.jpg" height=100% width=100%>
