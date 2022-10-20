@@ -12,7 +12,7 @@ Automatic Cashier For Your Next Store.
 - ### Minimal (1st Design)
 <image src="./assets/minimal-design.jpg" height=500 width=500>
 
-- ### 2st Design
+- ### 2nd Design
 <image src="./assets/minimal-design2.jpg" height=500 width=100%>
 
 
