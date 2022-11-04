@@ -29,4 +29,6 @@ yarn start
 yarn deploy
 ```
 ## Hardware
-Hardware-side mostly for Raspberry pi and **OBJECT RECOGNITION**
+Hardware-side mostly for Raspberry Pi and **OBJECT RECOGNITION**
+
+using Pytorch + Reaspberry Pi 4 for hosting our **OBJECT RECOGNITION** and Local Web-App
