@@ -66,5 +66,7 @@ node_modules/
 .env
 
 ImageProcessing/train/snacks-*
-ImageProcessing/train/models/*
+ImageProcessing/models/ckpt/*
+ImageProcessing/models/state/*
+ImageProcessing/images/*
 __pycache__

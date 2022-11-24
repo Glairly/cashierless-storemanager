@@ -7,7 +7,7 @@ from pytorch_lightning import Trainer
 from absl import app
 from absl import flags
 
-os.path.join(".")
+os.path.join("..")
 from libs.model import CocoDetection
 import torch
 import pytorch_lightning as pl
@@ -39,7 +39,7 @@ def main(argv):
 
     roboflow_version = FLAGS.roboflow_version if FLAGS.roboflow_version else 0
     dataset_path = FLAGS.dataset_path if FLAGS.dataset_path else "/snacks-" + str(roboflow_version)
-    ckpt_path = FLAGS.ckpt_path if FLAGS.ckpt_path else "/models"
+    ckpt_path = FLAGS.ckpt_path if FLAGS.ckpt_path else "../models/ckpt"
     batch_size = FLAGS.batch_size if FLAGS.batch_size else 4
     epochs = FLAGS.epochs if FLAGS.epochs else 50
     gpu_devices = FLAGS.gpu_devices if FLAGS.gpu_devices else 0
@@ -153,15 +153,17 @@ def main(argv):
 
 
     model = Detr(lr=1e-4, lr_backbone=1e-5, weight_decay=1e-4)
-    ckpt = ModelCheckpoint(dirpath=ckpt_path, filename='2cl-{epoch}-{val_loss:.2f}-{other_metric:.2f}' )
+    ckpt = ModelCheckpoint(dirpath=ckpt_path, filename='{epoch}-{val_loss:.2f}-{other_metric:.2f}' )
     
     if gpu_devices == 0:
         trainer = Trainer(callbacks=[ckpt], max_steps=epochs, gradient_clip_val=0.1)
     else:
-        trainer = Trainer(callbacks=[ckpt],accelerator='gpu', devices=gpu_devices, max_steps=epochs, gradient_clip_val=0.1)
+        trainer = Trainer(callbacks=[ckpt], accelerator='gpu', devices=gpu_devices, max_steps=epochs, gradient_clip_val=0.1)
 
     # Training
     trainer.fit(model)
+
+    torch.save(model.state_dict(), ckpt_path)
 
 
     print("Done")
