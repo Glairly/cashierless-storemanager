@@ -23,6 +23,8 @@ FLAGS = flags.FLAGS
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+print("Running on", device)
+
 def load_model(path):
     _model = torch.load(path, map_location=device)
     _model.eval()

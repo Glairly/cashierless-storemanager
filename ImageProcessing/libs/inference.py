@@ -101,11 +101,15 @@ class SnacksDetection:
         bboxs = []
 
         for p, (xmin, ymin, xmax, ymax) in zip(probas[keep], bboxes_scaled.tolist()):
-            p = probas[keep]
-            cl = p.argmax()
+            cl = torch.argmax(p)
 
-            self.labels[cl.item()]
-            text = f"{self.labels[cl.item()]}: {p[0][cl]:0.2f}"
+            try:
+                self.labels[cl.item()]
+                text = f"{self.labels[cl.item()]}: {p[cl]:0.2f}"
+            except Exception as e:
+                print(e)
+                print(p,cl)
+                exit()
 
             labels.append(text)
             bboxs += [[int(xmin), int(ymin), int(xmax), int(ymax)]]
