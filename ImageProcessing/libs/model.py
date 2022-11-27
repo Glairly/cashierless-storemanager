@@ -2,7 +2,8 @@ import torchvision
 import torch
 import os
 import pytorch_lightning as pl
-from transformers import DetrForObjectDetection
+from transformers import DetrForObjectDetection, DetrFeatureExtractor
+from torch.utils.data import DataLoader
 
 class CocoDetection(torchvision.datasets.CocoDetection):
     def __init__(self, img_folder, feature_extractor, train=True):
@@ -23,18 +24,47 @@ class CocoDetection(torchvision.datasets.CocoDetection):
 
         return pixel_values, target
 
+feature_extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
+def collate_fn(batch):
+    pixel_values = [item[0] for item in batch]
+    encoding = feature_extractor.pad_and_create_pixel_mask(pixel_values, return_tensors="pt")
+    labels = [item[1] for item in batch]
+    batch = {}
+    batch['pixel_values'] = encoding['pixel_values']
+    batch['pixel_mask'] = encoding['pixel_mask']
+    batch['labels'] = labels
+    return batch
+
 class Detr(pl.LightningModule):
         
         def __init__(self, lr, lr_backbone, weight_decay):
             super().__init__()
             # replace COCO classification head with custom head
-            self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", 
-                                                                num_labels=len(id2label),
-                                                                ignore_mismatched_sizes=True)
+            # self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", 
+            #                                                     num_labels=len(id2label),
+            #                                                     ignore_mismatched_sizes=True)
+            self.model = None
             # see https://github.com/PyTorchLightning/pytorch-lightning/pull/1896
             self.lr = lr
             self.lr_backbone = lr_backbone
             self.weight_decay = weight_decay
+        
+        def preprocess(self, dataset_path):
+            
+            self.train_dataset = CocoDetection(img_folder=f'{dataset_path}/train', feature_extractor=feature_extractor)
+            self.val_dataset = CocoDetection(img_folder=f'{dataset_path}/valid', feature_extractor=feature_extractor)
+
+            cats = self.train_dataset.coco.cats
+            self.id2label = {k: v['name'] for k,v in cats.items()}
+
+            print("Number of training examples:", len(self.train_dataset))
+            # epochs = epochs * (len(train_dataset) / 4 + len(val_dataset) / 2) 
+            self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", 
+                                                                num_labels=len(self.id2label),
+                                                                ignore_mismatched_sizes=True)
+            
+        def get_cats(self):
+            return self.id2label
 
         def forward(self, pixel_values, pixel_mask):
             outputs = self.model(pixel_values=pixel_values, pixel_mask=pixel_mask)
@@ -85,7 +115,7 @@ class Detr(pl.LightningModule):
             return optimizer
 
         def train_dataloader(self):
-            return train_dataloader
+            return DataLoader(self.train_dataset, collate_fn=collate_fn, batch_size=4, shuffle=True)
 
         def val_dataloader(self):
-            return val_dataloader
+            return DataLoader(self.val_dataset, collate_fn=collate_fn, batch_size=2, shuffle=True)

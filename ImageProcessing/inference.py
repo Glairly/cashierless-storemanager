@@ -57,7 +57,6 @@ def main(argv):
         else:
             print("Mode is invalid.")
 
-    pass
 
 if __name__ == "__main__":
     app.run(main)
