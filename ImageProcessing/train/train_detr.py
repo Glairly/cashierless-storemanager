@@ -1,13 +1,18 @@
 from transformers import DetrFeatureExtractor, DetrForObjectDetection
 import os
+import sys
 from torch.utils.data import DataLoader
 from roboflow import Roboflow
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import Trainer
 from absl import app
 from absl import flags
+import json
 
-os.path.join("..")
+
+
+sys.path.insert(0,f"{os.getcwd()}")
+
 from libs.model import CocoDetection
 import torch
 import pytorch_lightning as pl
@@ -38,12 +43,15 @@ def main(argv):
     del argv
 
     roboflow_version = FLAGS.roboflow_version if FLAGS.roboflow_version else 0
-    dataset_path = FLAGS.dataset_path if FLAGS.dataset_path else "/snacks-" + str(roboflow_version)
-    ckpt_path = FLAGS.ckpt_path if FLAGS.ckpt_path else "../models/ckpt"
+    dataset_path = FLAGS.dataset_path if FLAGS.dataset_path else "./snacks-" + str(roboflow_version)
+    ckpt_path = FLAGS.ckpt_path if FLAGS.ckpt_path else  os.getcwd() + "\\models\\ckpt\\"
     batch_size = FLAGS.batch_size if FLAGS.batch_size else 4
     epochs = FLAGS.epochs if FLAGS.epochs else 50
     gpu_devices = FLAGS.gpu_devices if FLAGS.gpu_devices else 0
     download_dataset = FLAGS.download_dataset if FLAGS.download_dataset else False
+
+    model_path = os.getcwd() + "\\models\\state\\"
+
 
     try:
         roboflow_version = int(roboflow_version)
@@ -70,6 +78,8 @@ def main(argv):
 
     print("Number of training examples:", len(train_dataset))
 
+    # epochs = epochs * (len(train_dataset) / 4 + len(val_dataset) / 2) 
+
     def collate_fn(batch):
         pixel_values = [item[0] for item in batch]
         encoding = feature_extractor.pad_and_create_pixel_mask(pixel_values, return_tensors="pt")
@@ -82,6 +92,8 @@ def main(argv):
 
     train_dataloader = DataLoader(train_dataset, collate_fn=collate_fn, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(val_dataset, collate_fn=collate_fn, batch_size=batch_size, shuffle=True)
+
+
 
     # Model Preperation
     class Detr(pl.LightningModule):
@@ -151,9 +163,8 @@ def main(argv):
         def val_dataloader(self):
             return val_dataloader
 
-
     model = Detr(lr=1e-4, lr_backbone=1e-5, weight_decay=1e-4)
-    ckpt = ModelCheckpoint(dirpath=ckpt_path, filename='{epoch}-{val_loss:.2f}-{other_metric:.2f}' )
+    ckpt = ModelCheckpoint(dirpath=ckpt_path, filename='detr-{epoch}eps' )
     
     if gpu_devices == 0:
         trainer = Trainer(callbacks=[ckpt], max_steps=epochs, gradient_clip_val=0.1)
@@ -163,11 +174,21 @@ def main(argv):
     # Training
     trainer.fit(model)
 
-    torch.save(model.state_dict(), ckpt_path)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    filename = f"{model_path}detr-{epochs}eps.pt"
+    # torch.save(model, filename)
+
+    LABEL_PATH = f"{filename}.json"
+
+    with open(LABEL_PATH, "w") as outfile:
+        json.dump(id2label, outfile)
+
 
 
     print("Done")
-    print("Model saved to " + ckpt_path)
+    print("Model saved to " + filename)
 
 
 

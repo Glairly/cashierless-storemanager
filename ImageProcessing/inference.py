@@ -1,6 +1,8 @@
 from absl import app
 from absl import flags
 import os
+
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import json
 
 os.path.join(".")
