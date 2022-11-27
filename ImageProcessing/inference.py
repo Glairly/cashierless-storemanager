@@ -20,6 +20,8 @@ flags.DEFINE_string(
     'label_path', None, 'Labels path')
 flags.DEFINE_string(
     'mode', None, 'Prediction mode')
+flags.DEFINE_string(
+    'model_name', None, 'Naming mode')
 
 FLAGS = flags.FLAGS
 
@@ -34,11 +36,18 @@ def load_model(path):
     return _model
 
 def main(argv):
+    del argv
 
     model_path = FLAGS.model_path if FLAGS.model_path else "./models/state/default.pt"
     img_path = FLAGS.img_path if FLAGS.img_path else "./images/default.jpg"
     label_path = FLAGS.label_path if FLAGS.label_path else "./models/state/default_label.json"
     mode = FLAGS.mode if FLAGS.mode else 'image'
+
+    model_name = FLAGS.model_name if FLAGS.model_name else False
+
+    if model_name:
+        model_path = f"./models/state/{model_name}.pt"
+        label_path = f"./models/state/{model_name}.pt.json"
 
     model = load_model(model_path)
     feature_extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
