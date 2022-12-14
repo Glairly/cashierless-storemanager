@@ -19,6 +19,11 @@ pip install -r inference.txt
 optional
 - CUDA installed
 
+run
+```shell
+python inference.py --mode webcam --model_name detr_model_11cls_50ep
+```
+
 ## Performance
 <hr>
 **2 ~ 3** fps on CUDA <br> 
@@ -28,3 +33,4 @@ inference on <br>
 ```
 Intel I5-9300H GTX-1650 2.40GHz SSD 16gb 4c-8th
 ```
+

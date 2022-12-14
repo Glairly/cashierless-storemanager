@@ -66,9 +66,12 @@ def main(argv):
 
     # Model Preperation
     model = Detr(lr=1e-4, lr_backbone=1e-5, weight_decay=1e-4)
-    model.preprocess(dataset_path=dataset_path)
+    model.preprocess(dataset_path=dataset_path, epochs=epochs)
+
+    epochs = model.get_epochs()
 
     ckpt = ModelCheckpoint(dirpath=ckpt_path, filename='detr-{epoch}eps' )
+
     
     if gpu_devices == 0:
         trainer = Trainer(callbacks=[ckpt], max_steps=epochs, gradient_clip_val=0.1)

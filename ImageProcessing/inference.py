@@ -7,9 +7,9 @@ import json
 
 os.path.join(".")
 from libs.inference import SnacksDetection
-from libs.model import Detr
+from libs.model import *
 
-from transformers import DetrFeatureExtractor
+from transformers import DetrFeatureExtractor, DetrForObjectDetection
 import torch
 
 flags.DEFINE_string(
@@ -47,7 +47,7 @@ def main(argv):
 
     if model_name:
         model_path = f"./models/state/{model_name}.pt"
-        label_path = f"./models/state/{model_name}.pt.json"
+        label_path = f"./models/state/{model_name}.json"
 
     model = load_model(model_path)
     feature_extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
@@ -57,7 +57,7 @@ def main(argv):
         labels = json.load(raw)
         labels = { int(k) : labels[k] for k in labels}
 
-        SD = SnacksDetection(model, feature_extractor,labels)
+        SD = SnacksDetection(model, feature_extractor, labels)
 
         if mode == 'webcam':
             SD.streams()
