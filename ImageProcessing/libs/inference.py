@@ -38,12 +38,13 @@ class SnacksDetection:
         colors = self.COLORS * 100
         for p, (xmin, ymin, xmax, ymax), c in zip(prob, boxes.tolist(), colors):
             ax.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin,
-                                    fill=False, color=c, linewidth=3))
+                                    fill=False, color=c, linewidth=10))
             cl = p.argmax()
             text = f"{self.labels[cl.item()]}: {p[cl]:0.2f}"
             print(text)
             ax.text(xmin, ymin, text, fontsize=15,
-                    bbox=dict(facecolor='yellow', alpha=0.5))
+                    bbox=dict(boxstyle='round', ec=(1., 0.5, 0.5),fc=(1., 0.8, 0.8)))
+
         plt.axis('off')
         plt.show()
 
@@ -125,16 +126,22 @@ class SnacksDetection:
             row = cord[i]
             x1, y1, x2, y2 = row
             bgr = (0, 0, 255)
-            cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 1)
+            cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 5)
             label = labels[i]
-            cv2.putText(frame, label, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 1)
-            cv2.putText(frame, f"Total Snacks: {n}", (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+            # Label bg
+            textSize = cv2.getTextSize(label,  cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2);
+            cv2.rectangle(frame, (x1, y1 - textSize[0][1] ), (x1 + textSize[0][0], y1 + textSize[0][1]), bgr, -1)
+            # label
+            cv2.putText(frame, label, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            # total snaccks
+            cv2.putText(frame, f"Total Snacks: {n}", (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         return frame
 
     def streams(self):
         # Open Camera
-        player = cv2.VideoCapture(0)
+        player = cv2.VideoCapture(1)
         assert player is not None
         assert player.isOpened()
 
@@ -147,16 +154,17 @@ class SnacksDetection:
             ret, frame = player.read()
             if not ret:
                 break
-      
+            
+            frame = cv2.resize(frame, (1280, 960)) 
+
             # Convert CV2 to PIL
             _frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             _frame = Image.fromarray(_frame)
             # Prediction goes here
             outputs =  self.predict_stream(image=_frame)
-            bbox = self.result_to_bbox(_frame, outputs, threshold=0.8, keep_highest_scoring_bbox=False)
+            bbox = self.result_to_bbox(_frame, outputs, threshold=0.7, keep_highest_scoring_bbox=False)
             frame = self.plot_boxes(bbox, frame)
             ########################
-
 
             cv2.imshow('frame', frame)
             end_time = time()
