@@ -9,3 +9,4 @@ roboflow
 fiftyone
 pytorch_lightning
 pycocotools
+pyzbar
