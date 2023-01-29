@@ -18,18 +18,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print("Running on", device)
 
-class CustomUnpickler(pickle.Unpickler):
-    
-    def find_class(self, module, name):
-        if name == 'Detr':
-            return Detr
-        return super().find_class(module, name)
-
-
 def load_model(path):
-    # with open(path, 'rb') as f:
-        # unpickler = CustomUnpickler(f)
-    # _model = torch.load(f, pickle_module = unpickler, map_location=device)
     _model = torch.load(path, map_location=device)
     _model.eval()
     _model.to(device)
