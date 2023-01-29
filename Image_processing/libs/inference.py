@@ -1,3 +1,4 @@
+import io
 import torch
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -41,12 +42,16 @@ class SnacksDetection:
                                     fill=False, color=c, linewidth=10))
             cl = p.argmax()
             text = f"{self.labels[cl.item()]}: {p[cl]:0.2f}"
-            print(text)
             ax.text(xmin, ymin, text, fontsize=15,
                     bbox=dict(boxstyle='round', ec=(1., 0.5, 0.5),fc=(1., 0.8, 0.8)))
 
         plt.axis('off')
-        plt.show()
+        # plt.show()
+
+        # buf = io.BytesIO()
+        # plt.savefig(buf)
+
+        # return Image.open(buf)
 
     def visualize_predictions(self,image, outputs, threshold=0.9, keep_highest_scoring_bbox=False):
         # keep only predictions with confidence >= threshold
@@ -58,13 +63,13 @@ class SnacksDetection:
         
         # convert predicted boxes from [0; 1] to image scales
         bboxes_scaled = self.rescale_bboxes(outputs.pred_boxes[0, keep].cpu(), image.size)
-            
         # plot results
-        self.plot_results(image, probas[keep], bboxes_scaled)
+        # self.plot_results(image, probas[keep], bboxes_scaled)
+
+        return bboxes_scaled.tolist(),  
 
 
     def predict(self, path_to_image):
-
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         image = Image.open(path_to_image)
@@ -73,10 +78,10 @@ class SnacksDetection:
         pixel_values = pixel_values.unsqueeze(0).to(device)
         outputs = self.model(pixel_values=pixel_values, pixel_mask=None)
 
-        return self.visualize_predictions(image, outputs, threshold=0.8, keep_highest_scoring_bbox=False)
+        return self.result_to_bbox(image, outputs, threshold=0.8, keep_highest_scoring_bbox=False)
+        # return self.visualize_predictions(image, outputs, threshold=0.8, keep_highest_scoring_bbox=False)
 
     def predict_stream(self,image):
-        
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         encoding = self.feature_extractor(images=image, return_tensors="pt")
@@ -87,7 +92,7 @@ class SnacksDetection:
         return outputs
 
 
-    def result_to_bbox(self,image, outputs, threshold=0.9, keep_highest_scoring_bbox=False):
+    def result_to_bbox(self, image, outputs, threshold=0.9, keep_highest_scoring_bbox=False):
         # keep only predictions with confidence >= threshold
         probas = outputs.logits.softmax(-1)[0, :, :-1]
         keep = probas.max(-1).values > threshold

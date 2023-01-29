@@ -3,41 +3,47 @@
 # From root
 import sys
 sys.path.append(".")
-from src.inference.index import *
-from Image_processing.libs.model import *
 
+# add our module to top level 
+# do not remove
+from Image_processing.libs.model import *
 setattr(sys.modules['__main__'], 'Detr', Detr.Detr)
 setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection.CocoDetection)
 setattr(sys.modules['__main__'], 'collate_fn', Detr.collate_fn)
 
-from fastapi import FastAPI, File, UploadFile
-import numpy as np
-import cv2
-from pyzbar.pyzbar import decode
+# Libs
+from fastapi import FastAPI, UploadFile
 
-app = FastAPI()
-model = Detr_facade()
+# Facade
+from src.inference.DetrFacade import *
+from src.inference.DecoderFacade import *
+
+# Result
+from src.model.PredictResult import *
+from src.model.DecodeResult import *
+
+
+app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
+model = DetrFacade()
+decoder = DecoderFacade()
 
 @app.get("/")
 async def main():
     return "Hello world"
 
-@app.post("/predict")
+@app.post("/predict", response_model=PredictResult)
 async def predict(file: UploadFile):
     # Pre-process the input data and pass it to the model
-    prediction = await model.predict(file)
-    return prediction
+    labels, bboxes = await model.predict(file)
+    return PredictResult(labels=labels, bboxes=bboxes)
 
 
-@app.post("/decode")
+@app.post("/decode", response_model=DecodeResult)
 async def decode_barcodes(file: UploadFile):
-    # Load the image data from the request
-    image_data = await file.read()
-    # Convert the image data to a NumPy array
-    image = cv2.imdecode(np.fromstring(image_data, np.uint8), cv2.IMREAD_UNCHANGED)
+    labels, bboxes = await decoder.predict(file);
+    return DecodeResult(labels=labels, bboxes=bboxes)
 
-    # Detect and decode barcodes in the image
-    barcodes = decode(image)
 
-    # Return the decoded barcodes
-    return barcodes
+@app.post("/inference")
+async def inference(file: UploadFile):
+    return  await model.predict(file), await decoder.predict(file), 
