@@ -23,9 +23,6 @@ class Detr(pl.LightningModule):
         def __init__(self, config, dataset_path=None):
             super().__init__()
 
-            if (config == None):
-                return
-
             if(dataset_path == None):
                 raise Exception("Dataset path is not defined.")
             # see https://github.com/PyTorchLightning/pytorch-lightning/pull/1896
