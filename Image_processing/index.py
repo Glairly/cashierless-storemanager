@@ -16,7 +16,7 @@ import torch
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-print("Running on", device)
+print("Now Running on", device)
 
 def load_model(path):
     _model = torch.load(path, map_location=device)
