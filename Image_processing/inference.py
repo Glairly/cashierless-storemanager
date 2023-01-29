@@ -1,11 +1,12 @@
 from absl import app
 from absl import flags
 import os
+import sys
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import json
 
-os.path.join(".")
+sys.path.append("./image_processing")
 from libs.inference import SnacksDetection
 from libs.model import *
 

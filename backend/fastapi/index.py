@@ -1,19 +1,31 @@
-from fastapi import FastAPI, File, UploadFile
+# To run
+# uvicorn --app-dir=backend/fastapi index:app --reload  
+# From root
+import sys
+sys.path.append(".")
+from src.inference.index import *
+from Image_processing.libs.model import *
+
+setattr(sys.modules['__main__'], 'Detr', Detr.Detr)
+setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection.CocoDetection)
+setattr(sys.modules['__main__'], 'collate_fn', Detr.collate_fn)
+
 from fastapi import FastAPI, File, UploadFile
 import numpy as np
 import cv2
 from pyzbar.pyzbar import decode
 
 app = FastAPI()
+model = Detr_facade()
 
-model = None
-feature_extractor = None
+@app.get("/")
+async def main():
+    return "Hello world"
 
 @app.post("/predict")
 async def predict(file: UploadFile):
     # Pre-process the input data and pass it to the model
-    processed_data = feature_extractor(file)
-    prediction = model.predict(processed_data)
+    prediction = await model.predict(file)
     return prediction
 
 
