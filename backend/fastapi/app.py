@@ -5,8 +5,8 @@ import sys
 
 # add our module to top level 
 # do not remove
-from src.object_detection.Detr import Detr, collate_fn
-from src.object_detection.CocoDetection import CocoDetection 
+from src.object_detection.Detr import *
+from src.object_detection.CocoDetection import *
 
 setattr(sys.modules['__main__'], 'Detr', Detr)
 setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection)
@@ -17,8 +17,8 @@ from fastapi import FastAPI, UploadFile
 from src.libs.Utils import Utils
 
 # Services
-from src.services.DetrFacade import *
-from src.services.DecoderFacade import *
+from src.services.DetrService import *
+from src.services.DecoderService import *
 from src.services.InferenceService import *
 
 # Result
@@ -27,8 +27,8 @@ from src.model.DecodeResult import *
 
 
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
-model = DetrFacade()
-decoder = DecoderFacade()
+model = DetrService()
+decoder = DecoderService()
 inferenceService = InferenceService()
 
 @app.get("/")
