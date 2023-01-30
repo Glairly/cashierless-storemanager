@@ -21,8 +21,8 @@ class InferenceService:
         for bb in _decodeResult:
             _detectionResult = sorted(_detectionResult, key= lambda x: self.find_collision(x, bb), reverse=True)
             
-            if (self.find_collision( _detectionResult[0], bb)):
-                _detectionResult = _detectionResult[1:]
+            # if (self.find_collision( _detectionResult[0], bb)):
+            #     _detectionResult = _detectionResult[1:]
 
         return list(_detectionResult) +  _decodeResult
         

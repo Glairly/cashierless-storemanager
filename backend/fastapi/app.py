@@ -1,15 +1,16 @@
 # To run
-# uvicorn --app-dir=backend/fastapi index:app --reload  
+# uvicorn --app-dir=fastapi app:app --reload  
 # From root
 import sys
-sys.path.append(".")
 
 # add our module to top level 
 # do not remove
-from Image_processing.libs.model import *
-setattr(sys.modules['__main__'], 'Detr', Detr.Detr)
-setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection.CocoDetection)
-setattr(sys.modules['__main__'], 'collate_fn', Detr.collate_fn)
+from src.object_detection.Detr import Detr, collate_fn
+from src.object_detection.CocoDetection import CocoDetection 
+
+setattr(sys.modules['__main__'], 'Detr', Detr)
+setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection)
+setattr(sys.modules['__main__'], 'collate_fn', collate_fn)
 
 # Libs
 from fastapi import FastAPI, UploadFile
@@ -54,10 +55,10 @@ async def inference(file: UploadFile):
     m_labels, m_bboxes = await model.predict(content)
     d_labels, d_bboxes = await decoder.predict(content);
 
-    return inferenceService.detection_qr_collision_merge(
-        DetectionResult(labels=["Oishi_Yellow", "Oishi_Yellow"], bboxes=[[10,10,20,20], [10,10,40,40]]), 
-        DecodeResult(labels=["Oishi_Yellow"], bboxes=[[12,12,17,17]])
-        )  
+    # return inferenceService.detection_qr_collision_merge(
+    #     DetectionResult(labels=["Oishi_Yellow", "Oishi_Yellow"], bboxes=[[10,10,20,20], [10,10,40,40]]), 
+    #     DecodeResult(labels=["Oishi_Yellow"], bboxes=[[12,12,17,17]])
+    #     )  
 
-    # return  DetectionResult(labels=m_labels, bboxes=m_bboxes), DecodeResult(labels=d_labels, bboxes=d_bboxes)
+    return  DetectionResult(labels=m_labels, bboxes=m_bboxes), DecodeResult(labels=d_labels, bboxes=d_bboxes)
 
