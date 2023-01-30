@@ -13,37 +13,51 @@ setattr(sys.modules['__main__'], 'collate_fn', Detr.collate_fn)
 
 # Libs
 from fastapi import FastAPI, UploadFile
+from src.libs.Utils import Utils
 
-# Facade
-from src.inference.DetrFacade import *
-from src.inference.DecoderFacade import *
+# Services
+from src.services.DetrFacade import *
+from src.services.DecoderFacade import *
+from src.services.InferenceService import *
 
 # Result
-from src.model.PredictResult import *
+from src.model.DetectionResult import *
 from src.model.DecodeResult import *
 
 
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 model = DetrFacade()
 decoder = DecoderFacade()
+inferenceService = InferenceService()
 
 @app.get("/")
 async def main():
     return "Hello world"
 
-@app.post("/predict", response_model=PredictResult)
+@app.post("/predict", response_model=DetectionResult)
 async def predict(file: UploadFile):
-    # Pre-process the input data and pass it to the model
-    labels, bboxes = await model.predict(file)
-    return PredictResult(labels=labels, bboxes=bboxes)
+    content = await Utils.deserialize_file(file)
+    labels, bboxes = await model.predict(content)
+    return DetectionResult(labels=labels, bboxes=bboxes)
 
 
 @app.post("/decode", response_model=DecodeResult)
 async def decode_barcodes(file: UploadFile):
-    labels, bboxes = await decoder.predict(file);
+    content = await Utils.deserialize_file(file)
+    labels, bboxes = await decoder.predict(content);
     return DecodeResult(labels=labels, bboxes=bboxes)
 
 
 @app.post("/inference")
 async def inference(file: UploadFile):
-    return  await model.predict(file), await decoder.predict(file), 
+    content = await Utils.deserialize_file(file)
+    m_labels, m_bboxes = await model.predict(content)
+    d_labels, d_bboxes = await decoder.predict(content);
+
+    return inferenceService.detection_qr_collision_merge(
+        DetectionResult(labels=["Oishi_Yellow", "Oishi_Yellow"], bboxes=[[10,10,20,20], [10,10,40,40]]), 
+        DecodeResult(labels=["Oishi_Yellow"], bboxes=[[12,12,17,17]])
+        )  
+
+    # return  DetectionResult(labels=m_labels, bboxes=m_bboxes), DecodeResult(labels=d_labels, bboxes=d_bboxes)
+

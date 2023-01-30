@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class PredictResult(BaseModel):
+class DetectionResult(BaseModel):
     labels: list
     bboxes: list
  
