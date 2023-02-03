@@ -13,52 +13,45 @@ setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection)
 setattr(sys.modules['__main__'], 'collate_fn', collate_fn)
 
 # Libs
-from fastapi import FastAPI, UploadFile
-from src.libs.Utils import Utils
+from fastapi import FastAPI
+
+# Router
+from src.controllers.InferenceController import *
+from src.controllers.ItemsController import *
+
+from pymongo import MongoClient
 
 # Services
 from src.services.DetrService import *
 from src.services.DecoderService import *
 from src.services.InferenceService import *
+from src.services.ItemsService import *
 
 # Result
 from src.model.DetectionResult import *
 from src.model.DecodeResult import *
 
-
+# lib
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
+client = MongoClient("mongodb://localhost:27017/")
+db = client["cashierless"]
+collection = db["items"]
+
+# service
 model = DetrService()
 decoder = DecoderService()
 inferenceService = InferenceService()
+itemsService = ItemsService(collection)
+
+# api 
+imapi = InferenceController(model, decoder, inferenceService)
+smapi = ItemsController(itemsService)
+
+app.include_router(imapi.router)
+app.include_router(smapi.router)
 
 @app.get("/")
-async def main():
+async def root():
     return "Hello world"
 
-@app.post("/predict", response_model=DetectionResult)
-async def predict(file: UploadFile):
-    content = await Utils.deserialize_file(file)
-    labels, bboxes = await model.predict(content)
-    return DetectionResult(labels=labels, bboxes=bboxes)
-
-
-@app.post("/decode", response_model=DecodeResult)
-async def decode_barcodes(file: UploadFile):
-    content = await Utils.deserialize_file(file)
-    labels, bboxes = await decoder.predict(content);
-    return DecodeResult(labels=labels, bboxes=bboxes)
-
-
-@app.post("/inference")
-async def inference(file: UploadFile):
-    content = await Utils.deserialize_file(file)
-    m_labels, m_bboxes = await model.predict(content)
-    d_labels, d_bboxes = await decoder.predict(content);
-
-    # return inferenceService.detection_qr_collision_merge(
-    #     DetectionResult(labels=["Oishi_Yellow", "Oishi_Yellow"], bboxes=[[10,10,20,20], [10,10,40,40]]), 
-    #     DecodeResult(labels=["Oishi_Yellow"], bboxes=[[12,12,17,17]])
-    #     )  
-
-    return  DetectionResult(labels=m_labels, bboxes=m_bboxes), DecodeResult(labels=d_labels, bboxes=d_bboxes)
-
+ 
