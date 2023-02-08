@@ -48,7 +48,7 @@ class InferenceController:
             DetectionResult(labels=m_labels, bboxes=m_bboxes), 
             DecodeResult(labels=d_labels, bboxes=d_bboxes)
         )
-
+        print(merged[2].label)
         return self.itemsService.getItem_by_BBoxes(merged)
 
 

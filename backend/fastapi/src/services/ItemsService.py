@@ -16,12 +16,17 @@ class ItemsService:
         self.__mongoClient = mongoClient
 
     def getItem(self, id: str) -> Item:
-        result = self.__mongoClient.find_one({"_id": ObjectId(id)})
+        result = self.__mongoClient.find({"_id": ObjectId(id)}).next()
+        result['_id'] = str(result['_id'])
+        return result
+
+    def getItem_by_name(self, name: str) -> Item:
+        result = self.__mongoClient.find({"name": name}).next()
         result['_id'] = str(result['_id'])
         return result
 
     def getItem_by_barCode(self, barCode: str) -> Item:
-        result = self.__mongoClient.find_one({"barCode": barCode})
+        result = self.__mongoClient.find({"barCode": barCode}).next()
         result['_id'] = str(result['_id'])
         return result
 
@@ -32,8 +37,14 @@ class ItemsService:
                 key = 'barCode'
             else:
                 key = 'name'
-            result = self.__mongoClient.find_one({}, { key : bbox.label })
-            results.append(result)
+            
+            try:
+                cursor = self.__mongoClient.find({ key : bbox.label })
+                result = cursor.next()
+                result['_id'] = str(result['_id'])
+                results.append(result)
+            except:
+                pass
         return results
 
     def generate_item(self) -> Item:

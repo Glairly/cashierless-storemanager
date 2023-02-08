@@ -10,7 +10,8 @@ class DecoderService():
         barcodes = decode(file)
   
         # Return the decoded barcodes
-        labels = list(map(lambda x: x[0], barcodes))
+        # x[0].decode() btye string
+        labels = list(map(lambda x: x[0].decode(), barcodes))
         bboxes = list(map(lambda x: x[2], barcodes))
 
         file.close()

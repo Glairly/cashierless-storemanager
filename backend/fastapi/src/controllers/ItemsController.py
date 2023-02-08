@@ -20,6 +20,7 @@ class ItemsController:
 
         self.router.add_api_route("/get_id", self.getItem_by_id, methods=["GET"])
         self.router.add_api_route("/get_barcode", self.getItem_by_barCode, methods=["GET"])
+        self.router.add_api_route("/get_name", self.getItem_by_name, methods=["GET"])
         self.router.add_api_route("/generate", self.generate_item, methods=["POST"])
 
     def getItem_by_id(self, id: str):
@@ -27,6 +28,9 @@ class ItemsController:
 
     def getItem_by_barCode(self, barCode: str):
         return self.__itemsService.getItem_by_barCode(barCode)
+
+    def getItem_by_name(self, name: str):
+        return self.__itemsService.getItem_by_name(name)
 
     def generate_item(self):
         item = self.__itemsService.generate_item()
