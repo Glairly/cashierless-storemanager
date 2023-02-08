@@ -43,7 +43,7 @@ class SnacksDetection:
 
             try:
                 self.labels[cl.item()]
-                text = f"{self.labels[cl.item()]}: {p[cl]:0.2f}"
+                text = f"{self.labels[cl.item()]}"
             except Exception as e:
                 print(e)
                 print(p,cl)

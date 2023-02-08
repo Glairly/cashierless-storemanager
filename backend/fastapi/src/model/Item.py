@@ -3,6 +3,7 @@ from .ItemType import *
 from datetime import datetime
 
 class Item(BaseModel):
+    _id: int
     name: str
     price: int
     barCode: str

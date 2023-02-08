@@ -1,3 +1,4 @@
+from typing import List
 from ..model.DecodeResult import DecodeResult
 from ..model.DetectionResult import DetectionResult
 from ..model.BBox import BBox
@@ -12,9 +13,9 @@ class InferenceService:
             }
         }
 
-    def detection_qr_collision_merge(self, detection_result: DetectionResult, decode_result: DecodeResult) -> list:
-        detection_result = BBox.toBBoxList(detection_result.labels, detection_result.bboxes)
-        decode_result = BBox.toBBoxList(decode_result.labels, decode_result.bboxes)
+    def detection_qr_collision_merge(self, detection_result: DetectionResult, decode_result: DecodeResult) -> List[BBox]:
+        detection_result = BBox.toBBoxList(detection_result.labels, detection_result.bboxes, detection_result.type)
+        decode_result = BBox.toBBoxList(decode_result.labels, decode_result.bboxes, decode_result.type)
 
         for bb in decode_result:
             detection_result = sorted(detection_result, key=lambda x: self.find_collision(x, bb), reverse=True)

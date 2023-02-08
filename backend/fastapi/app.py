@@ -2,6 +2,8 @@
 # uvicorn --app-dir=fastapi app:app --reload  
 # From root
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 
 # add our module to top level 
 # do not remove
@@ -44,7 +46,7 @@ inferenceService = InferenceService()
 itemsService = ItemsService(collection)
 
 # api 
-imapi = InferenceController(model, decoder, inferenceService)
+imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 
 app.include_router(imapi.router)
