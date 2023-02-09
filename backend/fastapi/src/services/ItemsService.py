@@ -1,4 +1,6 @@
 from typing import List
+
+from ..model.exceptions.AlreadyDeactivatedException import AlreadDeactivatedException
 from ..model.BBox import *
 from ..model.BBoxType import *
 from ..model.Item import *
@@ -46,6 +48,22 @@ class ItemsService:
             except:
                 pass
         return results
+    
+    def deactivate_items(self, lst: List[Item]) -> int:
+        totalPrice = 0
+        for item in lst:
+            if item.type == BBoxType.BarCode:
+                key = 'barCode'
+            else:
+                key = 'name'
+            
+            result = self.__mongoClient.find_one({ key : item.name })
+            if result['active']:
+                self.__mongoClient.update_one({ key : item.name }, {'$set' : {'active': False} })
+                totalPrice += result['price']
+            else:
+                raise AlreadDeactivatedException()
+        return totalPrice
 
     def generate_item(self) -> Item:
         fake = Faker()
@@ -64,4 +82,4 @@ class ItemsService:
             active: True,
         }
         result = self.__mongoClient.insert_one(item)
-        return self.__mongoClient.find_one({}, {"_id": result.inserted_id})
+        return self.__mongoClient.find_one({"_id": result.inserted_id})

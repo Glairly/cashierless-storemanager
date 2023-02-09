@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from .BBoxType import BBoxType
+from ..BBoxType import BBoxType
 
 class DetectionResult(BaseModel):
     labels: list

@@ -70,6 +70,7 @@ snacks-*
 *.ckpt
 *.pt
 *.pth
+configs.json
 ImageProcessing/train/snacks-*
 ImageProcessing/models/ckpt/*
 ImageProcessing/models/state/*

@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from pymongo.collection import Collection
 
 # Libs
 from ..libs.Utils import Utils
@@ -8,9 +7,12 @@ from ..libs.Utils import Utils
 from ..services.ItemsService import *
 
 # Result
-from ..model.DetectionResult import *
-from ..model.DecodeResult import *
+from ..model.results.DetectionResult import *
+from ..model.results.DecodeResult import *
+from ..model.results.BaseResult import *
+
 from ..model.Item import *
+from ..model.exceptions.AlreadyDeactivatedException import *
 
 class ItemsController:
     router = APIRouter(prefix="/smapi/v1")

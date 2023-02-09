@@ -1,6 +1,7 @@
 from pyzbar.pyzbar import decode
 from PIL import Image
 
+
 class DecoderService():
 
     def __init__(self):

@@ -13,8 +13,9 @@ from ..services.InferenceService import *
 from ..services.ItemsService import *
 
 # Result
-from ..model.DetectionResult import *
-from ..model.DecodeResult import *
+from ..model.results.DetectionResult import *
+from ..model.results.DecodeResult import *
+from ..model.results.BaseResult import *
 
 class InferenceController:
     router = APIRouter(prefix="/imapi/v1")

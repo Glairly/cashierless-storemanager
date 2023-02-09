@@ -1,17 +1,12 @@
 from typing import List
-from ..model.DecodeResult import DecodeResult
-from ..model.DetectionResult import DetectionResult
+from ..model.results.DecodeResult import DecodeResult
+from ..model.results.DetectionResult import DetectionResult
 from ..model.BBox import BBox
 
 class InferenceService:
 
     def __init__(self) -> None:
-        self.db = {
-            "4713072178244": {
-                'name': 'Oishi_Yellow',
-                'price': 10
-            }
-        }
+        pass
 
     def detection_qr_collision_merge(self, detection_result: DetectionResult, decode_result: DecodeResult) -> List[BBox]:
         detection_result = BBox.toBBoxList(detection_result.labels, detection_result.bboxes, detection_result.type)
