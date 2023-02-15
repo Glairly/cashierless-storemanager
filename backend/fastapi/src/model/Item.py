@@ -3,13 +3,9 @@ from .ItemType import *
 from datetime import datetime
 
 class Item(BaseModel):
-    _id: int
+    _id: str
     name: str
-    price: int
-    barCode: str
-    expDate: datetime
+    price: float
+    shop_id: str
+    quantity: int
     type: int
-    active: bool
-
-    def __init__(__pydantic_self__, **data) -> None:
-        super().__init__(**data)

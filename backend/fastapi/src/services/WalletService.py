@@ -11,19 +11,24 @@ from bson.objectid import ObjectId
 
 
 class WalletService:
-    # TODO CRUD
     def __init__(self, mongoClient: Collection):
         self.__mongoClient = mongoClient
 
-    def deduct(self, walletId: str, amount: int):
+    def deduct(self, walletId: str, amount: float):
         try:
             self.__mongoClient.find_one_and_update({'_id': ObjectId(walletId) }, {'$inc': { 'balance': -1 * amount } })
+        except:
+            raise Exception();
+    
+    def deposit(self, walletId: str, amount: float):
+        try:
+            self.__mongoClient.find_one_and_update({'_id': ObjectId(walletId) }, {'$inc': { 'balance': amount } })
         except:
             raise Exception();
 
     def generate_item(self) -> Wallet:
         fake = Faker()
-        owner_id = fake.random_int(min=10, max=100, step=1)
+        owner_id = ObjectId()
         balance = fake.random_int(min=10, max=1000, step=1)
         is_belong_to_shop = fake.boolean()
         item = {

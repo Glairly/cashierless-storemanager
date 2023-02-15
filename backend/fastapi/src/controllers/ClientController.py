@@ -9,7 +9,6 @@ from ..services.ClientService import *
 # Result
 from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
-from ..model.results.BaseResult import *
 
 from ..model.Item import *
 from ..model.exceptions.AlreadyDeactivatedException import *

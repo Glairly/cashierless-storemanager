@@ -1,6 +1,6 @@
 from pyzbar.pyzbar import decode
 
-def BarcodeReader():
+def barcodeReader():
 
     def __init__(self):
         self.dc = decode

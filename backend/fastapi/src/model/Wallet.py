@@ -6,6 +6,3 @@ class Wallet(BaseModel):
     owner_id: str
     balance: int
     is_belong_to_shop: bool = False
-
-    def __init__(__pydantic_self__, **data) -> None:
-        super().__init__(**data)

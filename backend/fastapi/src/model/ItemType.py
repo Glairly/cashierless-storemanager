@@ -1,5 +1,5 @@
 from enum import Enum
 
 class ItemType(Enum):
-   RayOriginal = 1
-   OishiYellow = 2
+   Ray_Original = 1
+   Oishi_Yellow = 2

@@ -1,7 +1,9 @@
 from typing import List
 from pydantic import BaseModel
 
-class Transaction(BaseModel):
+class Stock(BaseModel):
     _id: str
     shop_id: str
-    items_list: List[str]
+    item_id: str
+    quantity: int
+    active: bool

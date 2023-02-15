@@ -7,5 +7,4 @@ class Shop(BaseModel):
     owner_id: str
     stock_id: str
     name: str
-    join_date: datetime
     machine_id: str

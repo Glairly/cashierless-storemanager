@@ -26,6 +26,7 @@ from src.controllers.ItemsController import *
 from src.controllers.WalletController import *
 from src.controllers.TransactionController import *
 from src.controllers.ClientController import *
+from src.controllers.ShopController import *
 
 from pymongo import MongoClient
 
@@ -36,6 +37,7 @@ from src.services.InferenceService import *
 from src.services.ItemsService import *
 from src.services.WalletService import *
 from src.services.ClientService import *
+from src.services.ShopService import *
 
 # Result
 from src.model.results.DetectionResult import *
@@ -53,22 +55,25 @@ db = client[configs['dbName']]
 model = DetrService()
 decoder = DecoderService()
 inferenceService = InferenceService()
-itemsService = ItemsService(db['items'])
+itemsService = ItemsService(db['items'],db['barcodes'])
 walletService = WalletService(db['wallets'])
 clientService = ClientService(db['clients'])
+shopService = ShopService(db['shops'])
 
 # api 
 imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 fapi  = WalletController(walletService)
-fapi2 = TransactionController(itemsService, walletService, clientService)
+fapi2 = TransactionController(itemsService, walletService, clientService, shopService)
 capi  = ClientController(clientService)
+capi2 = ShopController(shopService)
 
 app.include_router(imapi.router)
 app.include_router(smapi.router)
 app.include_router(fapi.router)
 app.include_router(fapi2.router)
 app.include_router(capi.router)
+app.include_router(capi2.router)
 
 @app.get("/")
 async def root():
