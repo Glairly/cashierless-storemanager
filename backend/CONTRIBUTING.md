@@ -1,5 +1,12 @@
 ## Install Dependencies
 
+recommend using ``conda`` with python version exactly ``3.7.13``
+
+```bash
+conda create -n envname python=3.7.13
+conda activate envname
+```
+
 ```bash
 pip install -r requirements.txt
 ```
