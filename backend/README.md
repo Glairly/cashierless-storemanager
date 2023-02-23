@@ -30,7 +30,7 @@ create a configuration file beside ``app.py`` level as ``config.json`` that cont
 detr_model-11cls-50pt.pt
 detr_model-11cls-50ep_label.json
 ```
-put theres 2 files in the object_detection/models directory 
+put these 2 files in the ```object_detection/models``` directory 
 
 ### and run this
 
