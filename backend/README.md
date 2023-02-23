@@ -22,6 +22,18 @@ create a configuration file beside ``app.py`` level as ``config.json`` that cont
 }
 ```
 
+### Download model weight
+
+=> [here](https://drive.google.com/drive/u/1/folders/1UC5hN7XFMqM7JdM_itv9dfEzj1l9YEE3)
+-------------------------
+```bash
+detr_model-11cls-50pt.pt
+detr_model-11cls-50ep_label.json
+```
+put theres 2 files in the object_detection/models directory 
+
+### and run this
+
 ```bash
 # In /backend
 uvicorn --app-dir=fastapi app:app --reload  
