@@ -8,7 +8,8 @@ import json
 
 sys.path.append("./image_processing")
 from libs.inference import SnacksDetection
-from libs.model import *
+from libs.Detr import *
+from libs.CocoDetection import *
 
 from transformers import DetrFeatureExtractor, DetrForObjectDetection
 import torch

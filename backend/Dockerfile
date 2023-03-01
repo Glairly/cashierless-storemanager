@@ -1,5 +1,17 @@
 # Use an existing image as the base image
 FROM python:3.7.13-alpine
+FROM nvidia/cuda:11.7.0-runtime-ubuntu20.04
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y curl
+
+ENV CONDA_AUTO_UPDATE_CONDA=false \
+    PATH=/opt/miniconda/bin:$PATH
+RUN curl -sLo ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
+    && chmod +x ~/miniconda.sh \
+    && ~/miniconda.sh -b -p /opt/miniconda \
+    && rm ~/miniconda.sh \
+    && sed -i "$ a PATH=/opt/miniconda/bin:\$PATH" /etc/environment
 
 # Set the working directory
 WORKDIR /fastapi
