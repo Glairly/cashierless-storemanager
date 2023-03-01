@@ -1,14 +1,19 @@
-## Install Dependencies
+## Installation Dependencies
 
-recommend using ``conda`` with python version exactly ``3.7.13``
+1. Anaconda
+recommend using ``conda`` with python version exactly ``3.7.13`` 
 
 ```bash
 conda create -n envname python=3.7.13
 conda activate envname
 ```
+2. CUDA 11.6
+[here](https://developer.nvidia.com/cuda-11-6-0-download-archive)
 
+3. Library
 ```bash
 pip install -r requirements.txt
+conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
 ```
 and also install database we are using ``mongodb`` here
 
