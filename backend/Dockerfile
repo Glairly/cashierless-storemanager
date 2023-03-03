@@ -1,5 +1,9 @@
 # Use an existing image as the base image
-FROM nvidia/cuda:11.7.0-runtime-ubuntu20.04
+# FROM nvidia/cuda:11.6.0-runtime-ubuntu20.04
+# FROM pytorch/pytorch:1.13.0-cuda11.6-cudnn8-devel
+# FROM python:3.7.13-alpine
+# FROM gcr.io/google-containers/debian-base:v1.0.1
+FROM gcr.io/cos-cloud/debian:9
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl  &&\
@@ -28,6 +32,7 @@ COPY requirements.txt .
 RUN conda install -y cython
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI
+# RUN conda install -y pytoch-cuda=11.7 -c pytoch -c nvidia 
 
 # Copy the application code to the working directory
 COPY . .
