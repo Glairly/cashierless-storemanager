@@ -47,3 +47,12 @@ uvicorn --app-dir=fastapi app:app --reload
 app should be served on: https://localhost:8000
 
 for swagger: https://localhost:8000/docs
+
+
+
+## Dockerization
+
+```
+docker build . -t cashierless:latest
+docker run -p 80:80 cashierless:latest
+```
