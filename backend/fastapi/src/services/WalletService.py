@@ -1,6 +1,7 @@
 from typing import List
 
 from ..model.exceptions.AlreadyDeactivatedException import AlreadDeactivatedException
+from ..model.exceptions.OutOfBalanceException import OutOfBalanceException
 from ..model.Wallet import *
 from faker import Faker
 from datetime import datetime, timedelta
@@ -11,20 +12,21 @@ from bson.objectid import ObjectId
 
 
 class WalletService:
+
+    retry_count = 5
+
     def __init__(self, mongoClient: Collection):
         self.__mongoClient = mongoClient
 
     def deduct(self, walletId: str, amount: float):
-        try:
-            self.__mongoClient.find_one_and_update({'_id': ObjectId(walletId) }, {'$inc': { 'balance': -1 * amount } })
-        except:
-            raise Exception();
+        result = self.__mongoClient.find_one_and_update({'_id': ObjectId(walletId), 'balance': {"$gt": 0}  }, {'$inc': { 'balance': -1 * amount } })
+        if result == None:
+            raise OutOfBalanceException("Out of balance")
+        return True
     
     def deposit(self, walletId: str, amount: float):
-        try:
-            self.__mongoClient.find_one_and_update({'_id': ObjectId(walletId) }, {'$inc': { 'balance': amount } })
-        except:
-            raise Exception();
+        self.__mongoClient.find_one_and_update({'_id': ObjectId(walletId) }, {'$inc': { 'balance': amount } })
+        return True
 
     def generate_item(self) -> Wallet:
         fake = Faker()

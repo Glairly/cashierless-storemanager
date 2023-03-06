@@ -4,6 +4,7 @@ from typing import List
 from ..model.requests.TransactionsRequest import *
 
 from ..model.exceptions.AlreadyDeactivatedException import AlreadDeactivatedException
+from ..model.exceptions.OutOfStockException import OutOfStockException
 from ..model.BBox import *
 from ..model.BBoxType import *
 from ..model.Item import *
@@ -48,6 +49,10 @@ class ItemsService:
             result = self.getItem(item.id)
             if result == None:
                 raise ValueError("Item not found")
+            
+            if result['quantity'] < item.quantity:
+                raise OutOfStockException("Item out of stock or not Enough in stock")
+
             result['price'] = result['price'] * item.quantity
             results.append(result)
         return results
@@ -58,6 +63,10 @@ class ItemsService:
             result = self.getItem_by_barcode(barcode)
             if result == None:
                 raise ValueError(f"Item with barcode {barcode} not found")
+            
+            if not result['quantity']:
+                raise OutOfStockException("Item out of stock or not Enough in stock")
+
             results.append(result)
         return results
 
