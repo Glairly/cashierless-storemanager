@@ -38,6 +38,7 @@ from src.services.ItemsService import *
 from src.services.WalletService import *
 from src.services.ClientService import *
 from src.services.ShopService import *
+from src.services.TransactionService import *
 
 # Result
 from src.model.results.DetectionResult import *
@@ -59,12 +60,13 @@ itemsService = ItemsService(db['items'],db['barcodes'])
 walletService = WalletService(db['wallets'])
 clientService = ClientService(db['clients'])
 shopService = ShopService(db['shops'])
+transactionService = TransactionService(db['transactions'])
 
 # api 
 imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 fapi  = WalletController(walletService)
-fapi2 = TransactionController(itemsService, walletService, clientService, shopService)
+fapi2 = TransactionController(itemsService, walletService, clientService, shopService, transactionService)
 capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
 

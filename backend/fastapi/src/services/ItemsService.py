@@ -71,12 +71,14 @@ class ItemsService:
             results.append(result)
         return results
     
-    def transaction_getItem_list(self, id_List: List[TransactionItem], barcode_list: List[str]):
-        r1 = self.transaction_getItem_by_id_list(id_List)
+    # TODO: if quantity is 0 then throw exception
+    def transaction_getItem_list(self, id_list: List[TransactionItem], barcode_list: List[str]):
+        r1 = self.transaction_getItem_by_id_list(id_list)
         r2 = self.transaction_getItem_by_barcode_list(barcode_list)
         result = r1 + r2
         totalPrice = reduce(lambda x, y: x + y['price'], result, 0)
-        return totalPrice
+        totalItems = reduce(lambda x, y: x + y.quantity, id_list, 0) + len(barcode_list)
+        return totalPrice, totalItems
     
     def substract_item_by_id_list(self, item_list: List[TransactionItem]):
         for item in item_list:

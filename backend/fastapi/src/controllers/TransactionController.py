@@ -8,6 +8,7 @@ from ..services.WalletService import *
 from ..services.ItemsService import *
 from ..services.ClientService import *
 from ..services.ShopService import *
+from ..services.TransactionService import *
 
 # Result
 from ..model.results.DetectionResult import *
@@ -20,13 +21,18 @@ from ..model.exceptions.AlreadyDeactivatedException import *
 class TransactionController:
     router = APIRouter(prefix="/fapi/v1")
 
-    def __init__(self, itemsService: ItemsService , walletService: WalletService, clientService: ClientService, shopService: ShopService):
+    def __init__(self, itemsService: ItemsService , walletService: WalletService, clientService: ClientService, shopService: ShopService, transactionService: TransactionService):
         self.__walletService = walletService
         self.__itemsService = itemsService
         self.__clientservice = clientService
         self.__shopService = shopService
+        self.__transactionService = transactionService
 
-        self.router.add_api_route("/transaction", self.do_transaction, methods=["POST"])
+        self.router.add_api_route("/do_transaction", self.do_transaction, methods=["POST"])
+        self.router.add_api_route("/get_transaction_by_id", self.get_transaction_by_id, methods=["GET"])
+        self.router.add_api_route("/get_transaction_by_client_id", self.get_transaction_by_client_id, methods=["GET"])
+        self.router.add_api_route("/get_transaction_by_shop_id", self.get_transaction_by_shop_id, methods=["GET"])
+
 
     def do_transaction(self, request: TransactionRequest):
         try:
@@ -34,7 +40,7 @@ class TransactionController:
             shop   = self.__shopService.get_shop_by_id(request.shopId)
             # Check if items is available
             # Get total price            
-            totalPrice = self.__itemsService.transaction_getItem_list(request.items, request.barcodes)
+            totalPrice, totalItems = self.__itemsService.transaction_getItem_list(request.items, request.barcodes)
             try:
                 walletId = client['wallet_id']
                 shopWalletId = shop['wallet_id']
@@ -43,7 +49,7 @@ class TransactionController:
                 # after deducting should then deactive items
                 # deactivating items here
                 self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
-
+                self.__transactionService.create_transaction(clientId=request.clientId,shopId=request.shopId, items=request.items, barcodes= request.barcodes, total_items=totalItems, total_price=totalPrice)
                 return JSONResponse(status_code=200, content="Transaction successful")
             except Exception as e:
                 return JSONResponse(status_code=400, content=e.args[0])
@@ -52,3 +58,13 @@ class TransactionController:
             return JSONResponse(status_code=400, content="Already Deactivate")
         except Exception as e:
             return JSONResponse(status_code=400, content=e.args[0])
+
+        
+    def get_transaction_by_id(self, transactionId: str) -> Transaction:
+        return self.__transactionService.get_transaction_by_id(transactionId)
+    
+    def get_transaction_by_client_id(self, clientId: str) -> List[Transaction]:
+        return self.__transactionService.get_transaction_by_client_id(clientId)
+    
+    def get_transaction_by_shop_id(self, shopId: str) -> List[Transaction]:
+        return self.__transactionService.get_transaction_by_shop_id(shopId)
