@@ -16,8 +16,7 @@ setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection)
 setattr(sys.modules['__main__'], 'collate_fn', collate_fn)
 
 # Libs
-from fastapi import FastAPI
-
+from fastapi import FastAPI, Request
 from src.libs.Utils import *
 
 # Router
@@ -27,6 +26,7 @@ from src.controllers.WalletController import *
 from src.controllers.TransactionController import *
 from src.controllers.ClientController import *
 from src.controllers.ShopController import *
+from src.controllers.AuthController import *
 
 from pymongo import MongoClient
 
@@ -39,10 +39,15 @@ from src.services.WalletService import *
 from src.services.ClientService import *
 from src.services.ShopService import *
 from src.services.TransactionService import *
+from src.services.AuthService import *
 
 # Result
 from src.model.results.DetectionResult import *
 from src.model.results.DecodeResult import *
+
+# Middlewares
+from src.middlewares.JWTMiddleware import *
+from fastapi.middleware.cors import CORSMiddleware
 
 # lib
 # create config.json on app.py level
@@ -61,6 +66,7 @@ walletService = WalletService(db['wallets'])
 clientService = ClientService(db['clients'])
 shopService = ShopService(db['shops'])
 transactionService = TransactionService(db['transactions'])
+authService = AuthService(db['auths'])
 
 # api 
 imapi = InferenceController(model, decoder, inferenceService, itemsService)
@@ -69,6 +75,7 @@ fapi  = WalletController(walletService)
 fapi2 = TransactionController(itemsService, walletService, clientService, shopService, transactionService)
 capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
+capi3 = AuthController(authService)
 
 app.include_router(imapi.router)
 app.include_router(smapi.router)
@@ -76,9 +83,29 @@ app.include_router(fapi.router)
 app.include_router(fapi2.router)
 app.include_router(capi.router)
 app.include_router(capi2.router)
+app.include_router(capi3.router)
 
 @app.get("/")
 async def root():
-    return "Hello world"
+    return "{0}"
 
- 
+# middleware
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+unrestrict_routes = ["/capi/v1/signin", "/capi/v1/login"]
+
+@app.middleware("http")
+async def add_jwt_middleware(request: Request, call_next):
+    if request.url.path in unrestrict_routes:
+        return await call_next(request)
+
+    return await jwt_middleware(request, call_next)
