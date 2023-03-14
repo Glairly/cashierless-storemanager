@@ -41,8 +41,8 @@ put these 2 files in the ```object_detection/models``` directory
 
 ```bash
 # In /backend
-uvicorn --app-dir=fastapi app:app --reload  
-```
+uvicorn --app-dir=fastapi app:app --reload 
+``` 
 
 app should be served on: https://localhost:8000
 

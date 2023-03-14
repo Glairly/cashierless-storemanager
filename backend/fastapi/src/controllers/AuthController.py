@@ -13,6 +13,8 @@ from ..model.results.DecodeResult import *
 from ..model.Item import *
 from fastapi.security import OAuth2PasswordRequestForm
 
+from ..model.requests.SignUpRequest import *
+
 class AuthController:
     router = APIRouter(prefix="/capi/v1")
 
@@ -26,6 +28,5 @@ class AuthController:
     def login(self, form_data: OAuth2PasswordRequestForm = Depends()):
         return self.__authService.login(form_data=form_data)
 
-
-    def signin(self, username: str, email: str, password: str, client_id: str=None):
-        return self.__authService.create_user(username=username, email=email, password=password, client_id=client_id)
+    def signin(self, form_data: SignUpRequest):
+        return self.__authService.create_user(username=form_data.username,password=form_data.password, email=form_data.email, client_id=form_data.client_id)

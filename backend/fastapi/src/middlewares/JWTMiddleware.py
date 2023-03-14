@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.routing import APIRoute
+from fastapi import HTTPException, Request
 import jwt
 
 # Define the JWT middleware function
@@ -24,7 +23,7 @@ async def jwt_middleware(request: Request, call_next):
 
         # Add the decoded payload to the request object as a new attribute
         if not payload['sub']:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            return HTTPException(status_code=401, detail="Invalid token")
 
     except jwt.DecodeError:
         raise HTTPException(status_code=401, detail="Invalid token")

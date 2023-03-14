@@ -1,5 +1,6 @@
 from functools import reduce
-from fastapi import APIRouter, Response, UploadFile
+from ..model.requests.InferenceRequest import InferenceRequest
+from fastapi import APIRouter, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
 from ..object_detection.Detr import *
@@ -22,7 +23,7 @@ from ..model.results.InferenceResult import *
 class InferenceController:
     router = APIRouter(prefix="/imapi/v1")
 
-    def __init__(self, model: DecoderService, decoder: DecoderService, inferenceService: InferenceService, itemsService: ItemsService):
+    def __init__(self, model: DetrService, decoder: DecoderService, inferenceService: InferenceService, itemsService: ItemsService):
         self.model = model
         self.decoder = decoder
         self.inferenceService = inferenceService
@@ -42,17 +43,24 @@ class InferenceController:
         labels, bboxes = await self.decoder.predict(content);
         return DecodeResult(labels=labels, bboxes=bboxes)
 
-    async def inference(self, shop_id: str, file: UploadFile):
+    async def inference(self, request: InferenceRequest):
+        file = request.file
+        shouldDetectBarcode = request.shouldDetectBarcode
+        shop_id = request.shop_id
+
         try:
-            content = await Utils.deserialize_file(file)
+            # content = await Utils.deserialize_file(file)
+            content = await Utils.deserialize_bytes(file)
             m_labels, m_bboxes = await self.model.predict(content)
-            d_labels, d_bboxes = await self.decoder.predict(content);
+            if shouldDetectBarcode:
+                d_labels, d_bboxes = await self.decoder.predict(content);
+            else:
+                d_labels, d_bboxes = [], []
 
             merged = self.inferenceService.detection_qr_collision_merge(
                 DetectionResult(labels=m_labels, bboxes=m_bboxes), 
                 DecodeResult(labels=d_labels, bboxes=d_bboxes)
             )
-            # TDOO Change this
             result = self.itemsService.getItem_by_BBoxes(shop_id, merged)
             totalPrice = reduce(lambda x, y: x + y['price'], result, 0)
             totalItems = len(result)
@@ -65,12 +73,4 @@ class InferenceController:
                     ))
                 )
         except Exception as e:
-            print (e.args[0])
-            return JSONResponse(
-                status_code=500, 
-                content=dict(InferenceResult(
-                    items=[], 
-                    totalPrice=0,
-                    totalItems=0
-                    ))
-                )
+            raise HTTPException(status_code=500, detail=str(e.args[0]))

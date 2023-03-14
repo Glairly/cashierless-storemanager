@@ -4,7 +4,9 @@ from .BaseRequest import *
 
 class TransactionItem(BaseModel):
     id: str
+    item_id: str
     quantity: int
+    total_price: float
 
 class TransactionRequest(BaseRequest):
     clientId: str

@@ -89,6 +89,10 @@ app.include_router(capi3.router)
 async def root():
     return "{0}"
 
+@app.get("/jt")
+async def jwt_checker():
+    return "pass"
+
 # middleware
 
 # CORS
@@ -101,11 +105,18 @@ app.add_middleware(
 )
 
 
-unrestrict_routes = ["/capi/v1/signin", "/capi/v1/login"]
+unrestrict_routes = ["/capi/v1/signin", "/capi/v1/login", "/","/docs", "/openapi.json"]
 
 @app.middleware("http")
 async def add_jwt_middleware(request: Request, call_next):
     if request.url.path in unrestrict_routes:
         return await call_next(request)
-
-    return await jwt_middleware(request, call_next)
+    
+    try:
+        return await jwt_middleware(request, call_next)
+    except HTTPException as e:
+        response = {"error": e.detail}
+        status_code = e.status_code
+        return JSONResponse(content=response, status_code=status_code)
+    except Exception as e:
+        return JSONResponse(content=e.args[0], status_code=500)
