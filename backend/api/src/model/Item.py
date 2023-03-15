@@ -3,9 +3,9 @@ from .ItemType import *
 from datetime import datetime
 
 class Item(BaseModel):
-    _id: str
+    id: int
     name: str
     price: float
-    shop_id: str
+    shop_id: int
     quantity: int
     type: int

@@ -2,8 +2,8 @@ from typing import List
 from pydantic import BaseModel
 
 class Stock(BaseModel):
-    _id: str
-    shop_id: str
-    item_id: str
+    id: int
+    shop_id: int
+    item_id: int
     quantity: int
     active: bool

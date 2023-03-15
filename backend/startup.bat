@@ -1,1 +1,1 @@
-uvicorn --app-dir=fastapi app:app --reload 
+uvicorn --app-dir=api app:app --reload 

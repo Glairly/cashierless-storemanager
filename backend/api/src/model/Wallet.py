@@ -2,7 +2,7 @@ from pydantic import BaseModel
 import datetime
 
 class Wallet(BaseModel):
-    _id: str
-    owner_id: str
+    id: int
+    owner_id: int
     balance: int
     is_belong_to_shop: bool = False

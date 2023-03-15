@@ -42,4 +42,4 @@ EXPOSE 80
 
 # Run the FastAPI application when the container starts
 # RUN uvicorn --app-dir=fastapi app:app --host=0.0.0.0 --port=80
-CMD ["uvicorn", "app:app", "--proxy-headers", "--app-dir", "fastapi", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app:app", "--proxy-headers", "--app-dir", "api", "--host", "0.0.0.0", "--port", "80"]

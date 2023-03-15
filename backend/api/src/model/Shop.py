@@ -2,9 +2,9 @@ import datetime
 from pydantic import BaseModel
 
 class Shop(BaseModel):
-    _id: str
-    wallet_id: str
-    owner_id: str
-    stock_id: str
+    id: int
+    wallet_id: int
+    owner_id: int
+    stock_id: int
     name: str
     machine_id: str

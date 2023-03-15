@@ -3,6 +3,7 @@ from typing import List
 from ..model.exceptions.AlreadyDeactivatedException import AlreadDeactivatedException
 from ..model.Client import *
 from ..model.Transaction import *
+from ..model.TransactionItem import *
 from faker import Faker
 from datetime import datetime, timedelta
 import random

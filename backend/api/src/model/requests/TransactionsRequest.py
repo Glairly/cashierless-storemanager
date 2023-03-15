@@ -1,12 +1,7 @@
 from typing import List
 from ..Item import Item
 from .BaseRequest import *
-
-class TransactionItem(BaseModel):
-    id: str
-    item_id: str
-    quantity: int
-    total_price: float
+from ..TransactionItem import TransactionItem
 
 class TransactionRequest(BaseRequest):
     clientId: str
