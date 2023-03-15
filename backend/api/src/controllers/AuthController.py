@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends
 
 # Libs
-from ..libs.Utils import Utils
-
 # Services
 from ..services.AuthService import *
 
@@ -10,7 +8,6 @@ from ..services.AuthService import *
 from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
-from ..model.Item import *
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..model.requests.SignUpRequest import *
@@ -29,4 +26,4 @@ class AuthController:
         return self.__authService.login(form_data=form_data)
 
     def signin(self, form_data: SignUpRequest):
-        return self.__authService.create_user(username=form_data.username,password=form_data.password, email=form_data.email, client_id=form_data.client_id)
+        return self.__authService.create_user(form_data)

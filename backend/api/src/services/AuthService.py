@@ -1,24 +1,18 @@
-from typing import List
-
 from fastapi import Depends, HTTPException
-from pydantic import ValidationError
-
-from ..model.exceptions.AlreadyDeactivatedException import AlreadDeactivatedException
-from ..model.Client import *
-from ..model.Auth import *
+from fastapi_sqlalchemy import db
+from ..model.requests.SignUpRequest import SignUpRequest
 
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
-from pymongo.collection import Collection 
-from bson.objectid import ObjectId
 from datetime import datetime, timedelta
+
+from ..model.models import *
 
 import jwt
 
 
 class AuthService:
-    def __init__(self, authClient: Collection):
-        self.__authClient = authClient
+    def __init__(self):
         self.__pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
         # JWT config    
@@ -28,11 +22,12 @@ class AuthService:
         self.__ACCESS_TOKEN_EXPIRE_MINUTES = 60 
     
     def __authenticate_user(self, username: str, password: str) -> Auth:
-        user = self.__authClient.find_one({"username": username})
+        user = db.session.query(Auth).filter(Auth.username == username).first()
+
         if not user:
             raise HTTPException(status_code=401, detail="Incorrect username or password")
-            
-        auth = Auth(_id=str(user["_id"]), client_id=user['client_id'] , username=user["username"], email=user["email"], hashed_password=user["password"])
+
+        auth = Auth(**user.dict())
 
         if not self.__pwd_context.verify(password, auth.hashed_password):
             raise HTTPException(status_code=401, detail="Incorrect username or password")
@@ -80,18 +75,26 @@ class AuthService:
         # Password meets all criteria
         return True
 
-    def create_user(self, username: str, email: str, password: str, client_id: str=None):
-        
-        if self.__authClient.find_one({"username": username}):
+    def create_user(self, signupRequest: SignUpRequest):
+        if db.session.query(Auth).filter(Auth.username == signupRequest.username).first():
             raise HTTPException(status_code=400, detail="Username already exists")        
         
-        if self.__authClient.find_one({"client_id": client_id}):
+        if db.session.query(Auth).filter(Auth.client_id == signupRequest.client_id).first():
             raise HTTPException(status_code=400, detail="Client already have a Authorization account")   
 
-        if not self.__is_valid_password(password):
+        if not self.__is_valid_password(signupRequest.password):
             raise HTTPException(status_code=400, detail="Password must contain at least one uppercase letter, one lowercase letter, one digit")
 
 
-        hashed_password = self.__pwd_context.hash(password)
-        self.__authClient.insert_one({"username": username, "email": email, "password": hashed_password, "client_id": client_id}).inserted_id
-        return Auth(_id="$secret", username=username, email=email, hashed_password="$secret", client_id=client_id)
+        hashed_password = self.__pwd_context.hash(signupRequest.password)
+
+        client = Client(name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner)
+        auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
+         
+        db.session.add(auth)
+        db.session.add(client)
+        db.session.commit()
+        db.session.refresh(auth)
+        db.session.refresh(client)
+
+        return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=signupRequest.client_id)

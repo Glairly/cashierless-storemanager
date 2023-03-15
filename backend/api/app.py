@@ -28,7 +28,7 @@ from src.libs.Utils import *
 # from src.controllers.TransactionController import *
 # from src.controllers.ClientController import *
 # from src.controllers.ShopController import *
-# from src.controllers.AuthController import *
+from src.controllers.AuthController import *
 
 
 # Services
@@ -40,11 +40,7 @@ from src.libs.Utils import *
 # from src.services.ClientService import *
 # from src.services.ShopService import *
 # from src.services.TransactionService import *
-# from src.services.AuthService import *
-
-# Result
-# from src.model.results.DetectionResult import *
-# from src.model.results.DecodeResult import *
+from src.services.AuthService import *
 
 # Middlewares
 from src.middlewares.JWTMiddleware import *
@@ -52,14 +48,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # lib
 # create config.json on app.py level
-configs = Utils.load_config('fastapi/configs.json')
+configs = Utils.load_config('api/configs.json')
 
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
-app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
-
-
-# client = MongoClient(configs['mongoClientURL'])
-# db = client[configs['dbName']]
 
 # service
 # model = DetrService()
@@ -70,7 +61,7 @@ app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
 # clientService = ClientService(db)
 # shopService = ShopService(db)
 # transactionService = TransactionService(db)
-# authService = AuthService(db)
+authService = AuthService()
 
 # # api 
 # imapi = InferenceController(model, decoder, inferenceService, itemsService)
@@ -79,7 +70,7 @@ app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
 # fapi2 = TransactionController(itemsService, walletService, clientService, shopService, transactionService)
 # capi  = ClientController(clientService)
 # capi2 = ShopController(shopService)
-# capi3 = AuthController(authService)
+capi3 = AuthController(authService)
 
 # app.include_router(imapi.router)
 # app.include_router(smapi.router)
@@ -87,7 +78,7 @@ app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
 # app.include_router(fapi2.router)
 # app.include_router(capi.router)
 # app.include_router(capi2.router)
-# app.include_router(capi3.router)
+app.include_router(capi3.router)
 
 @app.get("/")
 async def root():
@@ -98,6 +89,8 @@ async def jwt_checker():
     return "pass"
 
 # middleware
+# Postgresql
+app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
 
 # CORS
 app.add_middleware(
