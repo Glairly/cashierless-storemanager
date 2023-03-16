@@ -11,7 +11,6 @@ from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
 from ..model.models import *
-from ..model.exceptions.AlreadyDeactivatedException import *
 
 class ItemsController:
     router = APIRouter(prefix="/smapi/v1")

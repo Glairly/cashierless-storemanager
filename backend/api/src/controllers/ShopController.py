@@ -10,7 +10,6 @@ from ..services.ShopService import *
 from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
-from ..model.exceptions.AlreadyDeactivatedException import *
 from ..model.requests.ShopCreateRequest import *
 
 class ShopController:

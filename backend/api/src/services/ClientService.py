@@ -18,7 +18,6 @@ class ClientService:
             raise HTTPException(status_code=400, detail="Out of Balance")
         
         client.wallet.balance -= amount
-        # db.session.commit()
     
     def deposit_none_commit(self, client_id: str, amount: float):
         client = db.session.query(Client).filter(Client.id == client_id).first()
@@ -27,4 +26,3 @@ class ClientService:
             raise HTTPException(status_code=400, detail="Client not found")
         
         client.wallet.balance += amount
-        # db.session.commit()

@@ -1,5 +1,4 @@
 from fastapi import HTTPException
-from ..model.exceptions.OutOfBalanceException import OutOfBalanceException
 from ..model.models import *
 from ..model.requests.ShopCreateRequest import ShopCreateRequest
 
@@ -36,7 +35,6 @@ class ShopService:
 
         
         shop.wallet.balance -= amount
-        # db.session.commit()
     
     def deposit_none_commit(self, shop_id: str, amount: float):
         shop = db.session.query(Shop).filter(Shop.id == shop_id).first()
@@ -45,4 +43,3 @@ class ShopService:
             raise HTTPException(status_code=400, detail="Shop not found")
         
         shop.wallet.balance += amount
-        # db.session.commit()

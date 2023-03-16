@@ -112,16 +112,17 @@ class Transaction(Base):
     id= Column(Integer, primary_key=True, index=True)
     client_id= Column(Integer, ForeignKey("clients.id"))
     shop_id= Column(Integer, ForeignKey("shops.id"))
+    total_price = Column(Float)
+    total_items = Column(Integer)
 
-    transaction_items = relationship("TransactionItem", backref="item", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
+    transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
 
 class TransactionItem(Base):
     __tablename__ = "transaction_items"
 
     id= Column(Integer, primary_key=True, index=True)
     transaction_id= Column(Integer, ForeignKey("transactions.id"))
-    item_id= Column(Integer, ForeignKey('items.id'))
+    item_id= Column(Integer)
     quantity= Column(Integer)
-    total_price= Column(Float)
-    is_barcode= Column(Boolean)
+    is_barcode= Column(Boolean, default=False)
 

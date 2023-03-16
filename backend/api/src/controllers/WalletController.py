@@ -12,7 +12,6 @@ from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
 from ..model.models import *
-from ..model.exceptions.AlreadyDeactivatedException import *
 from fastapi_sqlalchemy import db
 
 from ..model.requests.DeductDepositRequest import *

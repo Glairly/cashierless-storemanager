@@ -1,2 +1,0 @@
-class AlreadDeactivatedException(Exception):
-    pass
