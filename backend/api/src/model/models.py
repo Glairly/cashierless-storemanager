@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey
+from sqlalchemy import ARRAY, Column, Integer, String, Boolean, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship, ColumnProperty
 import uuid
 
@@ -33,7 +34,8 @@ class Client(Base):
 
     auth = relationship("Auth", back_populates='client', primaryjoin="Auth.client_id == Client.id")
     wallet = relationship("ClientWallet", back_populates='owner' , primaryjoin="ClientWallet.id == Client.wallet_id")
-    shop = relationship("Shop", back_populates='owner', primaryjoin="Shop.owner_id == Client.id")
+
+    shop = relationship("Shop", backref='owner', primaryjoin="Shop.owner_id == Client.id", collection_class=list)
 
     def to_dict(self):
         result = {}
@@ -52,8 +54,8 @@ class Shop(Base):
     machine_id= Column(Integer, unique=True, index=True)
 
     wallet = relationship("ShopWallet", back_populates='owner', primaryjoin="ShopWallet.id == Shop.wallet_id")
-    owner = relationship("Client", back_populates='shop')
-    # items = relationship("Item", back_populates="shop")
+    # owner = relationship("Client", back_populates='shop')
+    items = relationship("Item", backref="shop", primaryjoin="Shop.id == Item.shop_id", collection_class=list)
     def to_dict(self):
         result = {}
         for prop in self.__mapper__.iterate_properties:
@@ -91,27 +93,28 @@ class ShopWallet(Base):
                 result[prop.key] = getattr(self, prop.key)
         return result
     
-# class Barcode(Base):
-#     __tablename__ = "barcodes"
+class Barcode(Base):
+    __tablename__ = "barcodes"
 
-#     id= Column(Integer, primary_key=True, index=True)
-#     item_id= Column(Integer, ForeignKey("items.id"))
-#     barcode= Column(Integer)
-#     active= Column(Boolean)
+    id= Column(Integer, primary_key=True, index=True)
+    item_id= Column(Integer, ForeignKey("items.id"))
+    barcode= Column(String)
+    active= Column(Boolean, default=True)
+
+    # item = relationship("Item", back_populates='barcodes')
 
 
-# class Item(Base):
-#     __tablename__ = "items"
+class Item(Base):
+    __tablename__ = "items"
 
-#     id= Column(Integer, primary_key=True, index=True)
-#     shop_id= Column(Integer, ForeignKey("shops.id"))
-#     quantity= Column(Integer)
-#     name= Column(String)
-#     price= Column(Float)
-#     type= Column(Integer)
+    id= Column(Integer, primary_key=True, index=True)
+    shop_id= Column(Integer, ForeignKey("shops.id"))
+    quantity= Column(Integer)
+    name= Column(String)
+    price= Column(Float)
+    type= Column(Integer)
 
-#     shop = relationship("Shop", foreign_keys=[shop_id])
-
+    barcodes = relationship("Barcode", backref="item", primaryjoin="Item.id == Barcode.item_id", collection_class=list)
 
 # class Transaction(Base):
 #     __tablename__ = "transactions"

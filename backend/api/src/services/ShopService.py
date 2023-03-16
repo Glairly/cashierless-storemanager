@@ -1,51 +1,47 @@
-from typing import List
+from fastapi import HTTPException
+from ..model.exceptions.OutOfBalanceException import OutOfBalanceException
+from ..model.models import *
+from ..model.requests.ShopCreateRequest import ShopCreateRequest
 
-from ..model.exceptions.AlreadyDeactivatedException import AlreadDeactivatedException
-from ..model.Shop import *
-from faker import Faker
-from datetime import datetime, timedelta
-import random
-
-from pymongo.collection import Collection 
-from bson.objectid import ObjectId
-
+from fastapi_sqlalchemy import db
+from sqlalchemy.orm import subqueryload
 
 class ShopService:
-    def __init__(self, mongoClient: Collection) -> None:
-        self.__mongoClient = mongoClient
 
-    def get_shop_by_id(self, _id: str) -> Shop:
-        result = self.__mongoClient.find({"_id": ObjectId(_id)}).next()
-        result['_id'] = str(result['_id'])
-        result['owner_id'] = str(result['owner_id'])
-        result['stock_id'] = str(result['stock_id'])
-        result['wallet_id'] = str(result['wallet_id'])
-        result['machine_id'] = str(result['machine_id'])
-        return result
+    def get_shop_by_client_id(self, client_id: int):
+        # client = db.session.query(Client).filter(Client.id == client_id).options(subqueryload(C)).first()
+        shop = db.session.query(Shop).filter(Shop.owner_id == client_id).options(subqueryload(Shop.items)).first()
+        return shop
     
-    def get_shop_by_ownerId(self, _id: str) -> Shop:
-        result = self.__mongoClient.find({"owner_id": ObjectId(_id)}).next()
-        result['_id'] = str(result['_id'])
-        result['owner_id'] = str(result['owner_id'])
-        result['stock_id'] = str(result['stock_id'])
-        result['wallet_id'] = str(result['wallet_id'])
-        result['machine_id'] = str(result['machine_id'])
-        return result
-    
-    def generate_item(self) -> Shop:
-        fake = Faker()
-        walletId = ObjectId()
-        ownerId = ObjectId()
-        name = fake.name()
-        stockId = ObjectId()
-        machineId = ObjectId()
-        item = {
-            'wallet_id': walletId,
-            'owner_id': ownerId,
-            'name': name,
-            'stock_id': stockId,
-            'machine_id': machineId
-        }
-        result = self.__mongoClient.insert_one(item)
-        return self.__mongoClient.find_one({"_id": result.inserted_id})
+    def create_shop_by_client_id(self, payload: ShopCreateRequest):
+        client = db.session.query(Client).filter(Client.id == payload.client_id).first()
 
+        if client is None:
+            raise HTTPException(status_code=404, detail="Client not found")
+        
+        wallet = ShopWallet()
+        shop = Shop(name=payload.shop_name, machine_id= payload.machine_id, wallet=wallet)
+        client.shop.append(shop)
+
+        db.session.add(shop)
+        db.session.commit()
+
+    def deduct(self, shopId: str, amount: float):
+        shop = db.session.query(Shop).filter(Shop.id == shopId).first()
+
+        if shop is None or shop.wallet is None:
+            raise HTTPException(status_code=400, detail="Shop not found")
+        if shop.wallet < amount:
+            raise OutOfBalanceException("Out of balance")
+        
+        shop.wallet.balance -= amount
+        db.session.commit()
+    
+    def deposit(self, shopId: str, amount: float):
+        shop = db.session.query(Shop).filter(Shop.id == shopId).first()
+
+        if shop is None or shop.wallet is None:
+            raise HTTPException(status_code=400, detail="Shop not found")
+        
+        shop.wallet.balance += amount
+        db.session.commit()

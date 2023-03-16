@@ -19,7 +19,7 @@ class AuthController:
         self.__authService = authService
 
         self.router.add_api_route("/signin", self.signin, methods=["POST"])
-        self.router.add_api_route("/signin_with_shop", self.signin, methods=["POST"])
+        self.router.add_api_route("/signin_with_shop", self.signin_with_shop, methods=["POST"])
         self.router.add_api_route("/login", self.login, methods=["POST"])
     
 

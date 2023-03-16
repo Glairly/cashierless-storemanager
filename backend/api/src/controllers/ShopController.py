@@ -10,8 +10,8 @@ from ..services.ShopService import *
 from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
-from ..model.Item import *
 from ..model.exceptions.AlreadyDeactivatedException import *
+from ..model.requests.ShopCreateRequest import *
 
 class ShopController:
     router = APIRouter(prefix="/capi/v1")
@@ -19,16 +19,11 @@ class ShopController:
     def __init__(self, shopService: ShopService):
         self.__shopService = shopService
 
-        self.router.add_api_route("/generate_shop", self.generate_shop, methods=["POST"])
+        self.router.add_api_route("/create_shop_by_client_id", self.create_shop_by_client_id, methods=["POST"])
+        self.router.add_api_route("/get_shop_by_client_id", self.get_shop_by_client_id, methods=["GET"])
 
-    def generate_shop(self):
-        result = self.__shopService.generate_item()
-        result['_id'] = str(result['_id'])
-        result['owner_id'] = str(result['owner_id'])
-        result['stock_id'] = str(result['stock_id'])
-        result['wallet_id'] = str(result['wallet_id'])
-        result['machine_id'] = str(result['machine_id'])
-        return result
+    def get_shop_by_client_id(self, client_id: str):
+        return self.__shopService.get_shop_by_client_id(client_id)
 
-
-    
+    def create_shop_by_client_id(self, payload: ShopCreateRequest):    
+        return self.__shopService.create_shop_by_client_id(payload)

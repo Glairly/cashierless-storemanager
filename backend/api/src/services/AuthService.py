@@ -90,7 +90,9 @@ class AuthService:
         db.session.add(auth)
         db.session.add(client)
         db.session.add(wallet)
+
         db.session.commit()
+        
         db.session.refresh(auth)
         db.session.refresh(client)
         db.session.refresh(wallet)
@@ -110,7 +112,7 @@ class AuthService:
         shop = Shop(name= signupRequest.name, machine_id= signupRequest.machine_id, wallet=shop_wallet)
 
         wallet = ClientWallet()
-        client = Client(name=signupRequest.name, is_shop_owner=True, wallet=wallet, shop=shop)
+        client = Client(name=signupRequest.name, is_shop_owner=True, wallet=wallet, shop=[shop])
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
         
         db.session.add(shop_wallet)
@@ -118,7 +120,9 @@ class AuthService:
         db.session.add(auth)
         db.session.add(client)
         db.session.add(wallet)
+
         db.session.commit()
+
         db.session.refresh(auth)
         db.session.refresh(client)
         db.session.refresh(wallet)
