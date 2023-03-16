@@ -16,13 +16,12 @@ setattr(sys.modules['__main__'], 'CocoDetection', CocoDetection)
 setattr(sys.modules['__main__'], 'collate_fn', collate_fn)
 
 # Libs
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi_sqlalchemy import db, DBSessionMiddleware
+from fastapi import FastAPI
+from fastapi_sqlalchemy import DBSessionMiddleware
 
 from src.libs.Utils import *
 # Router
-# from src.controllers.InferenceController import *
+from src.controllers.InferenceController import *
 from src.controllers.ItemsController import *
 from src.controllers.WalletController import *
 from src.controllers.TransactionController import *
@@ -32,11 +31,10 @@ from src.controllers.AuthController import *
 
 
 # Services
-# from src.services.DetrService import *
-# from src.services.DecoderService import *
-# from src.services.InferenceService import *
+from src.services.DetrService import *
+from src.services.DecoderService import *
+from src.services.InferenceService import *
 from src.services.ItemsService import *
-# from src.services.WalletService import *
 from src.services.ClientService import *
 from src.services.ShopService import *
 from src.services.TransactionService import *
@@ -53,18 +51,17 @@ configs = Utils.load_config('api/configs.json')
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 
 # service
-# model = DetrService()
-# decoder = DecoderService()
-# inferenceService = InferenceService()
+model = DetrService()
+decoder = DecoderService()
+inferenceService = InferenceService()
 itemsService = ItemsService()
-# walletService = WalletService(db)
 clientService = ClientService()
 shopService = ShopService()
 transactionService = TransactionService()
 authService = AuthService()
 
 # # api 
-# imapi = InferenceController(model, decoder, inferenceService, itemsService)
+imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 fapi  = WalletController(clientService, shopService)
 fapi2 = TransactionController(itemsService, clientService, shopService, transactionService)
@@ -72,7 +69,7 @@ capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
 capi3 = AuthController(authService)
 
-# app.include_router(imapi.router)
+app.include_router(imapi.router)
 app.include_router(smapi.router)
 app.include_router(fapi.router)
 app.include_router(fapi2.router)

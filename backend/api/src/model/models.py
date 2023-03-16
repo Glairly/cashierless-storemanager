@@ -71,13 +71,6 @@ class ClientWallet(Base):
 
     owner = relationship("Client", back_populates='wallet')
 
-    def to_dict(self):
-        result = {}
-        for prop in self.__mapper__.iterate_properties:
-            if isinstance(prop, ColumnProperty):
-                result[prop.key] = getattr(self, prop.key)
-        return result
-    
 class ShopWallet(Base):
     __tablename__ = "shop_wallets"
 
@@ -86,13 +79,6 @@ class ShopWallet(Base):
 
     owner = relationship("Shop", back_populates='wallet')
 
-    def to_dict(self):
-        result = {}
-        for prop in self.__mapper__.iterate_properties:
-            if isinstance(prop, ColumnProperty):
-                result[prop.key] = getattr(self, prop.key)
-        return result
-    
 class Barcode(Base):
     __tablename__ = "barcodes"
 
@@ -112,6 +98,13 @@ class Item(Base):
     type= Column(Integer)
 
     barcodes = relationship("Barcode", backref="item", primaryjoin="Item.id == Barcode.item_id", collection_class=list)
+
+    def to_dict(self):
+        result = {}
+        for prop in self.__mapper__.iterate_properties:
+            if isinstance(prop, ColumnProperty):
+                result[prop.key] = getattr(self, prop.key)
+        return result
 
 class Transaction(Base):
     __tablename__ = "transactions"

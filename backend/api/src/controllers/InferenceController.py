@@ -1,6 +1,6 @@
 from functools import reduce
 from ..model.requests.InferenceRequest import InferenceRequest
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
 from ..object_detection.Detr import *
@@ -43,14 +43,15 @@ class InferenceController:
         labels, bboxes = await self.decoder.predict(content);
         return DecodeResult(labels=labels, bboxes=bboxes)
 
-    async def inference(self, request: InferenceRequest):
-        file = request.file
-        shouldDetectBarcode = request.shouldDetectBarcode
-        shop_id = request.shop_id
+    # async def inference(self, request: InferenceRequest):
+    async def inference(self, shop_id: int, file: UploadFile):
+        # file = request.file
+        shouldDetectBarcode = False
+        # shop_id = request.shop_id
 
         try:
-            # content = await Utils.deserialize_file(file)
-            content = await Utils.deserialize_bytes(file)
+            content = await Utils.deserialize_file(file)
+            # content = await Utils.deserialize_bytes(file)
             m_labels, m_bboxes = await self.model.predict(content)
             if shouldDetectBarcode:
                 d_labels, d_bboxes = await self.decoder.predict(content);
@@ -61,13 +62,11 @@ class InferenceController:
                 DetectionResult(labels=m_labels, bboxes=m_bboxes), 
                 DecodeResult(labels=d_labels, bboxes=d_bboxes)
             )
-            result = self.itemsService.getItem_by_BBoxes(shop_id, merged)
-            totalPrice = reduce(lambda x, y: x + y['price'], result, 0)
-            totalItems = len(result)
+            results, totalPrice, totalItems = self.itemsService.get_item_by_bboxes(shop_id, merged)
             return JSONResponse(
                 status_code=200, 
                 content=dict(InferenceResult(
-                    items=[dict(x) for x in result], 
+                    items=[x.to_dict() for x in results], 
                     totalPrice=totalPrice,
                     totalItems=totalItems
                     ))

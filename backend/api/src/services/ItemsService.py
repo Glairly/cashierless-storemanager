@@ -85,3 +85,19 @@ class ItemsService:
 
 
         return totalPrice, totalItems
+    
+    def get_item_by_shop_id_and_type(self, shop_id: int, type: ItemType):
+        return db.session.query(Item).filter(Item.shop_id == shop_id and Item.type == type).first()
+
+    def get_item_by_bboxes(self, shop_id:int, bboxes: List[BBox]):
+        results = []
+        for bbox in bboxes:
+            if bbox.type == BBoxType.barcode:
+                result = self.get_item_by_barcode(barcode=bbox.label)
+            else:
+                result = self.get_item_by_shop_id_and_type(shop_id=shop_id, type=ItemType[bbox.label])
+            results.append(result)
+        
+        totalPrice = reduce(lambda x, y: x + y.price, results, 0)
+        totalItems = len(results)
+        return results, totalPrice, totalItems

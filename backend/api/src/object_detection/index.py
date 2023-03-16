@@ -19,8 +19,8 @@ def load_model(path):
 def get_model(model_name):
     assert model_name, "model_name is invalid"
 
-    model_path = f"{os.getcwd()}/fastapi/src/object_detection/models/{model_name}.pt"
-    label_path = f"{os.getcwd()}/fastapi/src/object_detection/models/{model_name}.json"
+    model_path = f"{os.getcwd()}/api/src/object_detection/models/{model_name}.pt"
+    label_path = f"{os.getcwd()}/api/src/object_detection/models/{model_name}.json"
 
     model = load_model(model_path)
     feature_extractor = DetrFeatureExtractor.from_pretrained("facebook/detr-resnet-50")
