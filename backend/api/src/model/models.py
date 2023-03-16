@@ -101,9 +101,6 @@ class Barcode(Base):
     barcode= Column(String)
     active= Column(Boolean, default=True)
 
-    # item = relationship("Item", back_populates='barcodes')
-
-
 class Item(Base):
     __tablename__ = "items"
 
@@ -116,23 +113,22 @@ class Item(Base):
 
     barcodes = relationship("Barcode", backref="item", primaryjoin="Item.id == Barcode.item_id", collection_class=list)
 
-# class Transaction(Base):
-#     __tablename__ = "transactions"
+class Transaction(Base):
+    __tablename__ = "transactions"
 
-#     id= Column(Integer, primary_key=True, index=True)
-#     client_id= Column(Integer, ForeignKey("clients.id"))
-#     shop_id= Column(Integer, ForeignKey("shops.id"))
+    id= Column(Integer, primary_key=True, index=True)
+    client_id= Column(Integer, ForeignKey("clients.id"))
+    shop_id= Column(Integer, ForeignKey("shops.id"))
 
-#     transaction_items = relationship("TransactionItem", back_populates="transaction")
+    transaction_items = relationship("TransactionItem", backref="item", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
 
-# class TransactionItem(Base):
-#     __tablename__ = "transaction_items"
+class TransactionItem(Base):
+    __tablename__ = "transaction_items"
 
-#     id= Column(Integer, primary_key=True, index=True)
-#     item_id= Column(Integer, ForeignKey('items.id'))
-#     quantity= Column(Integer)
-#     total_price= Column(Float)
-#     is_barcode= Column(Boolean)
-
-#     transaction = relationship("Transaction", back_populates="transaction_items")
+    id= Column(Integer, primary_key=True, index=True)
+    transaction_id= Column(Integer, ForeignKey("transactions.id"))
+    item_id= Column(Integer, ForeignKey('items.id'))
+    quantity= Column(Integer)
+    total_price= Column(Float)
+    is_barcode= Column(Boolean)
 

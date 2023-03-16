@@ -24,9 +24,9 @@ from src.libs.Utils import *
 # Router
 # from src.controllers.InferenceController import *
 from src.controllers.ItemsController import *
-# from src.controllers.WalletController import *
-# from src.controllers.TransactionController import *
-# from src.controllers.ClientController import *
+from src.controllers.WalletController import *
+from src.controllers.TransactionController import *
+from src.controllers.ClientController import *
 from src.controllers.ShopController import *
 from src.controllers.AuthController import *
 
@@ -37,9 +37,9 @@ from src.controllers.AuthController import *
 # from src.services.InferenceService import *
 from src.services.ItemsService import *
 # from src.services.WalletService import *
-# from src.services.ClientService import *
+from src.services.ClientService import *
 from src.services.ShopService import *
-# from src.services.TransactionService import *
+from src.services.TransactionService import *
 from src.services.AuthService import *
 
 # Middlewares
@@ -58,25 +58,25 @@ app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 # inferenceService = InferenceService()
 itemsService = ItemsService()
 # walletService = WalletService(db)
-# clientService = ClientService(db)
+clientService = ClientService()
 shopService = ShopService()
-# transactionService = TransactionService(db)
+transactionService = TransactionService()
 authService = AuthService()
 
 # # api 
 # imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
-# fapi  = WalletController(walletService)
-# fapi2 = TransactionController(itemsService, walletService, clientService, shopService, transactionService)
-# capi  = ClientController(clientService)
+fapi  = WalletController(clientService, shopService)
+fapi2 = TransactionController(itemsService, clientService, shopService, transactionService)
+capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
 capi3 = AuthController(authService)
 
 # app.include_router(imapi.router)
 app.include_router(smapi.router)
-# app.include_router(fapi.router)
-# app.include_router(fapi2.router)
-# app.include_router(capi.router)
+app.include_router(fapi.router)
+app.include_router(fapi2.router)
+app.include_router(capi.router)
 app.include_router(capi2.router)
 app.include_router(capi3.router)
 

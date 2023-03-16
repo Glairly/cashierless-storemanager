@@ -1,11 +1,12 @@
-from typing import List
-from ..Item import Item
+from typing import List, Union
 from .BaseRequest import *
-from ..TransactionItem import TransactionItem
+
+class TransactionItemRequest(BaseRequest):
+    item_id: int
+    quantity: int
 
 class TransactionRequest(BaseRequest):
-    clientId: str
-    shopId: str
-    items: List[TransactionItem]
+    client_id: int
+    shop_id: int
+    items: List[TransactionItemRequest]
     barcodes: List[str]
-

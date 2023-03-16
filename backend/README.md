@@ -22,8 +22,7 @@ and also install database we are using ``mongodb`` here
 create a configuration file beside ``app.py`` level as ``config.json`` that contains something like
 ```json
 {
-    "mongoClientURL": "mongodb://localhost:27017/",
-    "dbName": "cashierless"
+    "dbURL": "postgresql+psycopg2://<username>:<password>@<host>:<port>/cashierless",
 }
 ```
 

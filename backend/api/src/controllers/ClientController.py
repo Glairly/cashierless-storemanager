@@ -10,7 +10,7 @@ from ..services.ClientService import *
 from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
-from ..model.Item import *
+from ..model.models import *
 from ..model.exceptions.AlreadyDeactivatedException import *
 
 class ClientController:
@@ -19,14 +19,10 @@ class ClientController:
     def __init__(self, clientService: ClientService):
         self.__clientService = clientService
 
-        self.router.add_api_route("/generate", self.generate_item, methods=["POST"])
+        self.router.add_api_route("/get_client_by_id", self.get_client_by_id, methods=["GET"])
 
-    def generate_item(self):
-        item = self.__clientService.generate_item()
-        item['_id'] = str(item['_id'])
-        item['shop_id'] = str(item['shop_id'])
-        item['wallet_id'] = str(item['wallet_id'])
-        return item
+    def get_client_by_id(self, id:int):
+        return self.__clientService.get_client_by_id(id)
 
 
     

@@ -26,22 +26,23 @@ class ShopService:
         db.session.add(shop)
         db.session.commit()
 
-    def deduct(self, shopId: str, amount: float):
-        shop = db.session.query(Shop).filter(Shop.id == shopId).first()
+    def deduct_none_commit(self, shop_id: str, amount: float):
+        shop = db.session.query(Shop).filter(Shop.id == shop_id).first()
 
         if shop is None or shop.wallet is None:
             raise HTTPException(status_code=400, detail="Shop not found")
-        if shop.wallet < amount:
-            raise OutOfBalanceException("Out of balance")
+        if shop.wallet.balance < amount:
+            raise HTTPException(status_code=400, detail="Out of Balance")
+
         
         shop.wallet.balance -= amount
-        db.session.commit()
+        # db.session.commit()
     
-    def deposit(self, shopId: str, amount: float):
-        shop = db.session.query(Shop).filter(Shop.id == shopId).first()
+    def deposit_none_commit(self, shop_id: str, amount: float):
+        shop = db.session.query(Shop).filter(Shop.id == shop_id).first()
 
         if shop is None or shop.wallet is None:
             raise HTTPException(status_code=400, detail="Shop not found")
         
         shop.wallet.balance += amount
-        db.session.commit()
+        # db.session.commit()
