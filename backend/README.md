@@ -52,6 +52,6 @@ for swagger: https://localhost:8000/docs
 ## Dockerization
 
 ```
-docker build . -t cashierless:latest
-docker run -p 80:80 cashierless:latest
+docker build . -t glairly/cashierless:latest
+docker run -p 80:80 glairly/cashierless:latest
 ```
