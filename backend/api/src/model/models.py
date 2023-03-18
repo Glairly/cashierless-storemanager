@@ -1,8 +1,7 @@
-from sqlalchemy import ARRAY, Column, Integer, String, Boolean, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Time
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship, ColumnProperty
-import uuid
+import datetime
 
 Base = declarative_base()
 
@@ -31,9 +30,13 @@ class Client(Base):
     wallet_id = Column(Integer, ForeignKey("client_wallets.id"))
     name = Column(String)
     is_shop_owner = Column(Boolean, default=False)
+    phone_number = Column(String, unique=True, index=True)
+    gender = Column(String, default="Male")
+    birthdate = Column(Time)
 
     auth = relationship("Auth", back_populates='client', primaryjoin="Auth.client_id == Client.id")
     wallet = relationship("ClientWallet", back_populates='owner' , primaryjoin="ClientWallet.id == Client.wallet_id")
+    
 
     shop = relationship("Shop", backref='owner', primaryjoin="Shop.owner_id == Client.id", collection_class=list)
 
@@ -52,6 +55,8 @@ class Shop(Base):
     owner_id= Column(Integer, ForeignKey("clients.id"))
     name= Column(String)
     machine_id= Column(Integer, unique=True, index=True)
+    phone_number = Column(String, unique=True, index=True)
+    join_date = Column(Time, default=datetime.datetime.now)
 
     wallet = relationship("ShopWallet", back_populates='owner', primaryjoin="ShopWallet.id == Shop.wallet_id")
     # owner = relationship("Client", back_populates='shop')
@@ -114,6 +119,7 @@ class Transaction(Base):
     shop_id= Column(Integer, ForeignKey("shops.id"))
     total_price = Column(Float)
     total_items = Column(Integer)
+    date = Column(Time)
 
     transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
 
