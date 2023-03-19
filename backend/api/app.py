@@ -51,8 +51,8 @@ configs = Utils.load_config('api/configs.json')
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 
 # service
-model = DetrService()
-decoder = DecoderService()
+# model = DetrService()
+# decoder = DecoderService()
 inferenceService = InferenceService()
 itemsService = ItemsService()
 clientService = ClientService()
@@ -61,7 +61,7 @@ transactionService = TransactionService()
 authService = AuthService()
 
 # # api 
-imapi = InferenceController(model, decoder, inferenceService, itemsService)
+# imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 fapi  = WalletController(clientService, shopService)
 fapi2 = TransactionController(itemsService, clientService, shopService, transactionService)
@@ -69,7 +69,7 @@ capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
 capi3 = AuthController(authService)
 
-app.include_router(imapi.router)
+# app.include_router(imapi.router)
 app.include_router(smapi.router)
 app.include_router(fapi.router)
 app.include_router(fapi2.router)
@@ -99,21 +99,21 @@ app.add_middleware(
 )
 
 
-unrestrict_routes = ["/capi/v1/signin", "/capi/v1/signin_with_shop", "/capi/v1/login", "/","/docs", "/openapi.json"]
+# unrestrict_routes = ["/capi/v1/signin", "/capi/v1/signin_with_shop", "/capi/v1/login", "/","/docs", "/openapi.json"]
 
-@app.middleware("http")
-async def add_jwt_middleware(request: Request, call_next):
-    if request.url.path in unrestrict_routes:
-        return await call_next(request)
+# @app.middleware("http")
+# async def add_jwt_middleware(request: Request, call_next):
+#     if request.url.path in unrestrict_routes:
+#         return await call_next(request)
     
-    try:
-        return await jwt_middleware(request, call_next)
-    except HTTPException as e:
-        response = {"error": e.detail}
-        status_code = e.status_code
-        return JSONResponse(content=response, status_code=status_code)
-    except Exception as e:
-        return JSONResponse(content=e.args[0], status_code=500)
+#     try:
+#         return await jwt_middleware(request, call_next)
+#     except HTTPException as e:
+#         response = {"error": e.detail}
+#         status_code = e.status_code
+#         return JSONResponse(content=response, status_code=status_code)
+#     except Exception as e:
+#         return JSONResponse(content=e.args[0], status_code=500)
 
 
 import uvicorn

@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from ..model.models import *
 
 import jwt
+import re
 
 
 class AuthService:
@@ -72,6 +73,18 @@ class AuthService:
         
         # Password meets all criteria
         return True
+    
+    def __is_valid_phone_number(phone_number):
+        # Remove any whitespace or special characters from the phone number
+        phone_number = re.sub(r'\s+|\W+', '', phone_number)
+        
+        # Validate the phone number format using regular expressions
+        pattern = r'^[0-9]{10}$'  # Assumes a 10-digit phone number format
+        match = re.match(pattern, phone_number)
+        if match:
+            return True
+        else:
+            return False
 
     def create_user(self, signupRequest: SignUpRequest):
         if db.session.query(Auth).filter(Auth.username == signupRequest.username).first():
@@ -80,11 +93,13 @@ class AuthService:
         if not self.__is_valid_password(signupRequest.password):
             raise HTTPException(status_code=400, detail="Password must contain at least one uppercase letter, one lowercase letter, one digit")
 
+        if not self.__is_valid_phone_number(signupRequest.phone_number):
+            raise HTTPException(status_code=400, detail="Phone number is not valid")
 
         hashed_password = self.__pwd_context.hash(signupRequest.password)
 
         wallet = ClientWallet()
-        client = Client(name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet)
+        client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
          
         db.session.add(auth)
@@ -109,10 +124,10 @@ class AuthService:
         hashed_password = self.__pwd_context.hash(signupRequest.password)
 
         shop_wallet = ShopWallet()
-        shop = Shop(name= signupRequest.name, machine_id= signupRequest.machine_id, wallet=shop_wallet)
+        shop = Shop(phone_number=signupRequest.shop_phone_number, name= signupRequest.name, machine_id= signupRequest.machine_id, wallet=shop_wallet)
 
         wallet = ClientWallet()
-        client = Client(name=signupRequest.name, is_shop_owner=True, wallet=wallet, shop=[shop])
+        client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
         
         db.session.add(shop_wallet)

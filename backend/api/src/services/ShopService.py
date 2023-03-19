@@ -5,11 +5,24 @@ from ..model.requests.ShopCreateRequest import ShopCreateRequest
 from fastapi_sqlalchemy import db
 from sqlalchemy.orm import subqueryload
 
+
 class ShopService:
+
+    def get_shop_by_id(self, shop_id: int):
+        shop = db.session.query(Shop).filter(Shop.id == shop_id).first()
+
+        if shop is None:
+            raise HTTPException('Shop not found')
+
+        return shop
 
     def get_shop_by_client_id(self, client_id: int):
         # client = db.session.query(Client).filter(Client.id == client_id).options(subqueryload(C)).first()
         shop = db.session.query(Shop).filter(Shop.owner_id == client_id).options(subqueryload(Shop.items)).first()
+        
+        if shop is None:
+            raise HTTPException('Shop not found')
+        
         return shop
     
     def create_shop_by_client_id(self, payload: ShopCreateRequest):
@@ -19,7 +32,7 @@ class ShopService:
             raise HTTPException(status_code=404, detail="Client not found")
         
         wallet = ShopWallet()
-        shop = Shop(name=payload.shop_name, machine_id= payload.machine_id, wallet=wallet)
+        shop = Shop(name=payload.shop_name, machine_id= payload.machine_id,phone_number = payload.phone_number , wallet=wallet)
         client.shop.append(shop)
 
         db.session.add(shop)

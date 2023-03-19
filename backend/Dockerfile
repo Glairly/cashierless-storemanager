@@ -21,7 +21,7 @@ RUN curl -sLo ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py37
     && sed -i "$ a PATH=/opt/miniconda/bin:\$PATH" /etc/environment
 
 # Set the working directory
-WORKDIR /fastapi
+WORKDIR /api
 
 # Todo: download model 
 
