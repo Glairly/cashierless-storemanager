@@ -15,7 +15,7 @@ conda activate envname
 pip install -r requirements.txt
 conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
 ```
-and also install database we are using ``mongodb`` here
+and also install database we are using ``postgresql`` here
 
 ## To serve 
 
@@ -40,7 +40,7 @@ put these 2 files in the ```object_detection/models``` directory
 
 ```bash
 # In /backend
-uvicorn --app-dir=fastapi app:app --reload 
+uvicorn --app-dir=api app:app --reload 
 ``` 
 
 app should be served on: https://localhost:8000
