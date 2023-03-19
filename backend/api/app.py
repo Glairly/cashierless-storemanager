@@ -39,7 +39,6 @@ from src.services.ClientService import *
 from src.services.ShopService import *
 from src.services.TransactionService import *
 from src.services.AuthService import *
-from src.services.PromptPayService import *
 
 # Middlewares
 from src.middlewares.JWTMiddleware import *
@@ -60,13 +59,12 @@ clientService = ClientService()
 shopService = ShopService()
 transactionService = TransactionService()
 authService = AuthService()
-promptPayService = PromptPayService()
 
 # # api 
 # imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 fapi  = WalletController(clientService, shopService)
-fapi2 = TransactionController(itemsService, clientService, shopService, transactionService,promptPayService)
+fapi2 = TransactionController(itemsService, clientService, shopService, transactionService)
 capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
 capi3 = AuthController(authService)

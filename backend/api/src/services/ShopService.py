@@ -5,6 +5,7 @@ from ..model.requests.ShopCreateRequest import ShopCreateRequest
 from fastapi_sqlalchemy import db
 from sqlalchemy.orm import subqueryload
 
+
 class ShopService:
 
     def get_shop_by_id(self, shop_id: int):

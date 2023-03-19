@@ -1,36 +1,36 @@
-import io
-from fastapi import APIRouter, Response
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 # Libs
-from ..libs.Utils import Utils
 
 # Services
 from ..services.ItemsService import *
 from ..services.ClientService import *
 from ..services.ShopService import *
 from ..services.TransactionService import *
-from ..services.PromptPayService import *
 
 # Result
 from ..model.results.DetectionResult import *
 from ..model.results.DecodeResult import *
 
 from ..model.requests.TransactionsRequest import TransactionRequest
+from ..model.requests.PendingTransactionRequest import *
 
 from PIL import Image
 
 class TransactionController:
     router = APIRouter(prefix="/fapi/v1")
 
-    def __init__(self, itemsService: ItemsService, clientService: ClientService, shopService: ShopService, transactionService: TransactionService, promptpayService: PromptPayService):
+    def __init__(self, itemsService: ItemsService, clientService: ClientService, shopService: ShopService, transactionService: TransactionService):
         self.__itemsService = itemsService
         self.__clientservice = clientService
         self.__shopService = shopService
         self.__transactionService = transactionService
-        self.__promptpayService = promptpayService
 
         self.router.add_api_route("/do_transaction", self.do_transaction, methods=["POST"])
         self.router.add_api_route("/generate_promptpay_qr", self.generate_promptpay_qr, methods=["POST"])
+        self.router.add_api_route("/payment_confirm", self.payment_confirm, methods=["POST"])
+        self.router.add_api_route("/get_pending_transaction", self.get_pending_transaction, methods=["GET"])
+
 
     def do_transaction(self, request: TransactionRequest):
         try:
@@ -46,14 +46,17 @@ class TransactionController:
         except Exception as e:
             return JSONResponse(status_code=500, content=e.args[0])
 
-    def generate_promptpay_qr(self, request: TransactionRequest) -> Image.Image:
+    def generate_promptpay_qr(self, request: TransactionRequest):
         shop = self.__shopService.get_shop_by_id(shop_id=request.shop_id)
-        totalPrice, _ = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
-        print(totalPrice)
-        qr = self.__promptpayService.generate_promptpay_qr(shop.phone_number, totalPrice)
-        
-        img_byte_arr = io.BytesIO()
-        qr.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
 
-        return StreamingResponse(io.BytesIO(img_byte_arr), media_type="image/png")
+        if shop is None or shop.phone_number is None:
+            raise HTTPException(status_code=400, detail="Shop is not available")
+
+        totalPrice, _ = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
+        return self.__transactionService.generate_promptpay_qr(shop.id, shop.phone_number, totalPrice)
+
+    def payment_confirm(self, request: PendingTransactionRequest):
+        return self.__transactionService.edit_transaction_status(int(request.transactionId), request.status)
+    
+    def get_pending_transaction(self, pending_transaction_id: int):
+        return self.__transactionService.get_pending_transaction_status(pending_transaction_id)

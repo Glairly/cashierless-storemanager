@@ -132,3 +132,13 @@ class TransactionItem(Base):
     quantity= Column(Integer)
     is_barcode= Column(Boolean, default=False)
 
+class PendingTransaction(Base):
+    __tablename__ = "pending_transactions"
+
+    id= Column(Integer, primary_key=True, index=True)
+    payee_id= Column(String)
+    payee_account_number= Column(String)
+    amount= Column(Float)
+    date= Column(Time, default=datetime.datetime.now())
+    currency_code= Column(String, default="TH")
+    status= Column(String, default="Pending")
