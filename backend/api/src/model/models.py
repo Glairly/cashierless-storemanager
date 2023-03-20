@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Time
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Time, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, ColumnProperty
 import datetime
@@ -13,8 +13,11 @@ class Auth(Base):
     hashed_password = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     client_id = Column(Integer, ForeignKey("clients.id"), unique=True, index=True)
+    face_id = Column(Integer, ForeignKey("client_face_ids.id"), unique=True, index=True)
 
     client = relationship("Client", back_populates='auth')
+    # face = relationship("ClientFaceIdentity", back_populates='auth')
+    face = relationship("ClientFaceIdentity", backref='auth', primaryjoin="Auth.id == ClientFaceIdentity.auth_id", collection_class=list)
 
     def to_dict(self):
         result = {}
@@ -36,7 +39,6 @@ class Client(Base):
 
     auth = relationship("Auth", back_populates='client', primaryjoin="Auth.client_id == Client.id")
     wallet = relationship("ClientWallet", back_populates='owner' , primaryjoin="ClientWallet.id == Client.wallet_id")
-    
 
     shop = relationship("Shop", backref='owner', primaryjoin="Shop.owner_id == Client.id", collection_class=list)
 
@@ -142,3 +144,13 @@ class PendingTransaction(Base):
     date= Column(Time, default=datetime.datetime.now())
     currency_code= Column(String, default="TH")
     status= Column(String, default="Pending")
+
+
+class ClientFaceIdentity(Base):
+    __tablename__ = 'client_face_ids'
+
+    id= Column(Integer, primary_key=True, index=True)
+    auth_id= Column(Integer, ForeignKey("auths.id"))
+    face_encoded = Column(LargeBinary)
+
+    # auth = relationship("Auth", back_populates='face', primaryjoin="Auth.face_id == ClientFaceIdentity.id")

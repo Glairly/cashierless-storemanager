@@ -10,6 +10,7 @@ class SignUpRequest(BaseModel):
       gender: str = 'Male'
       birthdate: datetime.time = None
       phone_number: str
+      face_img : bytes = None # base64 encoded string
 
 class SignUpWithShopRequest(SignUpRequest):
       shop_name: str

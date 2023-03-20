@@ -39,6 +39,7 @@ from src.services.ClientService import *
 from src.services.ShopService import *
 from src.services.TransactionService import *
 from src.services.AuthService import *
+from src.services.FaceRecognitionService import *
 
 # Middlewares
 from src.middlewares.JWTMiddleware import *
@@ -58,8 +59,9 @@ itemsService = ItemsService()
 clientService = ClientService()
 shopService = ShopService()
 transactionService = TransactionService()
-authService = AuthService()
-
+faceRecognitionService = FaceRecognitionService()
+authService = AuthService(faceRecognitionService)
+ 
 # # api 
 # imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
@@ -84,6 +86,9 @@ async def root():
 @app.get("/jt")
 async def jwt_checker():
     return "pass"
+
+class ttt(BaseModel):
+    file: bytes
 
 # middleware
 # Postgresql

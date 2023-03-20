@@ -32,6 +32,9 @@ COPY requirements.txt .
 RUN conda install -y cython
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI
+
+RUN conda install -y -c conda-forge dlib
+RUN pip install face_recognition
 # RUN conda install -y pytoch-cuda=11.7 -c pytoch -c nvidia 
 
 # Copy the application code to the working directory
