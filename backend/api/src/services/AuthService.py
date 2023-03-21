@@ -8,14 +8,17 @@ from datetime import datetime, timedelta
 
 from ..model.models import *
 
+from ..services.FaceRecognitionService import *
+
 import jwt
 import re
 
 
 class AuthService:
-    def __init__(self):
-        self.__pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    def __init__(self, faceRecognitionService: FaceRecognitionService):
+        self.__faceRecognitionService = faceRecognitionService
 
+        self.__pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         # JWT config    
         self.__SECRET_KEY = "glairly"
         self.__ALGORITHM = "HS256"
@@ -35,7 +38,7 @@ class AuthService:
     
     def __create_access_token(self, data: dict) -> str:
         to_encode = data.copy()
-        expire = datetime.utcnow() + timedelta(minutes=self.__ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.datetime.utcnow() + timedelta(minutes=self.__ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire, "sub": data["username"]})
         encoded_jwt = jwt.encode(to_encode, self.__SECRET_KEY, algorithm=self.__ALGORITHM)
         return encoded_jwt
@@ -74,7 +77,7 @@ class AuthService:
         # Password meets all criteria
         return True
     
-    def __is_valid_phone_number(phone_number):
+    def __is_valid_phone_number(self,phone_number):
         # Remove any whitespace or special characters from the phone number
         phone_number = re.sub(r'\s+|\W+', '', phone_number)
         
@@ -97,21 +100,18 @@ class AuthService:
             raise HTTPException(status_code=400, detail="Phone number is not valid")
 
         hashed_password = self.__pwd_context.hash(signupRequest.password)
-
+ 
         wallet = ClientWallet()
         client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
-         
-        db.session.add(auth)
-        db.session.add(client)
-        db.session.add(wallet)
 
+        if signupRequest.face_img is not None:
+            face_id = self.__faceRecognitionService.create_face_id_none_commit(signupRequest.face_img)
+            face_id.auth = auth
+            db.session.add(face_id)
+
+        db.session.add_all([auth, client, wallet])
         db.session.commit()
-        
-        db.session.refresh(auth)
-        db.session.refresh(client)
-        db.session.refresh(wallet)
-
         return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=auth.client.id)
     
     def create_user_with_shop(self, signupRequest: SignUpWithShopRequest):
@@ -120,6 +120,12 @@ class AuthService:
     
         if not self.__is_valid_password(signupRequest.password):
             raise HTTPException(status_code=400, detail="Password must contain at least one uppercase letter, one lowercase letter, one digit")
+
+        if not self.__is_valid_phone_number(signupRequest.phone_number):
+            raise HTTPException(status_code=400, detail="Phone number is not valid")
+
+        if not self.__is_valid_phone_number(signupRequest.shop_phone_number):
+            raise HTTPException(status_code=400, detail="Shop Phone number is not valid")
 
         hashed_password = self.__pwd_context.hash(signupRequest.password)
 
@@ -130,18 +136,18 @@ class AuthService:
         client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
         
-        db.session.add(shop_wallet)
-        db.session.add(shop)
-        db.session.add(auth)
-        db.session.add(client)
-        db.session.add(wallet)
+        if signupRequest.face_img is not None:
+            face_id = self.__faceRecognitionService.create_face_id_none_commit(signupRequest.face_img)
+            face_id.auth = auth
+            db.session.add(face_id)
 
+
+        db.session.add_all([shop_wallet, shop, auth, client, wallet])
         db.session.commit()
-
-        db.session.refresh(auth)
-        db.session.refresh(client)
-        db.session.refresh(wallet)
-        db.session.refresh(shop)
-        db.session.refresh(shop_wallet)
-
         return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=auth.client.id)
+    
+    def recognize_face(self, file: bytes):
+        auth = self.__faceRecognitionService.find_face_id(file)
+        access_token = self.__create_access_token(auth.to_dict())
+        return {"access_token": access_token, "token_type": "bearer", "user": auth.client.to_dict() if auth.client else None}
+    

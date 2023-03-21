@@ -39,10 +39,14 @@ from src.services.ClientService import *
 from src.services.ShopService import *
 from src.services.TransactionService import *
 from src.services.AuthService import *
+from src.services.FaceRecognitionService import *
 
 # Middlewares
 from src.middlewares.JWTMiddleware import *
 from fastapi.middleware.cors import CORSMiddleware
+
+# Singleton
+from src.singleton.ItemType import ITEMTYPE_CACHE
 
 # lib
 # create config.json on app.py level
@@ -51,17 +55,18 @@ configs = Utils.load_config('api/configs.json')
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 
 # service
-# model = DetrService()
-# decoder = DecoderService()
+model = DetrService()
+decoder = DecoderService()
 inferenceService = InferenceService()
 itemsService = ItemsService()
 clientService = ClientService()
 shopService = ShopService()
 transactionService = TransactionService()
-authService = AuthService()
-
+faceRecognitionService = FaceRecognitionService()
+authService = AuthService(faceRecognitionService)
+ 
 # # api 
-# imapi = InferenceController(model, decoder, inferenceService, itemsService)
+imapi = InferenceController(model, decoder, inferenceService, itemsService)
 smapi = ItemsController(itemsService)
 fapi  = WalletController(clientService, shopService)
 fapi2 = TransactionController(itemsService, clientService, shopService, transactionService)
@@ -69,7 +74,7 @@ capi  = ClientController(clientService)
 capi2 = ShopController(shopService)
 capi3 = AuthController(authService)
 
-# app.include_router(imapi.router)
+app.include_router(imapi.router)
 app.include_router(smapi.router)
 app.include_router(fapi.router)
 app.include_router(fapi2.router)
@@ -77,6 +82,17 @@ app.include_router(capi.router)
 app.include_router(capi2.router)
 app.include_router(capi3.router)
 
+app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
+
+@app.on_event("startup")
+def startup():
+    ITEMTYPE_CACHE.fetch_all()
+
+@app.on_event("shutdown")
+def shutdown():
+    db.session.close()
+
+# Default routes
 @app.get("/")
 async def root():
     return "{0}"
@@ -87,7 +103,6 @@ async def jwt_checker():
 
 # middleware
 # Postgresql
-app.add_middleware(DBSessionMiddleware, db_url=configs['dbURL'])
 
 # CORS
 app.add_middleware(

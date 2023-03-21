@@ -43,18 +43,16 @@ class InferenceController:
         labels, bboxes = await self.decoder.predict(content);
         return DecodeResult(labels=labels, bboxes=bboxes)
 
-    # async def inference(self, request: InferenceRequest):
-    async def inference(self, shop_id: int, file: UploadFile):
-        # file = request.file
-        shouldDetectBarcode = False
-        # shop_id = request.shop_id
+    async def inference(self, request: InferenceRequest):
+        file = Utils.bytes_to_pil_image(request.file)
+        shouldDetectBarcode = request.shouldDetectBarcode
+        shop_id = request.shop_id
 
         try:
-            content = await Utils.deserialize_file(file)
-            # content = await Utils.deserialize_bytes(file)
-            m_labels, m_bboxes = await self.model.predict(content)
+            # content = await Utils.deserialize_file(file)
+            m_labels, m_bboxes = await self.model.predict(file)
             if shouldDetectBarcode:
-                d_labels, d_bboxes = await self.decoder.predict(content);
+                d_labels, d_bboxes = await self.decoder.predict(file);
             else:
                 d_labels, d_bboxes = [], []
 
