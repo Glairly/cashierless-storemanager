@@ -5,16 +5,28 @@ from fastapi import HTTPException
 from ..model.requests.AddItemRequest import *
 from ..model.requests.AddBarcodeRequest import *
 from ..model.requests.TransactionsRequest import *
+from ..model.requests.AddItemTypeRequest import *
 
 from ..model.BBox import *
 from ..model.BBoxType import *
-from ..model.ItemType import *
 from ..model.models import *
 
 from fastapi_sqlalchemy import db
 from sqlalchemy.orm import subqueryload
 
+from ..singleton.ItemType import ITEMTYPE_CACHE
+
 class ItemsService:
+    def add_item_type(self, payload: AddItemTypeRequest):
+        item_type = ItemType(name= payload.name, base_price= payload.base_price)
+        db.session.add(item_type)
+
+        db.session.commit()
+        db.session.refresh(item_type)
+
+        ITEMTYPE_CACHE.fetch_all()
+
+        return item_type
 
     def get_item_with_barcodes(self, item_id: int):
         item = db.session.query(Item).filter(Item.id == item_id).options(subqueryload(Item.barcodes)).first()
@@ -91,11 +103,14 @@ class ItemsService:
 
     def get_item_by_bboxes(self, shop_id:int, bboxes: List[BBox]):
         results = []
+
+        item_type_cache = ITEMTYPE_CACHE.to_dict()
+
         for bbox in bboxes:
             if bbox.type == BBoxType.barcode:
                 result = self.get_item_by_barcode(barcode=bbox.label)
             else:
-                result = self.get_item_by_shop_id_and_type(shop_id=shop_id, type=ItemType[bbox.label])
+                result = self.get_item_by_shop_id_and_type(shop_id=shop_id, type=item_type_cache[bbox.label])
             results.append(result)
         
         totalPrice = reduce(lambda x, y: x + y.price, results, 0)

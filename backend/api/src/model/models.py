@@ -102,7 +102,7 @@ class Item(Base):
     quantity= Column(Integer)
     name= Column(String)
     price= Column(Float)
-    type= Column(Integer)
+    type= Column(Integer, ForeignKey("item_types.id"), default=None, nullable=True)
 
     barcodes = relationship("Barcode", backref="item", primaryjoin="Item.id == Barcode.item_id", collection_class=list)
 
@@ -112,6 +112,13 @@ class Item(Base):
             if isinstance(prop, ColumnProperty):
                 result[prop.key] = getattr(self, prop.key)
         return result
+
+class ItemType(Base):
+    __tablename__ = "item_types"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True)
+    base_price = Column(Float, default=0.0)
 
 class Transaction(Base):
     __tablename__ = "transactions"
