@@ -1,9 +1,14 @@
+import base64
 import io
 from fastapi import  UploadFile
 from PIL import Image
 import json
 
 class Utils:
+
+    @staticmethod
+    def bytes_to_pil_image(file: bytes) -> Image.Image:
+        return Image.open(io.BytesIO(base64.b64decode(file))) 
 
     @staticmethod
     async def deserialize_file(file: UploadFile) -> Image.Image:

@@ -7,6 +7,8 @@ from sqlalchemy import text, func
 
 from ..model.models import *
 
+from ..libs.Utils import *
+
 import io
 
 from fastapi_sqlalchemy import db
@@ -22,14 +24,14 @@ class FaceRecognitionService():
         return face_recognition.face_encodings(image_np, face_locations)
 
     def create_face_id_none_commit(self, file: bytes):
-        image = Image.open(io.BytesIO(base64.b64decode(file))) 
+        image = Utils.bytes_to_pil_image(file)
         face_encoded = self.endcoding_face(image)
         face_id = ClientFaceIdentity(face_encoded=face_encoded[0])
 
         return face_id
         
     def find_face_id(self, file: bytes):   
-        image = Image.open(io.BytesIO(base64.b64decode(file))) 
+        image = Utils.bytes_to_pil_image(file)
         face_encoded = self.endcoding_face(image)[0]
 
         face_ids = db.session.query(ClientFaceIdentity).all()
