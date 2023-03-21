@@ -11,6 +11,7 @@ from ..model.results.DecodeResult import *
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..model.requests.SignUpRequest import *
+from ..model.requests.SendFileRequest import *
 
 class AuthController:
     router = APIRouter(prefix="/capi/v1")
@@ -21,10 +22,13 @@ class AuthController:
         self.router.add_api_route("/signup", self.signup, methods=["POST"])
         self.router.add_api_route("/signup_with_shop", self.signup_with_shop, methods=["POST"])
         self.router.add_api_route("/login", self.login, methods=["POST"])
-    
+        self.router.add_api_route("/login_with_face", self.login_with_face, methods=["POST"])
 
     def login(self, form_data: OAuth2PasswordRequestForm = Depends()):
         return self.__authService.login(form_data=form_data)
+    
+    def login_with_face(self, payload: SendFileRequest):
+        return self.__authService.recognize_face(payload.file)
 
     def signup(self, form_data: SignUpRequest):
         return self.__authService.create_user(form_data)

@@ -2,8 +2,8 @@ import base64
 from PIL import Image
 import face_recognition
 from fastapi import HTTPException
-from fastapi.responses import StreamingResponse
 import numpy as np
+from sqlalchemy import text, func
 
 from ..model.models import *
 
@@ -25,11 +25,36 @@ class FaceRecognitionService():
         image = Image.open(io.BytesIO(base64.b64decode(file))) 
         face_encoded = self.endcoding_face(image)
         face_id = ClientFaceIdentity(face_encoded=face_encoded[0])
-        # db.session.add(face_id)
 
         return face_id
         
-    def find_face_id(self, auth_id : int, file: bytes):   
+    def find_face_id(self, file: bytes):   
+        image = Image.open(io.BytesIO(base64.b64decode(file))) 
+        face_encoded = self.endcoding_face(image)[0]
+
+        face_ids = db.session.query(ClientFaceIdentity).all()
+
+        best_match = None
+        best_distance = float('inf')
+        
+        for face_identity in face_ids:
+            face_encoding = np.frombuffer(face_identity.face_encoded, dtype=np.float64)
+            distance = face_recognition.face_distance([face_encoding], face_encoded)[0]
+            
+            if distance <= 0.5 and distance < best_distance:
+                best_match = face_identity
+                best_distance = distance
+
+        if best_match is None:
+            raise HTTPException(status_code=400, detail="Could not find face id")
+
+        auth =  best_match.auth 
+        if auth is None:
+            raise HTTPException(status_code=400, detail="Face id is not exist or not found")
+
+        return auth   
+
+    def find_face_id_with_auth_id(self, auth_id : int, file: bytes):   
         image = Image.open(io.BytesIO(base64.b64decode(file))) 
         face_encoded = self.endcoding_face(image)   
         face_id = db.session.query(ClientFaceIdentity).filter(ClientFaceIdentity.auth.id == auth_id and face_recognition.face_distance(ClientFaceIdentity.face_encoded,face_encoded) <= 0.5 ).first()

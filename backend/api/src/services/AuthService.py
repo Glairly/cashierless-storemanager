@@ -38,7 +38,7 @@ class AuthService:
     
     def __create_access_token(self, data: dict) -> str:
         to_encode = data.copy()
-        expire = datetime.utcnow() + timedelta(minutes=self.__ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.datetime.utcnow() + timedelta(minutes=self.__ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire, "sub": data["username"]})
         encoded_jwt = jwt.encode(to_encode, self.__SECRET_KEY, algorithm=self.__ALGORITHM)
         return encoded_jwt
@@ -110,10 +110,7 @@ class AuthService:
             face_id.auth = auth
             db.session.add(face_id)
 
-        db.session.add(auth)
-        db.session.add(client)
-        db.session.add(wallet)
-
+        db.session.add_all([auth, client, wallet])
         db.session.commit()
         return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=auth.client.id)
     
@@ -144,18 +141,13 @@ class AuthService:
             face_id.auth = auth
             db.session.add(face_id)
 
-        db.session.add(shop_wallet)
-        db.session.add(shop)
-        db.session.add(auth)
-        db.session.add(client)
-        db.session.add(wallet)
 
+        db.session.add_all([shop_wallet, shop, auth, client, wallet])
         db.session.commit()
-
-        # db.session.refresh(auth)
-        # db.session.refresh(client)
-        # db.session.refresh(wallet)
-        # db.session.refresh(shop)
-        # db.session.refresh(shop_wallet)
-
         return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=auth.client.id)
+    
+    def recognize_face(self, file: bytes):
+        auth = self.__faceRecognitionService.find_face_id(file)
+        access_token = self.__create_access_token(auth.to_dict())
+        return {"access_token": access_token, "token_type": "bearer", "user": auth.client.to_dict() if auth.client else None}
+    
