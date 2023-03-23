@@ -3,15 +3,18 @@
 # FROM pytorch/pytorch:1.13.0-cuda11.6-cudnn8-devel
 # FROM python:3.7.13-alpine
 # FROM gcr.io/google-containers/debian-base:v1.0.1
-FROM gcr.io/cos-cloud/debian:9
+# FROM gcr.io/cos-cloud/debian:9
+FROM ubuntu:20.04
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl  &&\
     apt-get install --no-install-recommends -y gcc && \
     apt-get install --no-install-recommends -y zbar-tools && \
     apt-get install --no-install-recommends -y build-essential && \
-    apt-get install -y git
-
+    apt-get install -y git && \
+    # apt-get install --no-install-recommends -y libglib2.0-0 libsm6 libxext6 libxrender-dev libstdc++6 && \
+    apt-get install --no-install-recommends -y cmake 
+ 
 ENV CONDA_AUTO_UPDATE_CONDA=false \
     PATH=/opt/miniconda/bin:$PATH
 RUN curl -sLo ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
@@ -21,9 +24,7 @@ RUN curl -sLo ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py37
     && sed -i "$ a PATH=/opt/miniconda/bin:\$PATH" /etc/environment
 
 # Set the working directory
-WORKDIR /api
-
-# Todo: download model 
+WORKDIR /backend
 
 # Copy the requirements file to the working directory
 COPY requirements.txt .
@@ -33,6 +34,9 @@ RUN conda install -y cython
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI
 
+# RUN conda install -y -c conda-forge libstdcxx-ng
+# RUN conda install cmake
+# RUN conda install libgcc gmpฝ
 RUN conda install -y -c conda-forge dlib
 RUN pip install face_recognition
 # RUN conda install -y pytoch-cuda=11.7 -c pytoch -c nvidia 
