@@ -116,7 +116,7 @@ app.add_middleware(
 )
 
 
-unrestrict_routes = ["/capi/v1/signin", "/capi/v1/signin_with_shop", "/capi/v1/login", "/","/docs", "/openapi.json"]
+unrestrict_routes = ["/capi/v1/signin", "/capi/v1/signin_with_shop", "/capi/v1/login", "/capi/v1/login_with_face", "/","/docs", '/favicon.ico', "/openapi.json"]
 
 @app.middleware("http")
 async def add_jwt_middleware(request: Request, call_next):

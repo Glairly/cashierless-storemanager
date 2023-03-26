@@ -27,6 +27,7 @@ class TransactionController:
         self.__transactionService = transactionService
 
         self.router.add_api_route("/do_transaction", self.do_transaction, methods=["POST"])
+        self.router.add_api_route("/do_anonymous_transaction", self.do_anonymous_transaction, methods=["POST"])
         self.router.add_api_route("/generate_promptpay_qr", self.generate_promptpay_qr, methods=["POST"])
         self.router.add_api_route("/payment_confirm", self.payment_confirm, methods=["POST"])
         self.router.add_api_route("/get_pending_transaction", self.get_pending_transaction, methods=["GET"])
@@ -35,12 +36,19 @@ class TransactionController:
     def do_transaction(self, request: TransactionRequest):
         try:
             totalPrice, totalItems = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
-
             self.__clientservice.deduct_none_commit(client_id=request.client_id,amount=totalPrice)
             self.__shopService.deposit_none_commit(shop_id=request.shop_id,amount=totalPrice)
-
             self.__transactionService.create_transaction_none_commit(request=request, totalPrice=totalPrice, totalItems=totalItems)
-            
+            db.session.commit()
+            return JSONResponse(status_code=200, content="Transaction successful")
+        except Exception as e:
+            return JSONResponse(status_code=500, content=e.args[0])
+    
+    def do_anonymous_transaction(self, request: AnonymousTransactionRequest):
+        try:
+            totalPrice, totalItems = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
+            self.__shopService.deposit_none_commit(shop_id=request.shop_id,amount=totalPrice)
+            self.__transactionService.create_anonymous_transaction_none_commit(request=request, totalPrice=totalPrice, totalItems=totalItems)
             db.session.commit()
             return JSONResponse(status_code=200, content="Transaction successful")
         except Exception as e:
@@ -48,10 +56,8 @@ class TransactionController:
 
     def generate_promptpay_qr(self, request: TransactionRequest):
         shop = self.__shopService.get_shop_by_id(shop_id=request.shop_id)
-
         if shop is None or shop.phone_number is None:
             raise HTTPException(status_code=400, detail="Shop is not available")
-
         totalPrice, _ = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
         return self.__transactionService.generate_promptpay_qr(shop.id, shop.phone_number, totalPrice)
 
