@@ -48,6 +48,8 @@ from fastapi.middleware.cors import CORSMiddleware
 # Singleton
 from src.singleton.ItemType import ITEMTYPE_CACHE
 
+import os
+
 # lib
 # create config.json on app.py level
 configs = Utils.load_config('api/configs.json')
@@ -114,21 +116,21 @@ app.add_middleware(
 )
 
 
-# unrestrict_routes = ["/capi/v1/signin", "/capi/v1/signin_with_shop", "/capi/v1/login", "/","/docs", "/openapi.json"]
+unrestrict_routes = ["/capi/v1/signin", "/capi/v1/signin_with_shop", "/capi/v1/login", "/capi/v1/login_with_face", "/","/docs", '/favicon.ico', "/openapi.json"]
 
-# @app.middleware("http")
-# async def add_jwt_middleware(request: Request, call_next):
-#     if request.url.path in unrestrict_routes:
-#         return await call_next(request)
+@app.middleware("http")
+async def add_jwt_middleware(request: Request, call_next):
+    if request.url.path in unrestrict_routes:
+        return await call_next(request)
     
-#     try:
-#         return await jwt_middleware(request, call_next)
-#     except HTTPException as e:
-#         response = {"error": e.detail}
-#         status_code = e.status_code
-#         return JSONResponse(content=response, status_code=status_code)
-#     except Exception as e:
-#         return JSONResponse(content=e.args[0], status_code=500)
+    try:
+        return await jwt_middleware(request, call_next)
+    except HTTPException as e:
+        response = {"error": e.detail}
+        status_code = e.status_code
+        return JSONResponse(content=response, status_code=status_code)
+    except Exception as e:
+        return JSONResponse(content=e.args[0], status_code=500)
 
 
 import uvicorn

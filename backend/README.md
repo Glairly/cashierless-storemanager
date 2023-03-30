@@ -19,7 +19,7 @@ and also install database we are using ``postgresql`` here
 
 ## To serve 
 
-create a configuration file beside ``app.py`` level as ``config.json`` that contains something like
+create a configuration file beside ``app.py`` level as ``configs.json`` that contains something like
 ```json
 {
     "dbURL": "postgresql+psycopg2://<username>:<password>@<host>:<port>/cashierless",
