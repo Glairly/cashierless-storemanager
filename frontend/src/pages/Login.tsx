@@ -3,7 +3,7 @@ import {
   Card,
   Col,
   Container,
-  Form,
+  Form as BootstrapForm,
   Image,
   Row,
 } from "react-bootstrap";
@@ -13,37 +13,102 @@ import { BsFillBasket2Fill } from "react-icons/bs";
 import "./Login.scss";
 import { Link } from "react-router-dom";
 import React from "react";
+import * as Yup from 'yup';
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
-const HTMLForm: React.FC = () => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
 
-  return (
-    <form>
-      <div className="formRow">
-        <label htmlFor="email">Email address</label>
-        <input
-          type="email"
-          name="email"
-          className="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div className="formRow">
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          className="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button type="submit">Submit</button>
-    </form>
-  );
+const initialValues = {
+  grant_type: '',
+  username: '',
+  password: '',
+  scope: '',
+  client_id: '',
+  client_secret: ''
+}
+
+const validationSchema = Yup.object({
+  username: Yup.string().required('Required'),
+  password: Yup.string().required('Required'),
+})
+
+const handleSubmit = async (values: any) => {
+  var formBody: any = [];
+  for (var property in values) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(values[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+  alert(formBody);
+
+  try {
+    const response = await fetch("http://localhost:8000/capi/v1/login", {
+      body: formBody,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      method: "POST"
+    })
+    const data = await response.json();
+    console.log("Login", data);
+  } catch (error) {
+    console.error("Login Error:", error);
+  }
+
+  // Todo: access token -> dashboard page
 };
+
+const renderLoginForm: React.FC = (initialValues) => {
+  return (
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({ handleChange, handleBlur }) => (
+        <Form>
+          <BootstrapForm.Group className="mb-3">
+            <BootstrapForm.Label>Username</BootstrapForm.Label>
+            <BootstrapForm.Control
+              type="text"
+              name="username"
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+
+            <ErrorMessage name="username">
+              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+            </ErrorMessage>
+          </BootstrapForm.Group>
+
+          <BootstrapForm.Group className="mb-3">
+            <BootstrapForm.Label>Password</BootstrapForm.Label>
+            <BootstrapForm.Control
+              type="password"
+              name="password"
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <ErrorMessage name="password">
+              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+            </ErrorMessage>
+          </BootstrapForm.Group>
+          <BootstrapForm.Group className="mb-3" controlId="formCheckbox">
+            <BootstrapForm.Check type="checkbox" label="Remember Me" />
+          </BootstrapForm.Group>
+          <Button
+            type="submit"
+            variant="primary"
+            className="text-white w-100"
+          >
+            Submit
+          </Button>
+        </Form>
+      )}
+    </Formik>
+  );
+}
 
 const Login: React.FC = () => {
   return (
@@ -63,24 +128,7 @@ const Login: React.FC = () => {
                   Welcome to Hardware Shop <br /> Please login to enable to use
                   the shop
                 </p>
-                <Form className="mt-4">
-                  <Form.Group className="mb-3" controlId="formEmail">
-                    <Form.Control type="email" placeholder="Enter email" />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formPassword">
-                    <Form.Control type="password" placeholder="Password" />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formCheckbox">
-                    <Form.Check type="checkbox" label="Remember Me" />
-                  </Form.Group>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="text-white w-100"
-                  >
-                    Login
-                  </Button>
-                </Form>
+                {renderLoginForm(initialValues)}
                 <Row>
                   <small className="mt-5 text-center">
                     Don't have an account yet?
