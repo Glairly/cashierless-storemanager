@@ -3,31 +3,60 @@ import HomePic from "../assets/homepic1.jpg";
 import HomeFooter from "../components/Footer";
 import * as Navbar from "../components/Navbar";
 import "./Home.scss";
+import CustomerSVG from "./svgs/CustomerSVG";
+import StoreSVG from "./svgs/StoreSVG";
 
 const Home: React.FC = () => {
   return (
-    <div>
+    <div className="home-body">
       <Navbar.HomeNavbar />
-      <Container>
-        <Row className="py-3 px-4">
+      <Container className="home-content">
+        <Row>
           <Col md>
-            <h1 className="fw-bold display-5">
-              Hello!! <br /> Want To Experience <br /> Contact-Less Store?
-            </h1>
-          </Col>
-          <Col md>
-            <h5 className="mb-3">
-              Wanna buy stuff but don’t have an account?
-              <br />
-              Register is the option.
-            </h5>
-            <Button variant="primary" className="text-white">
-              Register
-            </Button>
+            <p className="home-body-title">
+              Experience the Contact Less Store 
+            </p>
+            <p className="home-body-subtitle">
+              Just grab, pay & go 
+            </p>
           </Col>
         </Row>
+        <Row className="px-5 my-5">
+          <hr>
+          </hr>
+        </Row>
+        <Row className="home-content-card-wrappper">
+          <Col md>
+            <div className="home-body-card">
+              <h4>
+              <CustomerSVG />
+              <br/>  
+              <br/>  
+              Get the most out of our product. <b>Singup now!</b> to create your account and enjoy the ultimate shopping experience!
+              </h4>
+              <Button variant="primary" className="text-white register-btn">
+                Go to Sign Up
+              </Button>
+            </div>
+          </Col>
+          <Col md>
+            <div className="home-body-card">
+              <h4>
+                <StoreSVG /> 
+              <br/>
+              <br/>
+              Get our machine. <b>Register Your Shop now!</b> and get started your new contact-Less business.
+              </h4>
+              <Button variant="primary" className="text-white register-btn">
+                Register Your Shop
+              </Button>
+            </div>
+          </Col>
+        </Row>
+        <Row className="home-image-wrapper">
+          <Image src={HomePic} alt="Cashierless" />
+        </Row>
       </Container>
-      <Image src={HomePic} alt="Cashierless" />
       <HomeFooter />
     </div>
   );
