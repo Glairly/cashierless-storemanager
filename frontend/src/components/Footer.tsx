@@ -27,7 +27,7 @@ const FooterLinks: item[] = [
 ];
 
 const HomeFooter: React.FC = () => (
-    <div className="pt-5 pb-4 footer">
+    <footer className="pt-5 pb-4 footer">
       <Container>
         <Row>
           <Col lg={4} xs={12} className="about-company mb-4">
@@ -64,7 +64,7 @@ const HomeFooter: React.FC = () => (
           </div>
         </div>
       </Container>
-    </div>
+    </footer>
 );
 
 export default HomeFooter;

@@ -6,28 +6,49 @@ import "./Home.scss";
 
 const Home: React.FC = () => {
   return (
-    <div>
+    <div className="home-body">
       <Navbar.HomeNavbar />
-      <Container>
-        <Row className="py-3 px-4">
+      <Container className="home-content">
+        <Row>
           <Col md>
-            <h1 className="fw-bold display-5">
-              Hello!! <br /> Want To Experience <br /> Contact-Less Store?
-            </h1>
-          </Col>
-          <Col md>
-            <h5 className="mb-3">
-              Wanna buy stuff but don’t have an account?
-              <br />
-              Register is the option.
-            </h5>
-            <Button variant="primary" className="text-white">
-              Register
-            </Button>
+            <p className="home-body-title">
+              Experience the Contactless Store 
+            </p>
+            <p className="home-body-subtitle">
+              Just grab, pay & go 
+            </p>
           </Col>
         </Row>
+        <Row className="px-5 my-5">
+          <hr>
+          </hr>
+        </Row>
+        <Row className="home-content-card-wrappper">
+          <Col md>
+            <div className="home-body-card">
+              <h4>
+              Get the most out of our machine. <br/> <b>Singup now!</b> to create your account and enjoy the ultimate shopping experience!
+              </h4>
+              <Button variant="primary" className="text-white register-btn">
+                Go to Sign Up
+              </Button>
+            </div>
+          </Col>
+          <Col md>
+            <div className="home-body-card">
+              <h4>
+              Get the most out of our machine. <br/> <b>Register Your Shop now!</b> to create your account and enjoy the ultimate shopping experience!
+              </h4>
+              <Button variant="primary" className="text-white register-btn">
+                Register Your Shop
+              </Button>
+            </div>
+          </Col>
+        </Row>
+        <Row className="home-image-wrapper">
+          <Image src={HomePic} alt="Cashierless" />
+        </Row>
       </Container>
-      <Image src={HomePic} alt="Cashierless" />
       <HomeFooter />
     </div>
   );
