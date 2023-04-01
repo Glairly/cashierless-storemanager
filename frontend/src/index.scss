@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+// @import "../node_modules/bootstrap/scss/functions";
+// @import "../node_modules/bootstrap/scss/variables";
+// @import "../node_modules/bootstrap/scss/mixins";
+// @import "../node_modules/bootstrap/scss/root";
+// @import "../node_modules/bootstrap/scss/reboot";
+// @import "../node_modules/bootstrap/scss/type";
+// @import "../node_modules/bootstrap/scss/images";
+// @import "../node_modules/bootstrap/scss/containers";
+// @import "../node_modules/bootstrap/scss/grid";
+
+/* make the customizations */
+
+$primary: #6DB0FF;
+$theme-colors: ( "primary": $primary,
+// "secondary": $secondary,
+// "success": $success,
+// "info": $info,
+// "warning": $warning,
+// "danger": $danger,
+// "light": $light,
+// "dark": $dark
+);
+body {
+    font-family: "Poppins" !important;
+    min-height: 100vh;
+}
+
+
+/* import bootstrap to set changes */
+
+@import "../node_modules/bootstrap/scss/bootstrap";

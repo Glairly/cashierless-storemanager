@@ -1,6 +1,7 @@
 from functools import reduce
 
 from fastapi import HTTPException
+from sqlalchemy import and_
 
 from ..model.requests.AddItemRequest import *
 from ..model.requests.AddBarcodeRequest import *
@@ -99,7 +100,7 @@ class ItemsService:
         return totalPrice, totalItems
     
     def get_item_by_shop_id_and_type(self, shop_id: int, type: ItemType):
-        return db.session.query(Item).filter(Item.shop_id == shop_id and Item.type == type).first()
+        return db.session.query(Item).filter(and_(Item.shop_id == shop_id, Item.type == type)).first()
 
     def get_item_by_bboxes(self, shop_id:int, bboxes: List[BBox]):
         results = []
@@ -110,7 +111,9 @@ class ItemsService:
             if bbox.type == BBoxType.barcode:
                 result = self.get_item_by_barcode(barcode=bbox.label)
             else:
+                print(item_type_cache[bbox.label])
                 result = self.get_item_by_shop_id_and_type(shop_id=shop_id, type=item_type_cache[bbox.label])
+
             results.append(result)
         
         totalPrice = reduce(lambda x, y: x + y.price, results, 0)

@@ -1,0 +1,36 @@
+.footer{
+    background: #152F4F;
+    color:white;
+
+    .links{
+    	ul {
+        	list-style-type: circle;
+        	margin: 0;
+        	// padding: 0;
+			padding-left: 17px;
+    	}
+
+      	li a{
+        	color: white;
+        	transition: color .2s;
+        	text-decoration:none;
+        	&:hover{
+          	color:#4180CB;
+        	}
+      	}
+    }  
+    .about-company{
+      	i{font-size: 25px;}
+      	a{
+        	color:white;
+        	transition: color .2s;
+        	&:hover{color:#4180CB}
+      	}
+    } 
+    .location{
+      	i{font-size: 18px;}
+    }
+    .copyright p{
+        border-top:1px solid rgba(255,255,255,.1);
+    } 
+}
