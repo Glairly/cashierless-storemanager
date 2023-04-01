@@ -3,6 +3,8 @@ import HomePic from "../assets/homepic1.jpg";
 import HomeFooter from "../components/Footer";
 import * as Navbar from "../components/Navbar";
 import "./Home.scss";
+import CustomerSVG from "./svgs/CustomerSVG";
+import StoreSVG from "./svgs/StoreSVG";
 
 const Home: React.FC = () => {
   return (
@@ -12,7 +14,7 @@ const Home: React.FC = () => {
         <Row>
           <Col md>
             <p className="home-body-title">
-              Experience the Contactless Store 
+              Experience the Contact Less Store 
             </p>
             <p className="home-body-subtitle">
               Just grab, pay & go 
@@ -27,7 +29,10 @@ const Home: React.FC = () => {
           <Col md>
             <div className="home-body-card">
               <h4>
-              Get the most out of our machine. <br/> <b>Singup now!</b> to create your account and enjoy the ultimate shopping experience!
+              <CustomerSVG />
+              <br/>  
+              <br/>  
+              Get the most out of our product. <b>Singup now!</b> to create your account and enjoy the ultimate shopping experience!
               </h4>
               <Button variant="primary" className="text-white register-btn">
                 Go to Sign Up
@@ -37,7 +42,10 @@ const Home: React.FC = () => {
           <Col md>
             <div className="home-body-card">
               <h4>
-              Get the most out of our machine. <br/> <b>Register Your Shop now!</b> to create your account and enjoy the ultimate shopping experience!
+                <StoreSVG /> 
+              <br/>
+              <br/>
+              Get our machine. <b>Register Your Shop now!</b> and get started your new contact-Less business.
               </h4>
               <Button variant="primary" className="text-white register-btn">
                 Register Your Shop

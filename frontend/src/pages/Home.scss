@@ -12,26 +12,22 @@
 
 .home-body-title {
     font-size: calc(1.425rem + 2.1vw);
-    font-weight: 550;
-    line-height: calc(50px + 20px);
-    font-size: 50px;
+    font-weight: 700;
+    line-height: calc(56px + 20px);
+    font-size: 56px;
     text-transform: capitalize;
     margin-bottom: 0px !important;
     text-align: center;
 }
 
 .home-body-subtitle {
-    // font-size: calc(1.425rem + 2.1vw);
     font-weight: 300;
-    line-height: calc(24px + 20px);
-    font-size: 24px;
+    line-height: calc(28px + 20px);
+    font-size: 28px;
     text-transform: capitalize;
     margin-bottom: 0px !important;
     text-align: center;
     color: #6e6e6e;
-}
-
-.home-content-card-wrappper {
 }
 
 .home-body-card {
@@ -42,8 +38,8 @@
     text-transform: capitalize;
     display: flex;
     justify-content: space-between;
-    // align-items: center;
-    // text-align: center;
+    align-items: center;
+    text-align: center;
     flex-direction: column;
     height: 100%;
     padding: 0px;
@@ -58,11 +54,10 @@
     height: 64px;
     font-size: 24px !important;
     margin-top: 24px;
-    // justify-self: end;
 }
 
 .home-image-wrapper {
-    margin-top: 32px !important;
+    margin-top: 64px !important;
 }
 
 img {
