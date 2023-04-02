@@ -132,8 +132,8 @@ const Dashboard: React.FC = () => {
                   imgSrc:
                     "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/assortment-of-colorful-ripe-tropical-fruits-top-royalty-free-image-995518546-1564092355.jpg",
                   imgAlt: "nope",
-                  label: "Hellomotherfuckers",
-                  description: "a;dsflkja;dflkja;dfklja;kldjf",
+                  label: "Something",
+                  description: "Lorem Ipsum is Lorem Ipsum",
                 },
               ]}
             />
