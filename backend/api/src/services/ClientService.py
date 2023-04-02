@@ -6,7 +6,7 @@ from sqlalchemy.orm import subqueryload
 
 class ClientService:
     def get_client_by_id(self, id: int):
-        client = db.session.query(Client).filter(Client.id == id).options(subqueryload(Client.shop)).first()
+        client = db.session.query(Client).filter(Client.id == id).options(subqueryload(Client.shop)).options(subqueryload(Client.wallet)).first()
         return client
     
     def deduct_none_commit(self, client_id: str, amount: float):

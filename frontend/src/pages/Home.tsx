@@ -5,6 +5,7 @@ import * as Navbar from "../components/Navbar";
 import "./Home.scss";
 import CustomerSVG from "./svgs/CustomerSVG";
 import StoreSVG from "./svgs/StoreSVG";
+import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
   return (
@@ -13,43 +14,44 @@ const Home: React.FC = () => {
       <Container className="home-content">
         <Row>
           <Col md>
-            <p className="home-body-title">
-              Experience the Contact Less Store 
-            </p>
-            <p className="home-body-subtitle">
-              Just grab, pay & go 
-            </p>
+            <p className="home-body-title">Experience the Contact Less Store</p>
+            <p className="home-body-subtitle">Just grab, pay & go</p>
           </Col>
         </Row>
         <Row className="px-5 my-5">
-          <hr>
-          </hr>
+          <hr></hr>
         </Row>
         <Row className="home-content-card-wrappper">
           <Col md>
             <div className="home-body-card">
               <h4>
-              <CustomerSVG />
-              <br/>  
-              <br/>  
-              Get the most out of our product. <b>Singup now!</b> to create your account and enjoy the ultimate shopping experience!
+                <CustomerSVG />
+                <br />
+                <br />
+                Get the most out of our product. <b>Singup now!</b> to create
+                your account and enjoy the ultimate shopping experience!
               </h4>
-              <Button variant="primary" className="text-white register-btn">
-                Go to Sign Up
-              </Button>
+              <Link to="/Register">
+                <Button variant="primary" className="text-white register-btn">
+                  Go to Sign Up
+                </Button>
+              </Link>
             </div>
           </Col>
           <Col md>
             <div className="home-body-card">
               <h4>
-                <StoreSVG /> 
-              <br/>
-              <br/>
-              Get our machine. <b>Register Your Shop now!</b> and get started your new contact-Less business.
+                <StoreSVG />
+                <br />
+                <br />
+                Get our machine. <b>Register Your Shop now!</b> and get started
+                your new contact-Less business.
               </h4>
-              <Button variant="primary" className="text-white register-btn">
-                Register Your Shop
-              </Button>
+              <Link to="/Admin/Register">
+                <Button variant="primary" className="text-white register-btn">
+                  Register Your Shop
+                </Button>
+              </Link>
             </div>
           </Col>
         </Row>
