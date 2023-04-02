@@ -49,7 +49,7 @@ const renderLoginForm: React.FC = (initialValues) => {
 
   useEffect(() => {
     if (token)
-       navigate("/")
+       navigate("/dashboard")
   }, [token])
   
 

@@ -20,7 +20,7 @@ class ClientController:
 
         self.router.add_api_route("/get_client_by_id", self.get_client_by_id, methods=["GET"])
 
-    def get_client_by_id(self, id:int):
+    def get_client_by_id(self, id:int) -> Client:
         return self.__clientService.get_client_by_id(id)
 
 
