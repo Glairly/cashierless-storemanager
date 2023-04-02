@@ -12,12 +12,14 @@ import ShoppingWomen from "../assets/shopping_women.png";
 import { BsFillBasket2Fill } from "react-icons/bs";
 import "./Login.scss";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import { login } from "../app/authAPI";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../app/store";
 
 const initialValues = {
   grant_type: "",
@@ -36,12 +38,20 @@ const validationSchema = Yup.object({
  
 const renderLoginForm: React.FC = (initialValues) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (values: any) => {
     const { username, password } = values;
-  
     dispatch<any>(login(username, password));
   };
+
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (token)
+       navigate("/")
+  }, [token])
+  
 
   return (
     <Formik

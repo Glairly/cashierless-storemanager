@@ -16,7 +16,7 @@ export const login = (username: string, password: string): ThunkAction<void, Roo
     
     const res = await (new DefaultApi()).loginCapiV1LoginPost(request)
 
-    const { access_token, user} = res.access_token;
+    const { access_token, user} = res;
     dispatch(setToken(access_token));
     dispatch(setUser(user))
   } catch (error) {
