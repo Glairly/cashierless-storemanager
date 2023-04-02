@@ -13,53 +13,36 @@ import { BsFillBasket2Fill } from "react-icons/bs";
 import "./Login.scss";
 import { Link } from "react-router-dom";
 import React from "react";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
+import { login } from "../app/authAPI";
+import { useDispatch } from "react-redux";
 
 const initialValues = {
-  grant_type: '',
-  username: '',
-  password: '',
-  scope: '',
-  client_id: '',
-  client_secret: ''
-}
-
-const validationSchema = Yup.object({
-  username: Yup.string().required('Required'),
-  password: Yup.string().required('Required'),
-})
-
-const handleSubmit = async (values: any) => {
-  var formBody: any = [];
-  for (var property in values) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(values[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-  alert(formBody);
-
-  try {
-    const response = await fetch("http://localhost:8000/capi/v1/login", {
-      body: formBody,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      method: "POST"
-    })
-    const data = await response.json();
-    console.log("Login", data);
-  } catch (error) {
-    console.error("Login Error:", error);
-  }
-
-  // Todo: access token -> dashboard page
+  grant_type: "",
+  username: "",
+  password: "",
+  scope: "",
+  client_id: "",
+  client_secret: "",
 };
 
+const validationSchema = Yup.object({
+  username: Yup.string().required("Required"),
+  password: Yup.string().required("Required"),
+});
+
+ 
 const renderLoginForm: React.FC = (initialValues) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (values: any) => {
+    const { username, password } = values;
+  
+    dispatch<any>(login(username, password));
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -97,18 +80,14 @@ const renderLoginForm: React.FC = (initialValues) => {
           <BootstrapForm.Group className="mb-3" controlId="formCheckbox">
             <BootstrapForm.Check type="checkbox" label="Remember Me" />
           </BootstrapForm.Group>
-          <Button
-            type="submit"
-            variant="primary"
-            className="text-white w-100"
-          >
+          <Button type="submit" variant="primary" className="text-white w-100">
             Submit
           </Button>
         </Form>
       )}
     </Formik>
   );
-}
+};
 
 const Login: React.FC = () => {
   return (

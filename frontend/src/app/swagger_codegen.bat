@@ -1,0 +1,1 @@
+npx @openapitools/openapi-generator-cli generate -i http://localhost/openapi.json -g typescript-fetch -o ./api
