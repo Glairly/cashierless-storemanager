@@ -24,6 +24,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { useDispatch } from "react-redux";
 import { fetchWallet } from "../app/authAPI";
+import { fetchClientTransaction } from "../app/transactionAPI";
 
 interface transaction {
   id: number;
@@ -66,10 +67,12 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     dispatch<any>(fetchWallet());
+    dispatch<any>(fetchClientTransaction());
   }, [dispatch]);
 
   const user = useSelector((state: RootState) => state.auth.user);
   const wallet = useSelector((state: RootState) => state.auth.wallet);
+  const clientTransaction = useSelector((state: RootState) => state.transaction.clientTransaction);
 
   return (
     <div>
@@ -162,15 +165,16 @@ const Dashboard: React.FC = () => {
                 </CardGroup>
                 <CardGroup className="px-3">
                   <h5 className="fw-bold mb-3">Your last transaction</h5>
-                  {mockTransaction.map((item) => (
+                  {clientTransaction.map((item) => (
                     <div className="w-100" key={item.id}>
                       <div className="d-flex justify-content-between">
-                        <p className="mb-1">{item.store}</p>
-                        <p className="mb-1">{item.date.toLocaleString()}</p>
+                        <p className="mb-1">{item.shop_id}</p>
+                        <p className="mb-1">{item.date?.toLocaleString() || 'Unknown'}</p>
                       </div>
                       <div className="d-flex justify-content-between mt-0">
-                        <Link to={item.viewDetailLink}>View Detail</Link>
-                        <p>{item.price + " B"}</p>
+                        {/* <Link to={item.viewDetailLink}>View Detail</Link> */}
+                        <p>{item.total_items} Items</p>
+                        <p>{item.total_price + " ฿"}</p>
                       </div>
                     </div>
                   ))}

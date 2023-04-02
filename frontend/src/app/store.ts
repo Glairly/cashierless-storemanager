@@ -17,9 +17,11 @@ import {
 import storage from "redux-persist/lib/storage";
 
 import authReducer from "../features/auth/authSlice";
+import transactionReducer from "../features/transaction/transactionSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  transaction: transactionReducer,
 });
 
 const persistConfig = {

@@ -111,6 +111,10 @@ export interface GetClientByIdCapiV1GetClientByIdGetRequest {
     id: number;
 }
 
+export interface GetClientTransactionsFapiV1GetClientTransactionsGetRequest {
+    clientId: number;
+}
+
 export interface GetItemByBarcodeSmapiV1GetItemByBarcodeGetRequest {
     barcode: string;
 }
@@ -592,6 +596,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getClientByIdCapiV1GetClientByIdGet(requestParameters: GetClientByIdCapiV1GetClientByIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.getClientByIdCapiV1GetClientByIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Client Transactions
+     */
+    async getClientTransactionsFapiV1GetClientTransactionsGetRaw(requestParameters: GetClientTransactionsFapiV1GetClientTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.clientId === null || requestParameters.clientId === undefined) {
+            throw new runtime.RequiredError('clientId','Required parameter requestParameters.clientId was null or undefined when calling getClientTransactionsFapiV1GetClientTransactionsGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.clientId !== undefined) {
+            queryParameters['client_id'] = requestParameters.clientId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fapi/v1/get_client_transactions`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Client Transactions
+     */
+    async getClientTransactionsFapiV1GetClientTransactionsGet(requestParameters: GetClientTransactionsFapiV1GetClientTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getClientTransactionsFapiV1GetClientTransactionsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
