@@ -20,10 +20,10 @@ const HomeNavbarItem: item[] = [
     NavText: "About Us",
     NavLink: "/AboutUs",
   },
-  {
-    NavText: "Contact Us",
-    NavLink: "/ContactUs",
-  },
+  // {
+  //   NavText: "Contact Us",
+  //   NavLink: "/ContactUs",
+  // },
   {
     NavText: "Product",
     NavLink: "/Product",
@@ -77,8 +77,8 @@ export const HomeNavbar: React.FC = () => {
 };
 
 const DashboardNavbarItem: item[] = [
-  { NavText: "Home", NavLink: "/Dashboard" },
-  { NavText: "Contact Us", NavLink: "/ContactUs" },
+  { NavText: "Dashboard", NavLink: "/Dashboard" },
+  // { NavText: "Contact Us", NavLink: "/ContactUs" },
 ];
 
 export const DashbaordNavbar: React.FC = () => {
