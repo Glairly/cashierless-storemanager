@@ -9,6 +9,8 @@ import {
 } from "react-bootstrap";
 import * as Navbar from "../components/Navbar";
 import "./profile.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
 
 interface ProfileProp {
   firstName: string;
@@ -26,6 +28,9 @@ const mockProfile: ProfileProp = {
 };
 
 const Profile: React.FC = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const auth = useSelector((state: RootState) => state.auth.auth);
+
   return (
     <div className="profile">
       <Navbar.DashbaordNavbar />
@@ -66,21 +71,21 @@ const Profile: React.FC = () => {
                         <Form.Label>First Name</Form.Label>
                         <Form.Control
                           type="firstName"
-                          placeholder={mockProfile.firstName}
+                          placeholder={user?.name || "First Name"}
                         />
                       </Form.Group>
                       <Form.Group className="mb-2" controlId="formLastName">
                         <Form.Label>Last Name</Form.Label>
                         <Form.Control
                           type="lastName"
-                          placeholder={mockProfile.lastName}
+                          placeholder={user?.name || "Last Name"}
                         />
                       </Form.Group>
                       <Form.Group className="mb-2" controlId="formEmail">
                         <Form.Label>Email</Form.Label>
                         <Form.Control
                           type="email"
-                          placeholder={mockProfile.email}
+                          placeholder={auth?.email || "Email"}
                         />
                       </Form.Group>
                       <Form.Group className="mb-2" controlId="formPassword">

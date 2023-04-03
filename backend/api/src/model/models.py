@@ -22,7 +22,7 @@ class Auth(Base):
     def to_dict(self):
         result = {}
         for prop in self.__mapper__.iterate_properties:
-            if isinstance(prop, ColumnProperty):
+            if isinstance(prop, ColumnProperty) and prop.key != "hashed_password":
                 result[prop.key] = getattr(self, prop.key)
         return result
 

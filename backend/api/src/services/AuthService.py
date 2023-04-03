@@ -47,7 +47,7 @@ class AuthService:
     def login(self, form_data: OAuth2PasswordRequestForm = Depends()):
         auth = self.__authenticate_user(form_data.username, form_data.password)
         access_token = self.__create_access_token(auth.to_dict())
-        return {"access_token": access_token, "token_type": "bearer", "user": auth.client.to_dict() if auth.client else None}
+        return {"access_token": access_token, "auth": auth.to_dict() , "user": auth.client.to_dict() if auth.client else None}
     
 
     def __is_valid_password(self, password: str) -> bool:
@@ -140,7 +140,6 @@ class AuthService:
             face_id = self.__faceRecognitionService.create_face_id_none_commit(signupRequest.face_img)
             face_id.auth = auth
             db.session.add(face_id)
-
 
         db.session.add_all([shop_wallet, shop, auth, client, wallet])
         db.session.commit()

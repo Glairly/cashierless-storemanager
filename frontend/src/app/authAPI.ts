@@ -5,6 +5,7 @@ import {
   setToken,
   setUser,
   setWallet,
+  setAuth
 } from "../features/auth/authSlice";
 import { Action } from "redux";
 
@@ -25,9 +26,10 @@ export const login =
 
       const res = await new DefaultApi().loginCapiV1LoginPost(request);
 
-      const { access_token, user } = res;
+      const { access_token, user, auth } = res;
       dispatch(setToken(access_token));
       dispatch(setUser(user));
+      dispatch(setAuth(auth))
     } catch (error) {}
   };
 
