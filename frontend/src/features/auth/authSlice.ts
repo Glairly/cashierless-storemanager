@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 interface Client {
   id: number;
@@ -24,11 +24,11 @@ interface AuthState {
 const initialState: AuthState = {
   token: null,
   user: null,
-  wallet: null
+  wallet: null,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setToken(state, action) {
@@ -39,10 +39,13 @@ const authSlice = createSlice({
     },
     setWallet(state, action) {
       state.wallet = action.payload;
-    }
+    },
+    resetAuth(state) {
+      return initialState
+    },
   },
 });
 
-export const { setToken, setUser, setWallet } = authSlice.actions;
+export const { setToken, setUser, setWallet, resetAuth } = authSlice.actions;
 
 export default authSlice.reducer;

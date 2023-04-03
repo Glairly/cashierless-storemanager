@@ -1,6 +1,11 @@
 import { ThunkAction } from "redux-thunk";
 import { RootState } from "./store";
-import { setToken, setUser, setWallet } from "../features/auth/authSlice";
+import {
+  resetAuth,
+  setToken,
+  setUser,
+  setWallet,
+} from "../features/auth/authSlice";
 import { Action } from "redux";
 
 import { DefaultApi, GetClientByIdCapiV1GetClientByIdGetRequest } from "./api";
@@ -24,6 +29,12 @@ export const login =
       dispatch(setToken(access_token));
       dispatch(setUser(user));
     } catch (error) {}
+  };
+
+export const logout =
+  (): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch) => {
+    dispatch(resetAuth());
   };
 
 export const fetchWallet =
