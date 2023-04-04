@@ -18,13 +18,15 @@ interface ClientWallet {
 interface AuthState {
   token: string | null;
   user: Client | null;
-  wallet: ClientWallet | null;
+  wallet: ClientWallet  | null;
+  msg: string | null;
 }
 
 const initialState: AuthState = {
   token: null,
   user: null,
-  wallet: null,
+  wallet: null,,
+  msg: null
 };
 
 const authSlice = createSlice({
@@ -37,15 +39,17 @@ const authSlice = createSlice({
     setUser(state, action) {
       state.user = action.payload;
     },
+    setMessage(state, action) {
+      state.msg = action.payload;
+    },
     setWallet(state, action) {
       state.wallet = action.payload;
     },
     resetAuth(state) {
       return initialState
     },
-  },
+ },
 });
-
-export const { setToken, setUser, setWallet, resetAuth } = authSlice.actions;
+export const { setToken, setUser, setWallet, resetAuth, setMessage } = authSlice.actions;
 
 export default authSlice.reducer;
