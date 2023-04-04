@@ -8,7 +8,7 @@ class SignUpRequest(BaseModel):
       name: str
       is_shop_owner: bool = False
       gender: str = 'Male'
-      birthdate: datetime.time = None
+      birthdate: datetime.datetime = None
       phone_number: str
       face_img : bytes = None # base64 encoded string
 
