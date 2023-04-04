@@ -20,6 +20,11 @@ import {
 } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { useDispatch } from "react-redux";
+import { fetchWallet } from "../app/authAPI";
+import { fetchClientTransaction } from "../app/transactionAPI";
 
 interface transaction {
   id: number;
@@ -58,6 +63,17 @@ const Dashboard: React.FC = () => {
   const handleCloseScan = () => setShowScan(false);
   const handleShowScan = () => setShowScan(true);
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch<any>(fetchWallet());
+    dispatch<any>(fetchClientTransaction());
+  }, [dispatch]);
+
+  const user = useSelector((state: RootState) => state.auth.user);
+  const wallet = useSelector((state: RootState) => state.auth.wallet);
+  const clientTransaction = useSelector((state: RootState) => state.transaction.clientTransaction);
+
   return (
     <div>
       <Navbar.DashbaordNavbar />
@@ -80,8 +96,8 @@ const Dashboard: React.FC = () => {
                     className="d-flex flex-column justify-content-between py-2"
                   >
                     <h3>Balance</h3>
-                    <h1>$ 2200.00</h1>
-                    <small>Your account number is 123-456-789</small>
+                    <h1>{wallet?.balance} ฿</h1>
+                    {/* <small>Your account number is 123-456-789</small> */}
                   </Col>
                   <Col xs={4}>
                     <Button
@@ -119,8 +135,8 @@ const Dashboard: React.FC = () => {
                   imgSrc:
                     "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/assortment-of-colorful-ripe-tropical-fruits-top-royalty-free-image-995518546-1564092355.jpg",
                   imgAlt: "nope",
-                  label: "Hellomotherfuckers",
-                  description: "a;dsflkja;dflkja;dfklja;kldjf",
+                  label: "Something",
+                  description: "Lorem Ipsum is Lorem Ipsum",
                 },
               ]}
             />
@@ -136,15 +152,12 @@ const Dashboard: React.FC = () => {
                     rounded
                     src="https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg"
                   />
-                  <h5 className="fw-bold mb-0">Supakit Lokaew</h5>
-                  <p>Customer</p>
+                  <h5 className="fw-bold mb-0">{user?.name}</h5>
+                  <p>{user?.is_shop_owner ? "Shop Owner" : "Customer"}</p>
                   <div className="d-flex flex-row">
-                    <Button variant="primary text-white me-2">
-                      <BsPencilFill />
-                    </Button>
                     <Link to={"/Profile"}>
                       <Button variant="primary text-white">
-                        View Full Profile
+                        Edit Profile
                       </Button>
                     </Link>
                   </div>
@@ -152,15 +165,16 @@ const Dashboard: React.FC = () => {
                 </CardGroup>
                 <CardGroup className="px-3">
                   <h5 className="fw-bold mb-3">Your last transaction</h5>
-                  {mockTransaction.map((item) => (
+                  {clientTransaction.map((item) => (
                     <div className="w-100" key={item.id}>
                       <div className="d-flex justify-content-between">
-                        <p className="mb-1">{item.store}</p>
-                        <p className="mb-1">{item.date.toLocaleString()}</p>
+                        <p className="mb-1">{item.shop_id}</p>
+                        <p className="mb-1">{item.date?.toLocaleString() || 'Unknown'}</p>
                       </div>
                       <div className="d-flex justify-content-between mt-0">
-                        <Link to={item.viewDetailLink}>View Detail</Link>
-                        <p>{item.price + " B"}</p>
+                        {/* <Link to={item.viewDetailLink}>View Detail</Link> */}
+                        <p>{item.total_items} Items</p>
+                        <p>{item.total_price + " ฿"}</p>
                       </div>
                     </div>
                   ))}
