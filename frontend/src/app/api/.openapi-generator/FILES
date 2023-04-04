@@ -9,6 +9,8 @@ models/BBoxType.ts
 models/DecodeResult.ts
 models/DeductDepositRequest.ts
 models/DetectionResult.ts
+models/EditAuthRequest.ts
+models/EditClientRequest.ts
 models/HTTPValidationError.ts
 models/InferenceRequest.ts
 models/InferenceResult.ts

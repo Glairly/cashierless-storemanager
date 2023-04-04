@@ -5,11 +5,18 @@ import {
   setToken,
   setUser,
   setWallet,
-  setAuth
+  setAuth,
 } from "../features/auth/authSlice";
 import { Action } from "redux";
 
-import { DefaultApi, GetClientByIdCapiV1GetClientByIdGetRequest } from "./api";
+import {
+  DefaultApi,
+  EditAuthRequest,
+  EditClientCapiV1EditClientPostRequest,
+  EditClientRequest,
+  EditUserCapiV1EditUserPostRequest,
+  GetClientByIdCapiV1GetClientByIdGetRequest,
+} from "./api";
 import { LoginCapiV1LoginPostRequest } from "./api";
 
 export const login =
@@ -29,7 +36,7 @@ export const login =
       const { access_token, user, auth } = res;
       dispatch(setToken(access_token));
       dispatch(setUser(user));
-      dispatch(setAuth(auth))
+      dispatch(setAuth(auth));
     } catch (error) {}
   };
 
@@ -62,5 +69,80 @@ export const fetchWallet =
         meta
       );
       dispatch(setWallet(res.wallet));
+    } catch (error) {}
+  };
+
+export const editClient =
+  (
+    fullname: string,
+    phone_number: string,
+    gender: string
+  ): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    try {
+      const { auth } = getState();
+
+      if (!auth.user?.id) return false;
+
+      const request = {
+        editClientRequest: {
+          id: auth.user.id,
+          name: fullname,
+          phoneNumber: phone_number,
+          gender: gender,
+        } as EditClientRequest,
+      } as EditClientCapiV1EditClientPostRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().editClientCapiV1EditClientPost(
+        request,
+        meta
+      );
+      dispatch(setUser(res));
+    } catch (error) {}
+  };
+
+export const editAuth =
+  (
+    email: string,
+    password: string,
+    confirmPassword: string
+  ): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    try {
+      const { auth } = getState();
+
+      if (!auth.auth?.id) return false;
+
+      const request = {
+        editAuthRequest: {
+          id: auth.auth.id,
+          email: email,
+          username: auth.auth.username,
+          password: password,
+          confirmPassword: confirmPassword,
+        } as EditAuthRequest,
+      } as EditUserCapiV1EditUserPostRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().editUserCapiV1EditUserPost(
+        request,
+        meta
+      );
+      dispatch(setAuth(res));
     } catch (error) {}
   };
