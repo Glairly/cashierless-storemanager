@@ -25,7 +25,7 @@ interface AuthState {
 const initialState: AuthState = {
   token: null,
   user: null,
-  wallet: null,,
+  wallet: null,
   msg: null
 };
 
