@@ -51,7 +51,6 @@ export const register = (values: any): ThunkAction<void, RootState, null, Action
         })
       });
   } catch (error) {
-    // dispatch(setMessage(error));
     console.log(error);
   }
 };

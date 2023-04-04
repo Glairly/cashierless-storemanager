@@ -51,7 +51,6 @@ const SignupSchema = Yup.object().shape({
 
 const renderForm: React.FC = (initialValues) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const alertMsg = useSelector((state: RootState) => state.auth.msg);
 
   const handleSubmit = async (values: any) => {
