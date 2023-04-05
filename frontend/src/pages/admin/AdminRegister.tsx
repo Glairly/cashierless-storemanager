@@ -6,6 +6,7 @@ import {
   Form as BootstrapForm,
   Image,
   Row,
+  Modal
 } from "react-bootstrap";
 import * as Navbar from "../../components/Navbar";
 import ShoppingMan from "../../assets/shopping_man.png";
@@ -16,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerShop } from "../../app/authAPI";
 import * as Yup from "yup";
 import { RootState } from "../../app/store";
+import { useState } from "react";
 
 interface RegisterShopValues {
   username: string;
@@ -67,138 +69,155 @@ const SignupSchema = Yup.object().shape({
 
 const renderForm: React.FC = (initialValues) => {
   const dispatch = useDispatch();
-  const alertMsg = useSelector((state: RootState) => state.auth.msg);
+  const msg = useSelector((state: RootState) => state.auth.msg);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const handleCloseAlert = () => setShowAlert(false);
 
   const handleSubmit = async (values: any) => {
     await dispatch<any>(registerShop(values));
-    alert(alertMsg);
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={SignupSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ handleChange, handleBlur }) => (
-        <Form>
-          <BootstrapForm.Group className="my-3">
-            <BootstrapForm.Label>Username</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="text"
-              name="username"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="JBrown"
-            />
-            <ErrorMessage name="username">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Password</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="password"
-              name="password"
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <ErrorMessage name="password">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="my-3">
-            <BootstrapForm.Label>Shop Name</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="text"
-              name="shop_name"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Ex) HW Cashierless Store"
-            />
-            <ErrorMessage name="shop_phone_number">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Email</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="email"
-              name="email"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Ex) john@gmail.com"
-            />
-            <ErrorMessage name="email">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Name</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="text"
-              name="name"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Ex) John Brown"
-            />
-            <ErrorMessage name="name">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Birth Date</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="date"
-              name="birth_date"
-              onChange={handleChange}
-              defaultValue={"2005-01-01"}
-            />
-            <ErrorMessage name="birth_date">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
+    <div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={SignupSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleChange, handleBlur }) => (
+          <Form>
+            <BootstrapForm.Group className="my-3">
+              <BootstrapForm.Label>Username</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="text"
+                name="username"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="JBrown"
+              />
+              <ErrorMessage name="username">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Password</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="password"
+                name="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <ErrorMessage name="password">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="my-3">
+              <BootstrapForm.Label>Shop Name</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="text"
+                name="shop_name"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Ex) HW Cashierless Store"
+              />
+              <ErrorMessage name="shop_phone_number">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Email</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="email"
+                name="email"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Ex) john@gmail.com"
+              />
+              <ErrorMessage name="email">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Name</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="text"
+                name="name"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Ex) John Brown"
+              />
+              <ErrorMessage name="name">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Birth Date</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="date"
+                name="birth_date"
+                onChange={handleChange}
+                defaultValue={"2005-01-01"}
+              />
+              <ErrorMessage name="birth_date">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
 
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Phone Number</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="tel"
-              name="phone_number"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Ex) 0898998999"
-            />
-            <ErrorMessage name="phone_number">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Shop Phone Number</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="tel"
-              name="shop_phone_number"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Ex) 0898998999"
-            />
-            <ErrorMessage name="shop_phone_number">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Gender</BootstrapForm.Label>
-            <BootstrapForm.Check type="radio" label="Male" name="gender" id="male" defaultChecked={true} />
-            <BootstrapForm.Check type="radio" label="Female" name="gender" id="female" />
-            <ErrorMessage name="gender">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <Button type="submit" variant="primary" className="text-white w-100">
-            Submit
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Phone Number</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="tel"
+                name="phone_number"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Ex) 0898998999"
+              />
+              <ErrorMessage name="phone_number">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Shop Phone Number</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="tel"
+                name="shop_phone_number"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="Ex) 0898998999"
+              />
+              <ErrorMessage name="shop_phone_number">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Gender</BootstrapForm.Label>
+              <BootstrapForm.Check type="radio" label="Male" name="gender" id="male" defaultChecked={true} />
+              <BootstrapForm.Check type="radio" label="Female" name="gender" id="female" />
+              <ErrorMessage name="gender">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <Button type="submit" variant="primary" className="text-white w-100">
+              Submit
+            </Button>
+          </Form>
+        )}
+      </Formik>
+      <Modal show={showAlert} onHide={handleCloseAlert}>
+        <Modal.Header closeButton>
+          <Modal.Title>Notify</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {msg}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" className="text-white" onClick={handleCloseAlert}>
+            Close
           </Button>
-        </Form>
-      )}
-    </Formik>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 

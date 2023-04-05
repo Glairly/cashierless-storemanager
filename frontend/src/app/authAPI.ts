@@ -19,8 +19,7 @@ import {
   EditClientCapiV1EditClientPostRequest,
   EditClientRequest,
   EditUserCapiV1EditUserPostRequest,
-  GetClientByIdCapiV1GetClientByIdGetRequest,
-  SignUpRequest
+  GetClientByIdCapiV1GetClientByIdGetRequest
 } from "./api";
 import { LoginCapiV1LoginPostRequest } from "./api";
 import { SignUpRequest, SignupCapiV1SignupPostRequest } from './api';
@@ -165,8 +164,10 @@ export const editAuth =
       console.log(error);
       dispatch(setFailure("Error has Occured please try again"));
     }
-  };
-export const register = (values: any): ThunkAction<void, RootState, null, Action<string>> => async dispatch => {
+    };
+  
+export const register = (values: any): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch) => {
   try {
     const request = {
       signUpRequest: {
@@ -184,12 +185,15 @@ export const register = (values: any): ThunkAction<void, RootState, null, Action
 
     const res = await (new DefaultApi()).signupCapiV1SignupPost(request)
       .catch(error => {
-        error.response.json().then((errorBody:any) => {
+        error.response.json().then((errorBody: any) => {
           dispatch(setMessage(errorBody.detail));
         })
       });
+    
     dispatch(setMessage("Register Success! Please Login."));
+    dispatch(setSuccess());
   } catch (error) {
+    dispatch(setFailure("Error has Occured please try again"));
     console.log(error);
   }
 };
@@ -219,8 +223,10 @@ export const registerShop = (values: any): ThunkAction<void, RootState, null, Ac
           dispatch(setMessage(errorBody.detail));
         })
       });
-    dispatch(setMessage("Register Success! Please login."));
+    dispatch(setMessage("Register Shop Success! Please Login."));
+    dispatch(setSuccess());
   } catch (error) {
+    dispatch(setFailure("Error has Occured please try again"));
     console.log(error);
   }
 };
