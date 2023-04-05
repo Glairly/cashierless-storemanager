@@ -1,0 +1,32 @@
+.about-us-body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.about-us-content {
+    padding: 64px 0 !important;
+    flex-grow: 1;
+}
+
+
+.about-us-title {
+    font-size: calc(1.425rem + 2.1vw);
+    font-weight: 700;
+    line-height: calc(56px + 20px);
+    font-size: 56px;
+    text-transform: capitalize;
+    margin-bottom: 0px !important;
+    text-align: center;
+}
+
+.about-us-subtitle {
+    font-weight: 300;
+    line-height: calc(28px + 20px);
+    font-size: 28px;
+    text-transform: capitalize;
+    margin-bottom: 0px !important;
+    text-align: center;
+    color: #6e6e6e;
+}

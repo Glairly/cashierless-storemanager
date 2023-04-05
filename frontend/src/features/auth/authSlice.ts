@@ -15,10 +15,21 @@ interface ClientWallet {
   balance: number;
 }
 
+interface Auth {
+  id: number;
+  username: String;
+  email: string;
+  face_id: number;
+}
+
 interface AuthState {
   token: string | null;
   user: Client | null;
-  wallet: ClientWallet  | null;
+  wallet: ClientWallet | null;
+  auth: Auth | null;
+  pendingStatus: string | null;
+  isLoading: boolean;
+  error: null;
   msg: string | null;
 }
 
@@ -26,7 +37,11 @@ const initialState: AuthState = {
   token: null,
   user: null,
   wallet: null,
-  msg: null
+  auth: null,
+  pendingStatus: null,
+  isLoading: false,
+  error: null,
+  msg: null,
 };
 
 const authSlice = createSlice({
@@ -45,11 +60,49 @@ const authSlice = createSlice({
     setWallet(state, action) {
       state.wallet = action.payload;
     },
-    resetAuth(state) {
-      return initialState
+    setAuth(state, action) {
+      state.auth = action.payload;
     },
- },
+    setPending(state) {
+      return {
+        ...state,
+        pendingStatus: "pending",
+        isLoading: true,
+        error: null,
+      };
+    },
+    setSuccess(state) {
+      return {
+        ...state,
+        pendingStatus: "fulfilled",
+        isLoading: false,
+        error: null,
+      };
+    },
+    setFailure(state, action) {
+      return {
+        ...state,
+        pendingStatus: "rejected",
+        isLoading: false,
+        error: action.payload,
+      };
+    },
+    resetAuth(state) {
+      return initialState;
+    },
+  },
 });
-export const { setToken, setUser, setWallet, resetAuth, setMessage } = authSlice.actions;
+
+export const {
+  setToken,
+  setUser,
+  setWallet,
+  setAuth,
+  resetAuth,
+  setPending,
+  setSuccess,
+  setFailure,
+  setMessage,
+} = authSlice.actions;
 
 export default authSlice.reducer;
