@@ -8,7 +8,6 @@ import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { register } from "../app/authAPI";
-import "react-datepicker/dist/react-datepicker.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 
@@ -17,7 +16,7 @@ interface RegisterValues {
   password: string;
   email: string;
   name: string;
-  is_shop_owner: false;
+  is_shop_owner: boolean;
   gender: "Male" | "Female";
   birth_date: string;
   phone_number: string;
@@ -49,7 +48,8 @@ const SignupSchema = Yup.object().shape({
   ),
 });
 
-const renderForm: React.FC = (initialValues) => {
+const renderForm: React.FC = (props) => {
+  const { ...initialValues } = props;
   const dispatch = useDispatch();
   const alertMsg = useSelector((state: RootState) => state.auth.msg);
 
@@ -57,6 +57,10 @@ const renderForm: React.FC = (initialValues) => {
     await dispatch<any>(register(values));
     alert(alertMsg);
   };
+
+  const handleAlert = () => {
+    alert(alertMsg);
+  }
 
   return (
     <Formik
@@ -131,7 +135,7 @@ const renderForm: React.FC = (initialValues) => {
           </BootstrapForm.Group>
 
           <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Phone number</BootstrapForm.Label>
+            <BootstrapForm.Label>Phone Number</BootstrapForm.Label>
             <BootstrapForm.Control
               type="tel"
               name="phone_number"
@@ -144,7 +148,7 @@ const renderForm: React.FC = (initialValues) => {
             </ErrorMessage>
           </BootstrapForm.Group>
           <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Password</BootstrapForm.Label>
+            <BootstrapForm.Label>Gender</BootstrapForm.Label>
             <BootstrapForm.Check type="radio" label="Male" name="gender" id="male" defaultChecked={true} />
             <BootstrapForm.Check type="radio" label="Female" name="gender" id="female" />
             <ErrorMessage name="gender">
