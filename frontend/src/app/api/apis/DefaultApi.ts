@@ -22,6 +22,8 @@ import type {
   DecodeResult,
   DeductDepositRequest,
   DetectionResult,
+  EditAuthRequest,
+  EditClientRequest,
   HTTPValidationError,
   InferenceRequest,
   InferenceResult,
@@ -47,6 +49,10 @@ import {
     DeductDepositRequestToJSON,
     DetectionResultFromJSON,
     DetectionResultToJSON,
+    EditAuthRequestFromJSON,
+    EditAuthRequestToJSON,
+    EditClientRequestFromJSON,
+    EditClientRequestToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
     InferenceRequestFromJSON,
@@ -101,6 +107,14 @@ export interface DoAnonymousTransactionFapiV1DoAnonymousTransactionPostRequest {
 
 export interface DoTransactionFapiV1DoTransactionPostRequest {
     transactionRequest: TransactionRequest;
+}
+
+export interface EditClientCapiV1EditClientPostRequest {
+    editClientRequest: EditClientRequest;
+}
+
+export interface EditUserCapiV1EditUserPostRequest {
+    editAuthRequest: EditAuthRequest;
 }
 
 export interface GeneratePromptpayQrFapiV1GeneratePromptpayQrPostRequest {
@@ -521,6 +535,80 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async doTransactionFapiV1DoTransactionPost(requestParameters: DoTransactionFapiV1DoTransactionPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.doTransactionFapiV1DoTransactionPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit Client
+     */
+    async editClientCapiV1EditClientPostRaw(requestParameters: EditClientCapiV1EditClientPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.editClientRequest === null || requestParameters.editClientRequest === undefined) {
+            throw new runtime.RequiredError('editClientRequest','Required parameter requestParameters.editClientRequest was null or undefined when calling editClientCapiV1EditClientPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/capi/v1/edit_client`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditClientRequestToJSON(requestParameters.editClientRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Edit Client
+     */
+    async editClientCapiV1EditClientPost(requestParameters: EditClientCapiV1EditClientPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.editClientCapiV1EditClientPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit User
+     */
+    async editUserCapiV1EditUserPostRaw(requestParameters: EditUserCapiV1EditUserPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.editAuthRequest === null || requestParameters.editAuthRequest === undefined) {
+            throw new runtime.RequiredError('editAuthRequest','Required parameter requestParameters.editAuthRequest was null or undefined when calling editUserCapiV1EditUserPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/capi/v1/edit_user`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditAuthRequestToJSON(requestParameters.editAuthRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Edit User
+     */
+    async editUserCapiV1EditUserPost(requestParameters: EditUserCapiV1EditUserPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.editUserCapiV1EditUserPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

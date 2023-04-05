@@ -72,7 +72,9 @@ const Dashboard: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.auth.user);
   const wallet = useSelector((state: RootState) => state.auth.wallet);
-  const clientTransaction = useSelector((state: RootState) => state.transaction.clientTransaction);
+  const clientTransaction = useSelector(
+    (state: RootState) => state.transaction.clientTransaction
+  );
 
   return (
     <div>
@@ -82,11 +84,13 @@ const Dashboard: React.FC = () => {
           <Col lg={6} className="p-4">
             <div className="mb-4">
               <h1 className="fw-bold">Good to see you!</h1>
-              <p className="mb-0">Click the button to see</p>
-              <p className="mt-0">What we have for you today</p>
-              <Button variant="primary" className="text-white w-25">
+              {/* <p className="mb-0">Click the button to see</p> */}
+              <p className="mt-0" style={{ color: "gray" }}>
+                What will you do today?
+              </p>
+              {/* <Button variant="primary" className="text-white w-25">
                 Product
-              </Button>
+              </Button> */}
             </div>
             <Card>
               <Card.Body>
@@ -156,26 +160,26 @@ const Dashboard: React.FC = () => {
                   <p>{user?.is_shop_owner ? "Shop Owner" : "Customer"}</p>
                   <div className="d-flex flex-row">
                     <Link to={"/Profile"}>
-                      <Button variant="primary text-white">
-                        Edit Profile
-                      </Button>
+                      <Button variant="primary text-white">Edit Profile</Button>
                     </Link>
                   </div>
                   <div className="my-4 bg-primary border-bottom border-gray pb-1 mb-0 w-100" />
                 </CardGroup>
                 <CardGroup className="px-3">
                   <h5 className="fw-bold mb-3">Your last transaction</h5>
-                  {clientTransaction.map((item) => (
+                  {clientTransaction.slice(0, 3).map((item) => (
                     <div className="w-100" key={item.id}>
                       <div className="d-flex justify-content-between">
-                        <p className="mb-1">{item.shop_id}</p>
-                        <p className="mb-1">{item.date?.toLocaleString() || 'Unknown'}</p>
+                        <p className="mb-1">
+                          {item.date?.toLocaleString() || "Unknown Date"}
+                        </p>
+                        <p>{item.total_items} Items</p>
                       </div>
                       <div className="d-flex justify-content-between mt-0">
-                        {/* <Link to={item.viewDetailLink}>View Detail</Link> */}
-                        <p>{item.total_items} Items</p>
+                        <Link to={`/transaction/${item.id}`}>View Detail</Link>
                         <p>{item.total_price + " ฿"}</p>
                       </div>
+                      <hr className="mt-0 mb-4" />
                     </div>
                   ))}
                 </CardGroup>

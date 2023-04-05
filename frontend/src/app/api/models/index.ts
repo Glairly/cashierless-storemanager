@@ -8,6 +8,8 @@ export * from './BBoxType';
 export * from './DecodeResult';
 export * from './DeductDepositRequest';
 export * from './DetectionResult';
+export * from './EditAuthRequest';
+export * from './EditClientRequest';
 export * from './HTTPValidationError';
 export * from './InferenceRequest';
 export * from './InferenceResult';

@@ -1,3 +1,4 @@
+from sqlalchemy import and_
 from fastapi import Depends, HTTPException
 from fastapi_sqlalchemy import db
 from ..model.requests.SignUpRequest import SignUpRequest, SignUpWithShopRequest
@@ -7,12 +8,12 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 from ..model.models import *
+from ..model.requests.EditAuthRequest import EditAuthRequest
 
 from ..services.FaceRecognitionService import *
 
 import jwt
 import re
-
 
 class AuthService:
     def __init__(self, faceRecognitionService: FaceRecognitionService):
@@ -47,7 +48,7 @@ class AuthService:
     def login(self, form_data: OAuth2PasswordRequestForm = Depends()):
         auth = self.__authenticate_user(form_data.username, form_data.password)
         access_token = self.__create_access_token(auth.to_dict())
-        return {"access_token": access_token, "token_type": "bearer", "user": auth.client.to_dict() if auth.client else None}
+        return {"access_token": access_token, "auth": auth.to_dict() , "user": auth.client.to_dict() if auth.client else None}
     
 
     def __is_valid_password(self, password: str) -> bool:
@@ -141,11 +142,33 @@ class AuthService:
             face_id.auth = auth
             db.session.add(face_id)
 
-
         db.session.add_all([shop_wallet, shop, auth, client, wallet])
         db.session.commit()
         return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=auth.client.id)
     
+    def edit_user(self, payload: EditAuthRequest):
+        if payload.password:
+            if  not payload.password == payload.confirm_password:
+                raise HTTPException(status_code=400, detail="Passwords do not match")
+            
+            if not self.__is_valid_password(payload.password):
+                raise HTTPException(status_code=400, detail="Password must contain at least one uppercase letter, one lowercase letter, one digit")
+        
+        auth = db.session.query(Auth).filter(and_(Auth.username == payload.username, Auth.id == payload.id)).first()
+        
+        hashed_password = self.__pwd_context.hash(payload.password)
+        
+        if payload.password:
+            auth.hashed_password = hashed_password
+
+        if payload.email:
+            auth.email = payload.email
+
+        db.session.commit()
+        db.session.refresh(auth)
+
+        return auth.to_dict()
+
     def recognize_face(self, file: bytes):
         auth = self.__faceRecognitionService.find_face_id(file)
         access_token = self.__create_access_token(auth.to_dict())

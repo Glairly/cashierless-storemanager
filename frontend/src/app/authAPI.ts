@@ -6,10 +6,22 @@ import {
   setToken,
   setUser,
   setWallet,
+  setAuth,
+  setPending,
+  setSuccess,
+  setFailure,
 } from "../features/auth/authSlice";
 import { Action } from "redux";
 
-import { DefaultApi, GetClientByIdCapiV1GetClientByIdGetRequest, SignUpRequest } from "./api";
+import {
+  DefaultApi,
+  EditAuthRequest,
+  EditClientCapiV1EditClientPostRequest,
+  EditClientRequest,
+  EditUserCapiV1EditUserPostRequest,
+  GetClientByIdCapiV1GetClientByIdGetRequest,
+  SignUpRequest
+} from "./api";
 import { LoginCapiV1LoginPostRequest } from "./api";
 import { SignupCapiV1SignupPostRequest } from './api';
 
@@ -27,9 +39,10 @@ export const login =
 
       const res = await new DefaultApi().loginCapiV1LoginPost(request);
 
-      const { access_token, user  } = res;
+      const { access_token, user, auth } = res;
       dispatch(setToken(access_token));
-      dispatch(setUser(user));;
+      dispatch(setUser(user));
+      dispatch(setAuth(auth));
     } catch (error) {}
   };
 
@@ -65,6 +78,92 @@ export const fetchWallet =
     } catch (error) {}
   };
 
+export const editClient =
+  (
+    fullname: string,
+    phone_number: string,
+    gender: string
+  ): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    dispatch(setPending());
+
+    try {
+      const { auth } = getState();
+
+      if (!auth.user?.id) return false;
+
+      const request = {
+        editClientRequest: {
+          id: auth.user.id,
+          name: fullname,
+          phoneNumber: phone_number,
+          gender: gender,
+        } as EditClientRequest,
+      } as EditClientCapiV1EditClientPostRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().editClientCapiV1EditClientPost(
+        request,
+        meta
+      );
+      dispatch(setUser(res));
+      dispatch(setSuccess());
+    } catch (error) {
+      console.log(error);
+      dispatch(setFailure("Error has Occured please try again"));
+    }
+  };
+
+export const editAuth =
+  (
+    email: string,
+    password: string,
+    confirmPassword: string
+  ): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    dispatch(setPending());
+
+    try {
+      const { auth } = getState();
+
+      if (!auth.auth?.id) return false;
+
+      const request = {
+        editAuthRequest: {
+          id: auth.auth.id,
+          email: email,
+          username: auth.auth.username,
+          password: password,
+          confirmPassword: confirmPassword,
+        } as EditAuthRequest,
+      } as EditUserCapiV1EditUserPostRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().editUserCapiV1EditUserPost(
+        request,
+        meta
+      );
+      dispatch(setAuth(res));
+      dispatch(setSuccess());
+    } catch (error) {
+      console.log(error);
+      dispatch(setFailure("Error has Occured please try again"));
+    }
+  };
 export const register = (values: any): ThunkAction<void, RootState, null, Action<string>> => async dispatch => {
   try {
     const request = {
