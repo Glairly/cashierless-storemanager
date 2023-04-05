@@ -2,6 +2,7 @@ import { ThunkAction } from "redux-thunk";
 import { RootState } from "./store";
 import {
   resetAuth,
+  setMessage,
   setToken,
   setUser,
   setWallet,
@@ -19,8 +20,10 @@ import {
   EditClientRequest,
   EditUserCapiV1EditUserPostRequest,
   GetClientByIdCapiV1GetClientByIdGetRequest,
+  SignUpRequest
 } from "./api";
 import { LoginCapiV1LoginPostRequest } from "./api";
+import { SignupCapiV1SignupPostRequest } from './api';
 
 export const login =
   (
@@ -161,3 +164,32 @@ export const editAuth =
       dispatch(setFailure("Error has Occured please try again"));
     }
   };
+export const register = (values: any): ThunkAction<void, RootState, null, Action<string>> => async dispatch => {
+  try {
+    const request = {
+      signUpRequest: {
+        username: values.username,
+        password: values.password,
+        email: values.email,
+        name: values.name,
+        isShopOwner: values.is_shop_owner,
+        gender: values.gender,
+        birthdate: values.birth_date + "T00:00:00",
+        phoneNumber: values.phone_number,
+        faceImg: values.face_img == '' ? null : values.face_img
+      } as SignUpRequest
+    } as SignupCapiV1SignupPostRequest;
+
+    const res = await (new DefaultApi()).signupCapiV1SignupPost(request)
+      .then(data => {
+        dispatch(setMessage("Register Success! Please login."));
+      })
+      .catch(error => {
+        error.response.json().then((errorBody:any) => {
+          dispatch(setMessage(errorBody.detail));
+        })
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};

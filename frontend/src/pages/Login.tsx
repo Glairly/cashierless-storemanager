@@ -35,7 +35,7 @@ const validationSchema = Yup.object({
   password: Yup.string().required("Required"),
 });
 
- 
+
 const renderLoginForm: React.FC = (initialValues) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,9 +49,9 @@ const renderLoginForm: React.FC = (initialValues) => {
 
   useEffect(() => {
     if (token)
-       navigate("/dashboard")
+      navigate("/dashboard")
   }, [token])
-  
+
 
   return (
     <Formik
@@ -69,12 +69,10 @@ const renderLoginForm: React.FC = (initialValues) => {
               onChange={handleChange}
               onBlur={handleBlur}
             />
-
             <ErrorMessage name="username">
               {(msg) => <small style={{ color: "red" }}>{msg}</small>}
             </ErrorMessage>
           </BootstrapForm.Group>
-
           <BootstrapForm.Group className="mb-3">
             <BootstrapForm.Label>Password</BootstrapForm.Label>
             <BootstrapForm.Control
@@ -105,10 +103,10 @@ const Login: React.FC = () => {
       <Navbar.HomeNavbar />
       <Container className="p-4">
         <Row className="justify-content-center align-items-center">
-          <Col lg={5} className="d-none d-lg-block">
+          <Col lg={4} className="d-none d-lg-block">
             <Image src={ShoppingWomen} alt="" fluid />
           </Col>
-          <Col lg={5}>
+          <Col lg={6}>
             <Card className="py-5 rounded-5 align-items-center">
               <BsFillBasket2Fill size={30} className="basket-icon" />
               <Card.Body>

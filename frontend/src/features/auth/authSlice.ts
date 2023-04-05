@@ -30,6 +30,7 @@ interface AuthState {
   pendingStatus: string | null;
   isLoading: boolean;
   error: null;
+  msg: string | null;
 }
 
 const initialState: AuthState = {
@@ -40,6 +41,7 @@ const initialState: AuthState = {
   pendingStatus: null,
   isLoading: false,
   error: null,
+  msg: null,
 };
 
 const authSlice = createSlice({
@@ -51,6 +53,9 @@ const authSlice = createSlice({
     },
     setUser(state, action) {
       state.user = action.payload;
+    },
+    setMessage(state, action) {
+      state.msg = action.payload;
     },
     setWallet(state, action) {
       state.wallet = action.payload;
@@ -97,6 +102,7 @@ export const {
   setPending,
   setSuccess,
   setFailure,
+  setMessage,
 } = authSlice.actions;
 
 export default authSlice.reducer;
