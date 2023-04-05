@@ -13,10 +13,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { editAuth, editClient } from "../app/authAPI";
 import { useNavigate } from "react-router-dom";
+import Popup from "../components/Popup";
 
 const initialValues = {
   email: "",
@@ -46,31 +47,53 @@ const validationSchema2 = Yup.object({
 
 const Profile: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalStatus, setModalStatus] = useState(true);
 
   const genderOptions = ["Male", "Female", "Non-binary", "Other"];
 
   const user = useSelector((state: RootState) => state.auth.user);
   const auth = useSelector((state: RootState) => state.auth.auth);
 
+  const { pendingStatus, isLoading, error } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  useEffect(() => {
+    switch (pendingStatus) {
+      case "pending":
+        setShouldShowModal(false);
+        break;
+      case "fulfilled":
+        setShouldShowModal(true);
+        setModalStatus(true);
+        break;
+      case "rejected":
+        setShouldShowModal(true);
+        setModalStatus(false);
+        break;
+    }
+  }, [pendingStatus]);
+
   const handleSubmitPersonalInfo = async (values: any) => {
+    if (isLoading) return;
     const { fullname, phone, gender } = values;
     dispatch<any>(editClient(fullname, phone, gender));
-
-    navigate("");
   };
 
   const handleSubmitAccountInfo = async (values: any) => {
+    if (isLoading) return;
     const { email, password, confirmpassword } = values;
     dispatch<any>(editAuth(email, password, confirmpassword));
-
-    navigate("");
   };
 
   return (
     <div className="profile">
       <Navbar.DashbaordNavbar />
       <Container className="py-4">
+        {isLoading ? "Load" : "not load"}
+        {error ? error : "No error"}
         <Card className="rounded-5">
           <Row className="d-flex flex-row justify-content-center">
             <Col lg={8} className="py-2 px-4">
@@ -155,7 +178,7 @@ const Profile: React.FC = () => {
 
                           <div className="d-flex justify-content-end align-items-center mt-4">
                             <Button type="submit" className="text-white">
-                              Save
+                              {isLoading ? "Pending" : "Save"}
                             </Button>
                           </div>
                         </Form>
@@ -212,7 +235,7 @@ const Profile: React.FC = () => {
                           </BootstrapForm.Group>
                           <div className="d-flex justify-content-end align-items-center mt-4">
                             <Button type="submit" className="text-white">
-                              Save
+                              {isLoading ? "Pending" : "Save"}
                             </Button>
                           </div>
                         </Form>
@@ -231,6 +254,16 @@ const Profile: React.FC = () => {
             </Col>
           </Row>
         </Card>
+
+        <Popup
+          show={shouldShowModal}
+          title="Result"
+          body={error || ""}
+          status={modalStatus}
+          onHide={() => {
+            setShouldShowModal(false);
+          }}
+        />
       </Container>
     </div>
   );

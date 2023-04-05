@@ -6,6 +6,9 @@ import {
   setUser,
   setWallet,
   setAuth,
+  setPending,
+  setSuccess,
+  setFailure,
 } from "../features/auth/authSlice";
 import { Action } from "redux";
 
@@ -79,6 +82,8 @@ export const editClient =
     gender: string
   ): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
+    dispatch(setPending());
+
     try {
       const { auth } = getState();
 
@@ -96,8 +101,8 @@ export const editClient =
       const meta = {
         headers: {
           Authorization: `Bearer ${auth.token}`,
-          'accept': 'application/json',
-          'Content-Type': 'application/json'
+          accept: "application/json",
+          "Content-Type": "application/json",
         },
       } as RequestInit;
 
@@ -106,7 +111,11 @@ export const editClient =
         meta
       );
       dispatch(setUser(res));
-    } catch (error) {}
+      dispatch(setSuccess());
+    } catch (error) {
+      console.log(error);
+      dispatch(setFailure("Error has Occured please try again"));
+    }
   };
 
 export const editAuth =
@@ -116,6 +125,8 @@ export const editAuth =
     confirmPassword: string
   ): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
+    dispatch(setPending());
+
     try {
       const { auth } = getState();
 
@@ -134,8 +145,8 @@ export const editAuth =
       const meta = {
         headers: {
           Authorization: `Bearer ${auth.token}`,
-          'accept': 'application/json',
-          'Content-Type': 'application/json'
+          accept: "application/json",
+          "Content-Type": "application/json",
         },
       } as RequestInit;
 
@@ -144,5 +155,9 @@ export const editAuth =
         meta
       );
       dispatch(setAuth(res));
-    } catch (error) {}
+      dispatch(setSuccess());
+    } catch (error) {
+      console.log(error);
+      dispatch(setFailure("Error has Occured please try again"));
+    }
   };

@@ -27,13 +27,19 @@ interface AuthState {
   user: Client | null;
   wallet: ClientWallet | null;
   auth: Auth | null;
+  pendingStatus: string | null;
+  isLoading: boolean;
+  error: null;
 }
 
 const initialState: AuthState = {
   token: null,
   user: null,
   wallet: null,
-  auth: null
+  auth: null,
+  pendingStatus: null,
+  isLoading: false,
+  error: null,
 };
 
 const authSlice = createSlice({
@@ -52,12 +58,45 @@ const authSlice = createSlice({
     setAuth(state, action) {
       state.auth = action.payload;
     },
+    setPending(state) {
+      return {
+        ...state,
+        pendingStatus: "pending",
+        isLoading: true,
+        error: null,
+      };
+    },
+    setSuccess(state) {
+      return {
+        ...state,
+        pendingStatus: "fulfilled",
+        isLoading: false,
+        error: null,
+      };
+    },
+    setFailure(state, action) {
+      return {
+        ...state,
+        pendingStatus: "rejected",
+        isLoading: false,
+        error: action.payload,
+      };
+    },
     resetAuth(state) {
-      return initialState
+      return initialState;
     },
   },
 });
 
-export const { setToken, setUser, setWallet, setAuth, resetAuth } = authSlice.actions;
+export const {
+  setToken,
+  setUser,
+  setWallet,
+  setAuth,
+  resetAuth,
+  setPending,
+  setSuccess,
+  setFailure,
+} = authSlice.actions;
 
 export default authSlice.reducer;
