@@ -27,7 +27,7 @@ interface AuthState {
   user: Client | null;
   wallet: ClientWallet | null;
   auth: Auth | null;
-  pendingStatus: string | null;
+  pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
   isLoading: boolean;
   error: null;
   msg: string | null;
@@ -62,6 +62,14 @@ const authSlice = createSlice({
     },
     setAuth(state, action) {
       state.auth = action.payload;
+    },
+    setIdle(state) {
+      return {
+        ...state,
+        pendingStatus: "idle",
+        isLoading: false,
+        error: null,
+      };
     },
     setPending(state) {
       return {
@@ -103,6 +111,7 @@ export const {
   setSuccess,
   setFailure,
   setMessage,
+  setIdle,
 } = authSlice.actions;
 
 export default authSlice.reducer;
