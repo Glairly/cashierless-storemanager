@@ -16,8 +16,13 @@ import Stocking from "./pages/admin/Stocking";
 import Store from "./pages/store/Store";
 import CheckOut from "./pages/store/CheckOut";
 import Payment from "./pages/store/Payment";
+import { RootState } from "./app/store";
+import { useSelector } from "react-redux";
 
 const App: React.FC = () => {
+  const auth = useSelector((state: RootState) => state.auth.auth);
+  const user = useSelector((state: RootState) => state.auth.user);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -26,11 +31,15 @@ const App: React.FC = () => {
       <Route path="/ContactUs" element={<ContactUs />}></Route>
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
-      <Route path="/Dashboard" element={<Dashboard />}></Route>
+      {user?.is_shop_owner ? (
+        <Route path="/Dashboard" element={<AdminDashboard />}></Route>
+      ) : (
+        <Route path="/Dashboard" element={<Dashboard />}></Route>
+      )}
       <Route path="/Transaction" element={<Transaction />}></Route>
       <Route path="/Profile" element={<Profile />}></Route>
       <Route path="/Admin/Register" element={<AdminRegister />}></Route>
-      <Route path="/Admin/Dashboard" element={<AdminDashboard />}></Route>
+      {/* <Route path="/Admin/Dashboard" element={<AdminDashboard />}></Route> */}
       <Route path="/Admin/SalesHistory" element={<SalesHistory />}></Route>
       <Route path="/Admin/Stocking" element={<Stocking />}></Route>
       <Route path="/Store" element={<Store />}></Route>
