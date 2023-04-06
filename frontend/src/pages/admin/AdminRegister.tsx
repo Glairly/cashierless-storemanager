@@ -17,7 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerShop } from "../../app/authAPI";
 import * as Yup from "yup";
 import { RootState } from "../../app/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Popup from "../../components/Popup";
 
 interface RegisterShopValues {
   username: string;
@@ -45,6 +46,8 @@ const SignupSchema = Yup.object().shape({
     .min(6, "* Password is too short!")
     .max(20, "* Password is too long!")
     .required("* Required"),
+  confirm_password: Yup.string()
+    .oneOf([Yup.ref('password'), undefined], 'Passwords must match'),
   shop_name: Yup.string()
     .min(4, "* Shop name is too short!")
     .max(20, "* Shop name is too long!")
@@ -70,13 +73,33 @@ const SignupSchema = Yup.object().shape({
 const renderForm: React.FC = (initialValues) => {
   const dispatch = useDispatch();
   const msg = useSelector((state: RootState) => state.auth.msg);
+  const { pendingStatus } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  const [showAlert, setShowAlert] = useState(false);
-  const handleCloseAlert = () => setShowAlert(false);
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalStatus, setModalStatus] = useState(true);
 
   const handleSubmit = async (values: any) => {
     await dispatch<any>(registerShop(values));
+    setShouldShowModal(true);
   };
+
+  useEffect(() => {
+    switch (pendingStatus) {
+      case "pending":
+        setShouldShowModal(false);
+        break;
+      case "fulfilled":
+        setShouldShowModal(true);
+        setModalStatus(true);
+        break;
+      case "rejected":
+        setShouldShowModal(true);
+        setModalStatus(false);
+        break;
+    }
+  }, [pendingStatus]);
 
   return (
     <div>
@@ -109,6 +132,18 @@ const renderForm: React.FC = (initialValues) => {
                 onBlur={handleBlur}
               />
               <ErrorMessage name="password">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Confirm Password</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="password"
+                name="confirm_password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <ErrorMessage name="confirm_password">
                 {(msg) => <small style={{ color: "red" }}>{msg}</small>}
               </ErrorMessage>
             </BootstrapForm.Group>
@@ -204,19 +239,15 @@ const renderForm: React.FC = (initialValues) => {
           </Form>
         )}
       </Formik>
-      <Modal show={showAlert} onHide={handleCloseAlert}>
-        <Modal.Header closeButton>
-          <Modal.Title>Notify</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {msg}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" className="text-white" onClick={handleCloseAlert}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <Popup
+        show={shouldShowModal}
+        title="Notify"
+        body={msg || ""}
+        status={modalStatus}
+        onHide={() => {
+          setShouldShowModal(false);
+        }}
+      />
     </div>
   );
 };
