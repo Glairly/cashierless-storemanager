@@ -78,7 +78,7 @@ export const HomeNavbar: React.FC = () => {
 
 const DashboardNavbarItem: item[] = [
   { NavText: "Dashboard", NavLink: "/Dashboard" },
-  // { NavText: "Contact Us", NavLink: "/ContactUs" },
+  { NavText: "History", NavLink: "/Transaction" },
 ];
 
 export const DashbaordNavbar: React.FC = () => {
