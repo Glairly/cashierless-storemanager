@@ -187,6 +187,7 @@ export const register = (values: any): ThunkAction<void, RootState, null, Action
       .catch(error => {
         error.response.json().then((errorBody: any) => {
           dispatch(setMessage(errorBody.detail));
+          dispatch(setFailure("Error has Occured please try again"));
         })
       });
     

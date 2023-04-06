@@ -6,7 +6,7 @@ import {
   Form as BootstrapForm,
   Image,
   Row,
-  Modal
+  Dropdown
 } from "react-bootstrap";
 import * as Navbar from "../../components/Navbar";
 import ShoppingMan from "../../assets/shopping_man.png";
@@ -26,7 +26,7 @@ interface RegisterShopValues {
   email: string;
   name: string;
   is_shop_owner: boolean;
-  gender: "Male" | "Female";
+  gender: string;
   birth_date: string;
   phone_number: string;
   face_img: string | null;
@@ -76,9 +76,11 @@ const renderForm: React.FC = (initialValues) => {
   const { pendingStatus } = useSelector(
     (state: RootState) => state.auth
   );
+  const genderOptions = ["Male", "Female", "Non-binary", "Other"];
 
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [modalStatus, setModalStatus] = useState(true);
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleSubmit = async (values: any) => {
     await dispatch<any>(registerShop(values));
@@ -108,7 +110,7 @@ const renderForm: React.FC = (initialValues) => {
         validationSchema={SignupSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur }) => (
+        {({ handleChange, handleBlur, setFieldValue }) => (
           <Form>
             <BootstrapForm.Group className="my-3">
               <BootstrapForm.Label>Username</BootstrapForm.Label>
@@ -227,11 +229,24 @@ const renderForm: React.FC = (initialValues) => {
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
               <BootstrapForm.Label>Gender</BootstrapForm.Label>
-              <BootstrapForm.Check type="radio" label="Male" name="gender" id="male" defaultChecked={true} />
-              <BootstrapForm.Check type="radio" label="Female" name="gender" id="female" />
-              <ErrorMessage name="gender">
-                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-              </ErrorMessage>
+              <Dropdown className="border rounded-2">
+                <Dropdown.Toggle variant="secondary" id="gender" className="form-control">
+                  {selectedOption || "Select an option"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="form-control">
+                  {genderOptions.map((option) => (
+                    <Dropdown.Item
+                      key={option}
+                      onClick={() => {
+                        setFieldValue("gender", option);
+                        setSelectedOption(option)
+                      }}
+                    >
+                      {option}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </BootstrapForm.Group>
             <Button type="submit" variant="primary" className="text-white w-100">
               Submit
