@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 import * as Navbar from "../components/Navbar";
@@ -133,6 +133,8 @@ const Transaction: React.FC = () => {
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
 
+  const [paginationItems, setPaginationItems] = useState([] as any[]);
+
   const transactions = useSelector(
     (state: RootState) => state.transaction.clientTransaction
   );
@@ -148,22 +150,26 @@ const Transaction: React.FC = () => {
     indexOfLastTransaction
   );
 
-  const paginationItems = [];
-  for (
-    let i = 1;
-    i <= Math.ceil(mockTransactions.length / transactionsPerPage);
-    i++
-  ) {
-    paginationItems.push(
-      <Pagination.Item
-        key={i}
-        active={i === activePage}
-        onClick={() => handlePageChange(i)}
-      >
-        {i}
-      </Pagination.Item>
-    );
-  }
+  useEffect(() => {
+    const temp = [];
+    for (
+      let i = 1;
+      i <= Math.ceil(transactions.length / transactionsPerPage);
+      i++
+    ) {
+      temp.push(
+        <Pagination.Item
+          key={i}
+          active={i === activePage}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </Pagination.Item>
+      );
+    }
+
+    setPaginationItems(temp);
+  }, [transactions]);
 
   return (
     <div>
