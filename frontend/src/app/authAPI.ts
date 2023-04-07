@@ -63,6 +63,8 @@ export const fetchWallet =
 
       const request = {
         id: auth.user.id,
+
+        
       } as GetClientByIdCapiV1GetClientByIdGetRequest;
 
       const meta = {
