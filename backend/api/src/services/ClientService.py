@@ -47,8 +47,8 @@ class ClientService:
             client.phone_number = payload.phone_number
 
         if payload.profile_image:
-            image = base64.b64encode(payload.profile_image)
-            client.profile_image: image
+            image_bytes = base64.b64encode(payload.profile_image)
+            client.profile_image = image_bytes.decodeimage('utf-8')
 
         db.session.commit()
         db.session.refresh(client)
