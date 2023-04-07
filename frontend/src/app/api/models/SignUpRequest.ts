@@ -57,10 +57,10 @@ export interface SignUpRequest {
     gender?: string;
     /**
      * 
-     * @type {string}
+     * @type {Date}
      * @memberof SignUpRequest
      */
-    birthdate?: string;
+    birthdate?: Date;
     /**
      * 
      * @type {string}
@@ -105,7 +105,7 @@ export function SignUpRequestFromJSONTyped(json: any, ignoreDiscriminator: boole
         'name': json['name'],
         'isShopOwner': !exists(json, 'is_shop_owner') ? undefined : json['is_shop_owner'],
         'gender': !exists(json, 'gender') ? undefined : json['gender'],
-        'birthdate': !exists(json, 'birthdate') ? undefined : json['birthdate'],
+        'birthdate': !exists(json, 'birthdate') ? undefined : (new Date(json['birthdate'])),
         'phoneNumber': json['phone_number'],
         'faceImg': !exists(json, 'face_img') ? undefined : json['face_img'],
     };
@@ -126,7 +126,7 @@ export function SignUpRequestToJSON(value?: SignUpRequest | null): any {
         'name': value.name,
         'is_shop_owner': value.isShopOwner,
         'gender': value.gender,
-        'birthdate': value.birthdate,
+        'birthdate': value.birthdate === undefined ? undefined : (value.birthdate.toISOString()),
         'phone_number': value.phoneNumber,
         'face_img': value.faceImg,
     };

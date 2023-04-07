@@ -30,7 +30,7 @@ export interface EditClientRequest {
      * @type {string}
      * @memberof EditClientRequest
      */
-    name: string;
+    name?: string;
     /**
      * 
      * @type {string}
@@ -42,7 +42,13 @@ export interface EditClientRequest {
      * @type {string}
      * @memberof EditClientRequest
      */
-    phoneNumber: string;
+    phoneNumber?: string;
+    /**
+     * 
+     * @type {Blob}
+     * @memberof EditClientRequest
+     */
+    profileImage?: Blob;
 }
 
 /**
@@ -51,8 +57,6 @@ export interface EditClientRequest {
 export function instanceOfEditClientRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
-    isInstance = isInstance && "name" in value;
-    isInstance = isInstance && "phoneNumber" in value;
 
     return isInstance;
 }
@@ -68,9 +72,10 @@ export function EditClientRequestFromJSONTyped(json: any, ignoreDiscriminator: b
     return {
         
         'id': json['id'],
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'gender': !exists(json, 'gender') ? undefined : json['gender'],
-        'phoneNumber': json['phone_number'],
+        'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+        'profileImage': !exists(json, 'profile_image') ? undefined : json['profile_image'],
     };
 }
 
@@ -87,6 +92,7 @@ export function EditClientRequestToJSON(value?: EditClientRequest | null): any {
         'name': value.name,
         'gender': value.gender,
         'phone_number': value.phoneNumber,
+        'profile_image': value.profileImage,
     };
 }
 
