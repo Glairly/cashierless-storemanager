@@ -99,11 +99,15 @@ class AuthService:
 
         if not self.__is_valid_phone_number(signupRequest.phone_number):
             raise HTTPException(status_code=400, detail="Phone number is not valid")
+        
+        if signupRequest.profile_img is not None:
+            profile_image_bytes = base64.b64encode(signupRequest.profile_img)
+            profile_image_string = profile_image_bytes.decode("utf-8")
 
         hashed_password = self.__pwd_context.hash(signupRequest.password)
  
         wallet = ClientWallet()
-        client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet)
+        client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet, profile_image=profile_image_string)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
 
         if signupRequest.face_img is not None:
