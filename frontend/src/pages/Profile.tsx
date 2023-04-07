@@ -15,7 +15,7 @@ import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { editAuth, editClient } from "../app/authAPI";
+import { editAuth, editClient } from "../features/auth/authAPI";
 import Popup from "../components/Popup";
 import { setIdle } from "../features/auth/authSlice";
 

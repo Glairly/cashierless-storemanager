@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { register } from "../app/authAPI";
+import { register } from "../features/auth/authAPI";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { useAppDispatch, useAppSelector } from "../app/hooks";

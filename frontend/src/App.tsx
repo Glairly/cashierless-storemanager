@@ -18,6 +18,7 @@ import CheckOut from "./pages/store/CheckOut";
 import Payment from "./pages/store/Payment";
 import { RootState } from "./app/store";
 import { useSelector } from "react-redux";
+import "./App.css";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);

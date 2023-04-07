@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-import { login } from "../app/authAPI";
+import { login } from "../features/auth/authAPI";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../app/store";

@@ -5,7 +5,7 @@ import { Link, LinkProps, useNavigate } from "react-router-dom";
 import "./Navbar.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
-import { logout } from "../app/authAPI";
+import { logout } from "../features/auth/authAPI";
 
 interface item {
   NavText: string;

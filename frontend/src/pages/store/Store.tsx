@@ -2,6 +2,9 @@ import { Button, Col, Container, Row, Image } from "react-bootstrap";
 import React, { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { checkingout } from "../../features/inference/inferenceAPI";
+import { RootState } from "../../app/store";
 
 interface Data {
   shop_id: number;
@@ -13,61 +16,54 @@ const Store: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
   const [imgSrc, setImgSrc] = useState<string>("");
   let navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const inferenceResult = useSelector(
+    (state: RootState) => state.inference.inferenceResult
+  );
 
   const capture = useCallback(async () => {
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
       setImgSrc(imageSrc);
-      const request: Data = {
-        shop_id: 3,
-        shouldDetectBarcode: false,
-        file: imageSrc.split(",", 2)[1],
-      };
-
-      try {
-        const response = await fetch(
-          "http://localhost:8000/imapi/v1/inference",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(request),
-          }
-        );
-        const data = await response.json();
-        console.log("Response:", data);
-        navigate("CheckOut", {
-          state: {
-            base64: imageSrc,
-            items: data.items,
-            totalPrice: data.totalPrice,
-            totalItems: data.totalItems,
-          },
-        });
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      // const request: Data = {
+      //   shop_id: 3,
+      //   shouldDetectBarcode: false,
+      //   file: imageSrc.split(",", 2)[1],
+      // };
+      const file = imageSrc.split(",", 2)[1];
+      dispatch<any>(checkingout(file));
     }
   }, [webcamRef]);
 
   return (
-    <Container className="align-items-center p-5">
-      <div className="d-flex flex-row justify-content-center align-items-centers">
-        <div className="d-flex flex-column justify-content-center pe-5">
-          <h1>Welcome to HW-Store</h1>
-          <p>
-            Hw-store is cashierless store for your convience store experiece
-          </p>
-          <p>Place your item in the frame</p>
-          <div className="my-4 bg-primary border-bottom border-gray pb-1 w-50" />
+    <Container className="align-items-center p-5 w-100 h-100">
+      <div className="d-flex flex-row justify-content-center align-items-stretch h-100">
+        <div className="d-flex flex-column justify-content-between pe-5 flex-grow-1">
           <div>
-            <Button className="text-white w-10" onClick={capture}>
-              Capture photo
-            </Button>
+            <h1>Welcome to HW-Store</h1>
+            <p style={{ color: "gray" }}>
+              Hw-store is cashierless store for your convience store experiece
+            </p>
+          </div>
+          {JSON.stringify(inferenceResult)}
+          <div>
+            <h4 className="mt-5">Place your item in the frame</h4>
+            <div className="mb-4 bg-primary border-bottom border-gray pb-1" />
+            <div>
+              <Button
+                className="text-white w-100"
+                style={{ height: "144px", fontSize: "32px", fontWeight: 800 }}
+                onClick={capture}
+              >
+                Checking Out
+              </Button>
+            </div>
           </div>
         </div>
-        <Col className="d-flex flex-column justify-content-center">
+        <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100">
           <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
-        </Col>
+        </div>
       </div>
     </Container>
   );
