@@ -8,12 +8,19 @@ import {
   InferenceImapiV1InferencePostRequest,
   InferenceRequest,
 } from "../../app/api";
-import { setInferenceResult } from "./inferenceSlice";
+import {
+  setFailure,
+  setInferenceResult,
+  setPending,
+  setSuccess,
+} from "./inferenceSlice";
 // import { setClientTransaction } from "./transactionSlice";
 
 export const checkingout =
   (imgSrc: string): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
+    dispatch(setPending());
+
     try {
       const { inference } = getState();
 
@@ -41,5 +48,8 @@ export const checkingout =
       );
 
       dispatch(setInferenceResult(res));
-    } catch (error) {}
+      dispatch(setSuccess());
+    } catch (error) {
+      dispatch(setFailure("Error has occured please try again"));
+    }
   };

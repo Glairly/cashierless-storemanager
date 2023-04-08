@@ -1,10 +1,12 @@
 import { Button, Col, Container, Row, Image } from "react-bootstrap";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { checkingout } from "../../features/inference/inferenceAPI";
 import { RootState } from "../../app/store";
+import Popup from "../../components/Popup";
+import { setInferenceResult } from "../../features/inference/inferenceSlice";
 
 interface Data {
   shop_id: number;
@@ -18,19 +20,29 @@ const Store: React.FC = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const inferenceResult = useSelector(
-    (state: RootState) => state.inference.inferenceResult
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalStatus, setModalStatus] = useState(true);
+  const [modalBody, setModalBody] = useState("success");
+
+  const { inferenceResult, pendingStatus, isLoading, error } = useSelector(
+    (state: RootState) => state.inference
   );
 
+  useEffect(() => {
+    if (!inferenceResult) return;
+
+    if (!inferenceResult?.items.length) {
+      setShouldShowModal(true);
+      setModalStatus(false);
+      setModalBody("Item not found Please try again");
+    }
+  }, [inferenceResult]);
+
   const capture = useCallback(async () => {
+    if (isLoading) return;
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
       setImgSrc(imageSrc);
-      // const request: Data = {
-      //   shop_id: 3,
-      //   shouldDetectBarcode: false,
-      //   file: imageSrc.split(",", 2)[1],
-      // };
       const file = imageSrc.split(",", 2)[1];
       dispatch<any>(checkingout(file));
     }
@@ -47,7 +59,7 @@ const Store: React.FC = () => {
             </p>
           </div>
           <div>
-            Should have a example here
+            Should have a example here {JSON.stringify(inferenceResult)}
           </div>
           <div>
             <h4 className="mt-5">Place your item in the frame</h4>
@@ -56,9 +68,10 @@ const Store: React.FC = () => {
               <Button
                 className="text-white w-100"
                 style={{ height: "144px", fontSize: "32px", fontWeight: 800 }}
+                disabled={isLoading}
                 onClick={capture}
               >
-                Checking Out
+                {isLoading ? "Please wait" : "Checking Out"}
               </Button>
             </div>
           </div>
@@ -66,6 +79,17 @@ const Store: React.FC = () => {
         <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100">
           <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
         </div>
+
+        <Popup
+          show={shouldShowModal}
+          onHide={function (): void {
+            setShouldShowModal(false);
+            dispatch<any>(setInferenceResult(null));
+          }}
+          title={"Result"}
+          body={modalBody}
+          status={modalStatus}
+        />
       </div>
     </Container>
   );

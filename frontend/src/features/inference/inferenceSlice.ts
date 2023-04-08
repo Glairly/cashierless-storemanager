@@ -15,6 +15,9 @@ interface TransactionState {
   shop_id: number | null;
   is_barcode_enabled: boolean;
   machine_id: number | null;
+  pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
+  isLoading: boolean;
+  error: null;
 }
 
 const initialState: TransactionState = {
@@ -22,6 +25,9 @@ const initialState: TransactionState = {
   shop_id: 3,
   is_barcode_enabled: false,
   machine_id: null,
+  pendingStatus: "idle",
+  isLoading: false,
+  error: null,
 };
 
 const transactionSlice = createSlice({
@@ -40,6 +46,38 @@ const transactionSlice = createSlice({
     setMachineId(state, action) {
       state.machine_id = action.payload;
     },
+    setIdle(state) {
+      return {
+        ...state,
+        pendingStatus: "idle",
+        isLoading: false,
+        error: null,
+      };
+    },
+    setPending(state) {
+      return {
+        ...state,
+        pendingStatus: "pending",
+        isLoading: true,
+        error: null,
+      };
+    },
+    setSuccess(state) {
+      return {
+        ...state,
+        pendingStatus: "fulfilled",
+        isLoading: false,
+        error: null,
+      };
+    },
+    setFailure(state, action) {
+      return {
+        ...state,
+        pendingStatus: "rejected",
+        isLoading: false,
+        error: action.payload,
+      };
+    },
   },
 });
 
@@ -48,6 +86,10 @@ export const {
   setShopId,
   setBarcodeEnabled,
   setMachineId,
+  setPending,
+  setSuccess,
+  setFailure,
+  setIdle,
 } = transactionSlice.actions;
 
 export default transactionSlice.reducer;
