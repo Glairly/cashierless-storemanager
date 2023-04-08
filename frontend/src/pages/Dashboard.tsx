@@ -154,7 +154,7 @@ const Dashboard: React.FC = () => {
                     className="profile-img border rounded-5 my-3"
                     fluid
                     rounded
-                    src="https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg"
+                    src={user?.profile_image ? user.profile_image : "https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg"}
                   />
                   <h5 className="fw-bold mb-0">{user?.name}</h5>
                   <p>{user?.is_shop_owner ? "Shop Owner" : "Customer"}</p>
