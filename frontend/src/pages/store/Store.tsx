@@ -35,6 +35,8 @@ const Store: React.FC = () => {
       setShouldShowModal(true);
       setModalStatus(false);
       setModalBody("Item not found Please try again");
+    } else {
+      navigate("/Store/Checkout")
     }
   }, [inferenceResult]);
 
