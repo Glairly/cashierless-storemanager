@@ -70,6 +70,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
   const intervalGetTransaction = () => {
     setTimeout(async () => {
+      if (!show) return;
       if (
         res?.pending_transaction_id &&
         (await get_pending_transaction(res.pending_transaction_id.toString()))
@@ -82,9 +83,11 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   };
 
   useEffect(() => {
-    setTimeout(genQr, 2000);
-    intervalGetTransaction();
-  }, [inferenceResult]);
+    if (show) {
+      genQr();
+      intervalGetTransaction();
+    }
+  }, [show]);
 
   return (
     <Modal show={show} onHide={onHide}>
@@ -92,12 +95,15 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
       <Modal.Body>
         <div className="d-flex flex-column">
           <div className="d-flex justify-content-center">
-            {/* <h1>{data?.items[0].item_id}</h1> */}
-            <img
-              className="w-50 h-50"
-              src={"data:image/png;base64," + res?.qrcode}
-              alt=""
-            />
+            {res?.qrcode ? (
+              <img
+                className="w-50 h-50"
+                src={"data:image/png;base64," + res?.qrcode}
+                alt=""
+              />
+            ) : (
+              "Loading..."
+            )}
           </div>
           <Image
             className="mx-auto my-2"
