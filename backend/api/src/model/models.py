@@ -36,6 +36,7 @@ class Client(Base):
     phone_number = Column(String, unique=True, index=True)
     gender = Column(String, default="Male")
     birthdate = Column(Time)
+    profile_image = Column(String)
 
     auth = relationship("Auth", back_populates='client', primaryjoin="Auth.client_id == Client.id")
     wallet = relationship("ClientWallet", back_populates='owner' , primaryjoin="ClientWallet.id == Client.wallet_id")

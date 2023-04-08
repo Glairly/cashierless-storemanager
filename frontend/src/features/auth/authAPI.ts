@@ -63,6 +63,8 @@ export const fetchWallet =
 
       const request = {
         id: auth.user.id,
+
+        
       } as GetClientByIdCapiV1GetClientByIdGetRequest;
 
       const meta = {
@@ -168,7 +170,7 @@ export const editAuth =
   
 export const register = (values: any): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch) => {
-  try {
+    try {
     const request = {
       signUpRequest: {
         username: values.username,
@@ -177,9 +179,10 @@ export const register = (values: any): ThunkAction<void, RootState, null, Action
         name: values.name,
         isShopOwner: values.is_shop_owner,
         gender: values.gender,
-        birthdate: values.birth_date + "T00:00:00",
+        birthdate: new Date(values.birth_date),
         phoneNumber: values.phone_number,
-        faceImg: values.face_img == '' ? null : values.face_img
+        faceImg: values.face_img == '' ? null : values.face_img,
+        profileImg: values.profile_img == '' ? null : values.profile_img,
       } as SignUpRequest
     } as SignupCapiV1SignupPostRequest;
 
@@ -187,6 +190,7 @@ export const register = (values: any): ThunkAction<void, RootState, null, Action
       .catch(error => {
         error.response.json().then((errorBody: any) => {
           dispatch(setMessage(errorBody.detail));
+          dispatch(setFailure("Error has Occured please try again"));
         })
       });
     
@@ -208,12 +212,13 @@ export const registerShop = (values: any): ThunkAction<void, RootState, null, Ac
         name: values.name,
         isShopOwner: values.is_shop_owner,
         gender: values.gender,
-        birthdate: values.birth_date + "T00:00:00",
+        birthdate: new Date(values.birth_date),
         phoneNumber: values.phone_number,
         faceImg: values.face_img == '' ? null : values.face_img,
         shopName: values.shop_name,
         machineId: values.machine_id,
-        shopPhoneNumber: values.shop_phone_number
+        shopPhoneNumber: values.shop_phone_number,
+        profileImg: values.profile_img == '' ? null : values.profile_img,
       } as SignUpWithShopRequest
     } as SignupWithShopCapiV1SignupWithShopPostRequest;
 
@@ -221,6 +226,7 @@ export const registerShop = (values: any): ThunkAction<void, RootState, null, Ac
       .catch(error => {
         error.response.json().then((errorBody:any) => {
           dispatch(setMessage(errorBody.detail));
+          dispatch(setFailure("Error has Occured please try again"));
         })
       });
     dispatch(setMessage("Register Shop Success! Please Login."));

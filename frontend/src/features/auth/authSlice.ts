@@ -8,6 +8,7 @@ interface Client {
   birthdate: Date;
   is_shop_owner: boolean;
   wallet_id: number;
+  profile_image: string;
 }
 
 interface ClientWallet {

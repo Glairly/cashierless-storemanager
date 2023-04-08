@@ -43,6 +43,12 @@ export interface EditClientRequest {
      * @memberof EditClientRequest
      */
     phoneNumber?: string;
+    /**
+     * 
+     * @type {Blob}
+     * @memberof EditClientRequest
+     */
+    profileImage?: Blob;
 }
 
 /**
@@ -69,6 +75,7 @@ export function EditClientRequestFromJSONTyped(json: any, ignoreDiscriminator: b
         'name': !exists(json, 'name') ? undefined : json['name'],
         'gender': !exists(json, 'gender') ? undefined : json['gender'],
         'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+        'profileImage': !exists(json, 'profile_image') ? undefined : json['profile_image'],
     };
 }
 
@@ -85,6 +92,7 @@ export function EditClientRequestToJSON(value?: EditClientRequest | null): any {
         'name': value.name,
         'gender': value.gender,
         'phone_number': value.phoneNumber,
+        'profile_image': value.profileImage,
     };
 }
 

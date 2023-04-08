@@ -73,6 +73,12 @@ export interface SignUpRequest {
      * @memberof SignUpRequest
      */
     faceImg?: Blob;
+    /**
+     * 
+     * @type {Blob}
+     * @memberof SignUpRequest
+     */
+    profileImg?: Blob;
 }
 
 /**
@@ -108,6 +114,7 @@ export function SignUpRequestFromJSONTyped(json: any, ignoreDiscriminator: boole
         'birthdate': !exists(json, 'birthdate') ? undefined : (new Date(json['birthdate'])),
         'phoneNumber': json['phone_number'],
         'faceImg': !exists(json, 'face_img') ? undefined : json['face_img'],
+        'profileImg': !exists(json, 'profile_img') ? undefined : json['profile_img'],
     };
 }
 
@@ -129,6 +136,7 @@ export function SignUpRequestToJSON(value?: SignUpRequest | null): any {
         'birthdate': value.birthdate === undefined ? undefined : (value.birthdate.toISOString()),
         'phone_number': value.phoneNumber,
         'face_img': value.faceImg,
+        'profile_img': value.profileImg,
     };
 }
 
