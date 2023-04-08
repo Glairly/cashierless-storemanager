@@ -170,7 +170,7 @@ export const editAuth =
   
 export const register = (values: any): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch) => {
-  try {
+    try {
     const request = {
       signUpRequest: {
         username: values.username,
@@ -179,9 +179,10 @@ export const register = (values: any): ThunkAction<void, RootState, null, Action
         name: values.name,
         isShopOwner: values.is_shop_owner,
         gender: values.gender,
-        birthdate: values.birth_date + "T00:00:00",
+        birthdate: new Date(values.birth_date),
         phoneNumber: values.phone_number,
-        faceImg: values.face_img == '' ? null : values.face_img
+        faceImg: values.face_img == '' ? null : values.face_img,
+        profileImg: values.profile_img == '' ? null : values.profile_img,
       } as SignUpRequest
     } as SignupCapiV1SignupPostRequest;
 
@@ -211,7 +212,7 @@ export const registerShop = (values: any): ThunkAction<void, RootState, null, Ac
         name: values.name,
         isShopOwner: values.is_shop_owner,
         gender: values.gender,
-        birthdate: values.birth_date + "T00:00:00",
+        birthdate: new Date(values.birth_date),
         phoneNumber: values.phone_number,
         faceImg: values.face_img == '' ? null : values.face_img,
         shopName: values.shop_name,
