@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button, Modal, Image } from "react-bootstrap";
 import { RootState } from "../../app/store";
-import { Item } from "../../features/inference/inferenceSlice";
+import {
+  Item,
+  setInferenceResult,
+} from "../../features/inference/inferenceSlice";
 import { useSelector } from "react-redux";
 
 import PrompyPayLogo from "../../assets/prompt-pay-logo.png";
+import CheckMarked from "../../components/svgs/CheckMarked";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 interface QRCodePopupProps {
   show: boolean;
@@ -18,6 +24,10 @@ interface qrProp {
 
 const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const [res, setRes] = useState<qrProp>();
+  const [isTransactionComplete, setTransactionComplete] = useState(false);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { inferenceResult, shop_id, pendingStatus, isLoading, error } =
     useSelector((state: RootState) => state.inference);
@@ -32,6 +42,8 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const genQr = async () => {
     if (!inferenceResult) return;
     if (!shop_id) return;
+
+    setTransactionComplete(false);
 
     const request = {
       client_id: 0,
@@ -50,7 +62,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
         }
       );
       const data = await response.json();
-      setRes(data);
+      setRes({ ...data } as qrProp);
     } catch (error) {}
   };
 
@@ -68,14 +80,19 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
     return false;
   };
 
-  const intervalGetTransaction = () => {
-    setTimeout(async () => {
+  const intervalGetTransaction = function () {
+    setTimeout(async function () {
       if (!show) return;
       if (
         res?.pending_transaction_id &&
         (await get_pending_transaction(res.pending_transaction_id.toString()))
       ) {
-        alert("Transaction Complete Proceed to something");
+        setTransactionComplete(true);
+
+        setTimeout(() => {
+          dispatch<any>(setInferenceResult(null));
+          navigate("/store");
+        }, 5000);
       } else {
         intervalGetTransaction();
       }
@@ -85,32 +102,42 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   useEffect(() => {
     if (show) {
       genQr();
-      intervalGetTransaction();
     }
   }, [show]);
+
+  useEffect(() => {
+    intervalGetTransaction();
+  }, [res]);
 
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>Scan Here</Modal.Header>
       <Modal.Body>
-        <div className="d-flex flex-column">
-          <div className="d-flex justify-content-center">
+        {!isTransactionComplete ? (
+          <div className="d-flex flex-column align-items-center  justify-content-center">
             {res?.qrcode ? (
-              <img
-                className="w-50 h-50"
-                src={"data:image/png;base64," + res?.qrcode}
-                alt=""
-              />
+              <>
+                <img
+                  className="w-50 h-50"
+                  src={"data:image/png;base64," + res?.qrcode}
+                  alt=""
+                />
+              </>
             ) : (
               "Loading..."
             )}
+            <Image
+              className="mx-auto my-2"
+              style={{ width: 100 }}
+              src={PrompyPayLogo}
+            />
           </div>
-          <Image
-            className="mx-auto my-2"
-            style={{ width: 100 }}
-            src={PrompyPayLogo}
-          />
-        </div>
+        ) : (
+          <div className="d-flex flex-column justify-content-center align-items-center">
+            <CheckMarked />
+            <p>Transaction Complated</p>
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
