@@ -75,6 +75,12 @@ export interface SignUpWithShopRequest {
     faceImg?: Blob;
     /**
      * 
+     * @type {Blob}
+     * @memberof SignUpWithShopRequest
+     */
+    profileImg?: Blob;
+    /**
+     * 
      * @type {string}
      * @memberof SignUpWithShopRequest
      */
@@ -129,6 +135,7 @@ export function SignUpWithShopRequestFromJSONTyped(json: any, ignoreDiscriminato
         'birthdate': !exists(json, 'birthdate') ? undefined : (new Date(json['birthdate'])),
         'phoneNumber': json['phone_number'],
         'faceImg': !exists(json, 'face_img') ? undefined : json['face_img'],
+        'profileImg': !exists(json, 'profile_img') ? undefined : json['profile_img'],
         'shopName': json['shop_name'],
         'machineId': json['machine_id'],
         'shopPhoneNumber': json['shop_phone_number'],
@@ -153,6 +160,7 @@ export function SignUpWithShopRequestToJSON(value?: SignUpWithShopRequest | null
         'birthdate': value.birthdate === undefined ? undefined : (value.birthdate.toISOString()),
         'phone_number': value.phoneNumber,
         'face_img': value.faceImg,
+        'profile_img': value.profileImg,
         'shop_name': value.shopName,
         'machine_id': value.machineId,
         'shop_phone_number': value.shopPhoneNumber,

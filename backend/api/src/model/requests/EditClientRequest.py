@@ -6,4 +6,4 @@ class EditClientRequest(BaseModel):
   gender: str = ""
   # birthdate: datetime = None
   phone_number: str = ""
-  profile_image: bytes = None
+  profile_image: str = ""

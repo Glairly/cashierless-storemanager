@@ -11,7 +11,7 @@ class SignUpRequest(BaseModel):
       birthdate: datetime.datetime = None
       phone_number: str
       face_img : bytes = None # base64 encoded string
-      profile_img: bytes = None # base64 encoded string
+      profile_img: str = ""
 
 class SignUpWithShopRequest(SignUpRequest):
       shop_name: str
