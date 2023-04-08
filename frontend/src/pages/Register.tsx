@@ -23,10 +23,20 @@ interface RegisterValues {
   birth_date: string;
   phone_number: string;
   face_img: string | null;
+  profile_img: string | null;
 }
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+const MAX_FILE_SIZE: number = 102400; //100KB
+
+const validFileExtensions: { [key: string]: string[] } = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
+
+function isValidFileType(fileName: string, fileType: string): boolean {
+  return validFileExtensions[fileType].indexOf(fileName.split('.').pop()!) > -1;
+}
+
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .min(4, "* Username is too short!")
@@ -50,6 +60,17 @@ const SignupSchema = Yup.object().shape({
     phoneRegExp,
     "* Phone number is not valid"
   ),
+  profile_img: Yup.mixed()
+    .test('fileFormat', 'Only JPEG, JPG and PNG files are allowed',
+      (value) => {
+        const formats: string[] = ["jpg", "png", "jpeg"];
+        let result: boolean = false;
+        formats.forEach((format) => {
+          if ((value as String).includes(format))
+            result = true;
+        })
+        return result;
+      })
 });
 
 const renderForm: React.FC = (props) => {
@@ -208,6 +229,34 @@ const renderForm: React.FC = (props) => {
                 {(msg) => <small style={{ color: "red" }}>{msg}</small>}
               </ErrorMessage>
             </BootstrapForm.Group>
+
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Profile Picture</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="file"
+                accept="image/"
+                name="profile_img"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (event.currentTarget.files) {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(event.currentTarget.files[0]);
+                    if (reader != null) {
+                      reader.onload = () => {
+                        setFieldValue("profile_img", reader.result)
+                      }
+                      reader.onerror = (error) => {
+                        console.log("Error: " + error);
+                      }
+                    }
+                  }
+                }}
+                onBlur={handleBlur}
+                placeholder="Expected to be in jpeg and png format"
+              />
+              <ErrorMessage name="profile_img">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
             <Button type="submit" variant="primary" className="text-white w-100">
               Submit
             </Button>
@@ -238,6 +287,7 @@ const Register: React.FC = () => {
     birth_date: "",
     phone_number: "",
     face_img: null,
+    profile_img: null,
   };
 
   return (
