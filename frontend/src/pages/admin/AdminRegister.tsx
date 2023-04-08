@@ -68,6 +68,17 @@ const SignupSchema = Yup.object().shape({
     phoneRegExp,
     "* Shop phone number is not valid"
   ),
+  profile_img: Yup.mixed()
+    .test('fileFormat', 'Only JPEG, JPG and PNG files are allowed',
+      (value) => {
+        const formats: string[] = ["jpg", "png", "jpeg"];
+        let result: boolean = false;
+        formats.forEach((format) => {
+          if ((value as String).includes(format))
+            result = true;
+        })
+        return result;
+      })
 });
 
 const renderForm: React.FC = (initialValues) => {
@@ -247,6 +258,34 @@ const renderForm: React.FC = (initialValues) => {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
+            </BootstrapForm.Group>
+
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Profile Picture</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="file"
+                accept="image/"
+                name="profile_img"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (event.currentTarget.files) {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(event.currentTarget.files[0]);
+                    if (reader != null) {
+                      reader.onload = () => {
+                        setFieldValue("profile_img", reader.result)
+                      }
+                      reader.onerror = (error) => {
+                        console.log("Error: " + error);
+                      }
+                    }
+                  }
+                }}
+                onBlur={handleBlur}
+                placeholder="Expected to be in jpeg and png format"
+              />
+              <ErrorMessage name="profile_img">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
             </BootstrapForm.Group>
             <Button type="submit" variant="primary" className="text-white w-100">
               Submit

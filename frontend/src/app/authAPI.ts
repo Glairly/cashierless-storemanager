@@ -217,7 +217,8 @@ export const registerShop = (values: any): ThunkAction<void, RootState, null, Ac
         faceImg: values.face_img == '' ? null : values.face_img,
         shopName: values.shop_name,
         machineId: values.machine_id,
-        shopPhoneNumber: values.shop_phone_number
+        shopPhoneNumber: values.shop_phone_number,
+        profileImg: values.profile_img == '' ? null : values.profile_img,
       } as SignUpWithShopRequest
     } as SignupWithShopCapiV1SignupWithShopPostRequest;
 
