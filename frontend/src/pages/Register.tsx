@@ -1,4 +1,4 @@
-import { Button, Card, Col, Container, Image, Row, Form as BootstrapForm, Modal } from "react-bootstrap";
+import { Button, Card, Col, Container, Image, Row, Form as BootstrapForm, Dropdown } from "react-bootstrap";
 import * as Navbar from "../components/Navbar";
 import ShoppingMan from "../assets/shopping_man.png";
 import { BsFillBasket2Fill } from "react-icons/bs";
@@ -10,8 +10,8 @@ import { useDispatch } from "react-redux";
 import { register } from "../app/authAPI";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Popup from "../components/Popup";
 
 interface RegisterValues {
   username: string;
@@ -19,14 +19,24 @@ interface RegisterValues {
   email: string;
   name: string;
   is_shop_owner: boolean;
-  gender: "Male" | "Female";
+  gender: string;
   birth_date: string;
   phone_number: string;
   face_img: string | null;
+  profile_img: string | null;
 }
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+const MAX_FILE_SIZE: number = 102400; //100KB
+
+const validFileExtensions: { [key: string]: string[] } = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
+
+function isValidFileType(fileName: string, fileType: string): boolean {
+  return validFileExtensions[fileType].indexOf(fileName.split('.').pop()!) > -1;
+}
+
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
     .min(4, "* Username is too short!")
@@ -36,6 +46,8 @@ const SignupSchema = Yup.object().shape({
     .min(6, "* Password is too short!")
     .max(20, "* Password is too long!")
     .required("* Required"),
+  confirm_password: Yup.string()
+    .oneOf([Yup.ref('password'), undefined], 'Passwords must match'),
   email: Yup.string().email("* Invalid email").required("* Required"),
   name: Yup.string()
     .min(4, "* Name is too short!")
@@ -48,20 +60,52 @@ const SignupSchema = Yup.object().shape({
     phoneRegExp,
     "* Phone number is not valid"
   ),
+  profile_img: Yup.mixed()
+    .test('fileFormat', 'Only JPEG, JPG and PNG files are allowed',
+      (value) => {
+        const formats: string[] = ["jpg", "png", "jpeg"];
+        let result: boolean = false;
+        formats.forEach((format) => {
+          if ((value as String).includes(format))
+            result = true;
+        })
+        return result;
+      })
 });
 
 const renderForm: React.FC = (props) => {
   const { ...initialValues } = props;
   const dispatch = useDispatch();
   const msg = useSelector((state: RootState) => state.auth.msg);
+  const { pendingStatus } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const genderOptions = ["Male", "Female", "Non-binary", "Other"];
 
-  const [showAlert, setShowAlert] = useState(false);
-  const handleCloseAlert = () => setShowAlert(false);
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalStatus, setModalStatus] = useState(true);
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleSubmit = async (values: any) => {
     await dispatch<any>(register(values));
-    setShowAlert(true);
+    setShouldShowModal(true);
   };
+
+  useEffect(() => {
+    switch (pendingStatus) {
+      case "pending":
+        setShouldShowModal(false);
+        break;
+      case "fulfilled":
+        setShouldShowModal(true);
+        setModalStatus(true);
+        break;
+      case "rejected":
+        setShouldShowModal(true);
+        setModalStatus(false);
+        break;
+    }
+  }, [pendingStatus]);
 
   return (
     <div>
@@ -70,7 +114,7 @@ const renderForm: React.FC = (props) => {
         validationSchema={SignupSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur }) => (
+        {({ handleChange, handleBlur, setFieldValue }) => (
           <Form>
             <BootstrapForm.Group className="my-3">
               <BootstrapForm.Label>Username</BootstrapForm.Label>
@@ -94,6 +138,18 @@ const renderForm: React.FC = (props) => {
                 onBlur={handleBlur}
               />
               <ErrorMessage name="password">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Confirm Password</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="password"
+                name="confirm_password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <ErrorMessage name="confirm_password">
                 {(msg) => <small style={{ color: "red" }}>{msg}</small>}
               </ErrorMessage>
             </BootstrapForm.Group>
@@ -151,9 +207,53 @@ const renderForm: React.FC = (props) => {
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
               <BootstrapForm.Label>Gender</BootstrapForm.Label>
-              <BootstrapForm.Check type="radio" label="Male" name="gender" id="male" defaultChecked={true} />
-              <BootstrapForm.Check type="radio" label="Female" name="gender" id="female" />
+              <Dropdown className="border rounded-2">
+                <Dropdown.Toggle variant="secondary" id="gender" className="form-control">
+                  {selectedOption || "Select an option"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="form-control">
+                  {genderOptions.map((option) => (
+                    <Dropdown.Item
+                      key={option}
+                      onClick={() => {
+                        setFieldValue("gender", option);
+                        setSelectedOption(option)
+                      }}
+                    >
+                      {option}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
               <ErrorMessage name="gender">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>Profile Picture</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="file"
+                accept="image/"
+                name="profile_img"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (event.currentTarget.files) {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(event.currentTarget.files[0]);
+                    if (reader != null) {
+                      reader.onload = () => {
+                        setFieldValue("profile_img", reader.result)
+                      }
+                      reader.onerror = (error) => {
+                        console.log("Error: " + error);
+                      }
+                    }
+                  }
+                }}
+                onBlur={handleBlur}
+                placeholder="Expected to be in jpeg and png format"
+              />
+              <ErrorMessage name="profile_img">
                 {(msg) => <small style={{ color: "red" }}>{msg}</small>}
               </ErrorMessage>
             </BootstrapForm.Group>
@@ -163,19 +263,15 @@ const renderForm: React.FC = (props) => {
           </Form>
         )}
       </Formik>
-      <Modal show={showAlert} onHide={handleCloseAlert}>
-        <Modal.Header closeButton>
-          <Modal.Title>Notify</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {msg}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" className="text-white" onClick={handleCloseAlert}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <Popup
+        show={shouldShowModal}
+        title="Notify"
+        body={msg || ""}
+        status={modalStatus}
+        onHide={() => {
+          setShouldShowModal(false);
+        }}
+      />
     </div>
   );
 };
@@ -191,6 +287,7 @@ const Register: React.FC = () => {
     birth_date: "",
     phone_number: "",
     face_img: null,
+    profile_img: null,
   };
 
   return (

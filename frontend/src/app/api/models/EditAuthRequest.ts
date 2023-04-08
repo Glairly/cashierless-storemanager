@@ -36,19 +36,19 @@ export interface EditAuthRequest {
      * @type {string}
      * @memberof EditAuthRequest
      */
-    password: string;
+    password?: string;
     /**
      * 
      * @type {string}
      * @memberof EditAuthRequest
      */
-    confirmPassword: string;
+    confirmPassword?: string;
     /**
      * 
      * @type {string}
      * @memberof EditAuthRequest
      */
-    email: string;
+    email?: string;
 }
 
 /**
@@ -58,9 +58,6 @@ export function instanceOfEditAuthRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
     isInstance = isInstance && "username" in value;
-    isInstance = isInstance && "password" in value;
-    isInstance = isInstance && "confirmPassword" in value;
-    isInstance = isInstance && "email" in value;
 
     return isInstance;
 }
@@ -77,9 +74,9 @@ export function EditAuthRequestFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'id': json['id'],
         'username': json['username'],
-        'password': json['password'],
-        'confirmPassword': json['confirm_password'],
-        'email': json['email'],
+        'password': !exists(json, 'password') ? undefined : json['password'],
+        'confirmPassword': !exists(json, 'confirm_password') ? undefined : json['confirm_password'],
+        'email': !exists(json, 'email') ? undefined : json['email'],
     };
 }
 

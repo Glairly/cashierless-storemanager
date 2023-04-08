@@ -3,6 +3,7 @@ from ..model.models import *
 from fastapi_sqlalchemy import db
 
 from ..model.requests.EditClientRequest import *
+from ..libs.Utils import *
 
 from sqlalchemy.orm import subqueryload
 
@@ -44,6 +45,10 @@ class ClientService:
 
         if payload.phone_number:
             client.phone_number = payload.phone_number
+
+        if payload.profile_image:
+            image_bytes = base64.b64encode(payload.profile_image)
+            client.profile_image = image_bytes.decodeimage('utf-8')
 
         db.session.commit()
         db.session.refresh(client)
