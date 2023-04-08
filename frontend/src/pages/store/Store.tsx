@@ -7,6 +7,7 @@ import { checkingout } from "../../features/inference/inferenceAPI";
 import { RootState } from "../../app/store";
 import Popup from "../../components/Popup";
 import { setInferenceResult } from "../../features/inference/inferenceSlice";
+import { EmptyNavbar } from "../../components/Navbar";
 
 interface Data {
   shop_id: number;
@@ -36,7 +37,11 @@ const Store: React.FC = () => {
       setModalStatus(false);
       setModalBody("Item not found Please try again");
     } else {
-      navigate("/Store/Checkout")
+      navigate("/Store/Checkout", {
+        state: {
+          base64: imgSrc,
+        },
+      });
     }
   }, [inferenceResult]);
 
@@ -60,9 +65,7 @@ const Store: React.FC = () => {
               HW-store is cashierless store for your convience store experiece
             </p>
           </div>
-          <div>
-            Should have a example here {JSON.stringify(inferenceResult)}
-          </div>
+          <div>Should have a example here</div>
           <div>
             <h4 className="mt-5">Place your item in the frame</h4>
             <div className="mb-4 bg-primary border-bottom border-gray pb-1"></div>

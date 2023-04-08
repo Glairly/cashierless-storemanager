@@ -8,9 +8,6 @@ export interface Item {
 
 export interface CheckOutProps {
   base64: string;
-  items: Item[];
-  totalPrice: number;
-  totalItems: number;
 }
 
 export interface Pay {
