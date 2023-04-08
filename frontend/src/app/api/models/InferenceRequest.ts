@@ -33,10 +33,10 @@ export interface InferenceRequest {
     shouldDetectBarcode?: boolean;
     /**
      * 
-     * @type {Blob}
+     * @type {string}
      * @memberof InferenceRequest
      */
-    file: Blob;
+    file: string;
 }
 
 /**

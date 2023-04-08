@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Button, Modal, Image } from "react-bootstrap";
 import { RootState } from "../../app/store";
 import { Item } from "../../features/inference/inferenceSlice";
+import { useSelector } from "react-redux";
+
+import PrompyPayLogo from "../../assets/prompt-pay-logo.png";
+
+interface QRCodePopupProps {
+  show: boolean;
+  onHide: () => void;
+}
 
 interface qrProp {
   qrcode: string;
   pending_transaction_id: number;
 }
 
-const Payment: React.FC = () => {
+const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const [res, setRes] = useState<qrProp>();
 
   const { inferenceResult, shop_id, pendingStatus, isLoading, error } =
@@ -56,8 +63,7 @@ const Payment: React.FC = () => {
       if (data.status == "Complete") {
         return true;
       }
-    } catch (error) {
-    }
+    } catch (error) {}
 
     return false;
   };
@@ -79,19 +85,34 @@ const Payment: React.FC = () => {
     setTimeout(genQr, 2000);
     intervalGetTransaction();
   }, [inferenceResult]);
+
   return (
-    <div className="d-flex flex-column">
-      <div className="d-flex justify-content-center">
-        {/* <h1>{data?.items[0].item_id}</h1> */}
-        <img
-          className="w-50 h-50"
-          src={"data:image/png;base64," + res?.qrcode}
-          alt=""
-        />
-      </div>
-      <p className="text-center">Please scan here!</p>
-    </div>
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>Scan Here</Modal.Header>
+      <Modal.Body>
+        <div className="d-flex flex-column">
+          <div className="d-flex justify-content-center">
+            {/* <h1>{data?.items[0].item_id}</h1> */}
+            <img
+              className="w-50 h-50"
+              src={"data:image/png;base64," + res?.qrcode}
+              alt=""
+            />
+          </div>
+          <Image
+            className="mx-auto my-2"
+            style={{ width: 100 }}
+            src={PrompyPayLogo}
+          />
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 
-export default Payment;
+export default QRCodePopup;

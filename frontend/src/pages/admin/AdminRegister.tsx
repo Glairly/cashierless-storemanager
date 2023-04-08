@@ -14,7 +14,7 @@ import { BsFillBasket2Fill } from "react-icons/bs";
 import "./AdminRegister.scss";
 import { Formik, ErrorMessage, Form } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { registerShop } from "../../app/authAPI";
+import { registerShop } from "../../features/auth/authAPI";
 import * as Yup from "yup";
 import { RootState } from "../../app/store";
 import { useEffect, useState } from "react";

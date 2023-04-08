@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 import * as Navbar from "../components/Navbar";
+import { RootState } from "../app/store";
+import { useSelector } from "react-redux";
 
 interface TransactionProps {
   id: number;
@@ -131,6 +133,12 @@ const Transaction: React.FC = () => {
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
 
+  const [paginationItems, setPaginationItems] = useState([] as any[]);
+
+  const transactions = useSelector(
+    (state: RootState) => state.transaction.clientTransaction
+  );
+
   const handlePageChange = (page: number) => {
     setActivePage(page);
   };
@@ -142,22 +150,26 @@ const Transaction: React.FC = () => {
     indexOfLastTransaction
   );
 
-  const paginationItems = [];
-  for (
-    let i = 1;
-    i <= Math.ceil(mockTransactions.length / transactionsPerPage);
-    i++
-  ) {
-    paginationItems.push(
-      <Pagination.Item
-        key={i}
-        active={i === activePage}
-        onClick={() => handlePageChange(i)}
-      >
-        {i}
-      </Pagination.Item>
-    );
-  }
+  useEffect(() => {
+    const temp = [];
+    for (
+      let i = 1;
+      i <= Math.ceil(transactions.length / transactionsPerPage);
+      i++
+    ) {
+      temp.push(
+        <Pagination.Item
+          key={i}
+          active={i === activePage}
+          onClick={() => handlePageChange(i)}
+        >
+          {i}
+        </Pagination.Item>
+      );
+    }
+
+    setPaginationItems(temp);
+  }, [transactions]);
 
   return (
     <div>
@@ -189,19 +201,26 @@ const Transaction: React.FC = () => {
               <th>Timestamp</th>
               <th>Product</th>
               <th>Price</th>
-              <th>Transaction Status</th>
+              <th>Total items</th>
               <th>Delete</th>
             </tr>
           </thead>
           <tbody>
-            {currentTransactions.map((transaction) => (
-              <tr key={transaction.id} className="text-center">
+            {transactions.map((transaction) => (
+              <tr key={transaction.id} className="text-center ">
                 <td>{transaction.id}</td>
-                <td>{transaction.store}</td>
-                <td>{transaction.timestamp.toLocaleString()}</td>
-                <td>{transaction.product}</td>
-                <td>{transaction.price + " B"}</td>
-                <td>{transaction.status}</td>
+                <td>{transaction.shop_id}</td>
+                <td>{transaction?.date?.toLocaleString() || "Unknown date"}</td>
+                <td>
+                  {transaction.transaction_items.map((x) => (
+                    <>
+                      {x.item_id} x {x.quantity}
+                      <br />
+                    </>
+                  ))}
+                </td>
+                <td>{transaction.total_price + " ฿"}</td>
+                <td>{transaction.total_items}</td>
                 <td>
                   <Button className="text-white">
                     <BsFillTrashFill />
