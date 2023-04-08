@@ -15,22 +15,21 @@ export const checkingout =
   (imgSrc: string): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
     try {
-      const { auth } = getState();
+      const { inference } = getState();
 
-      if (!auth.user?.id) return false;
+      if (!inference?.shop_id) return false;
 
       const request = {
         inferenceRequest: {
-          shopId: 0,
-          shouldDetectBarcode: false,
-          // file: new Blob([imgSrc]),
+          shopId: inference.shop_id,
+          shouldDetectBarcode: inference.is_barcode_enabled,
           file: imgSrc,
         } as InferenceRequest,
       } as InferenceImapiV1InferencePostRequest;
 
       const meta = {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          // Authorization: `Bearer ${auth.token}`,
           accept: "application/json",
           "Content-Type": "application/json",
         },

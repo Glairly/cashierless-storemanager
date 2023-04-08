@@ -11,21 +11,23 @@
 
 /* make the customizations */
 
-$primary: #6DB0FF;
-$theme-colors: ( "primary": $primary,
-// "secondary": $secondary,
-// "success": $success,
-// "info": $info,
-// "warning": $warning,
-// "danger": $danger,
-// "light": $light,
-// "dark": $dark
+$primary: #6db0ff;
+$success: #7ac142;
+$danger: #ae3b2a;
+$theme-colors: (
+  "primary": $primary,
+  // "secondary": $secondary,
+  "success": $success,
+  // "info": $info,
+  // "warning": $warning,
+  "danger": $danger,
+  // "light": $light,
+  // "dark": $dark,
 );
 body {
-    font-family: "Poppins" !important;
-    min-height: 100vh;
+  font-family: "Poppins" !important;
+  min-height: 100vh;
 }
-
 
 /* import bootstrap to set changes */
 

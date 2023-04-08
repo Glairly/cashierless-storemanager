@@ -38,7 +38,7 @@ const initialState: AuthState = {
   user: null,
   wallet: null,
   auth: null,
-  pendingStatus: null,
+  pendingStatus: "idle",
   isLoading: false,
   error: null,
   msg: null,

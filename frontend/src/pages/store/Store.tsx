@@ -43,13 +43,15 @@ const Store: React.FC = () => {
           <div>
             <h1>Welcome to HW-Store</h1>
             <p style={{ color: "gray" }}>
-              Hw-store is cashierless store for your convience store experiece
+              HW-store is cashierless store for your convience store experiece
             </p>
           </div>
-          {JSON.stringify(inferenceResult)}
+          <div>
+            Should have a example here
+          </div>
           <div>
             <h4 className="mt-5">Place your item in the frame</h4>
-            <div className="mb-4 bg-primary border-bottom border-gray pb-1" />
+            <div className="mb-4 bg-primary border-bottom border-gray pb-1"></div>
             <div>
               <Button
                 className="text-white w-100"
