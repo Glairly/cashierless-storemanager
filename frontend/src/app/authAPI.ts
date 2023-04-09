@@ -85,7 +85,8 @@ export const editClient =
   (
     fullname: string,
     phone_number: string,
-    gender: string
+    gender: string,
+    profile_image: string,
   ): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
     dispatch(setPending());
@@ -101,6 +102,7 @@ export const editClient =
           name: fullname,
           phoneNumber: phone_number,
           gender: gender,
+          profileImage: profile_image
         } as EditClientRequest,
       } as EditClientCapiV1EditClientPostRequest;
 

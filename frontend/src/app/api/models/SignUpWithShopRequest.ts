@@ -75,10 +75,10 @@ export interface SignUpWithShopRequest {
     faceImg?: Blob;
     /**
      * 
-     * @type {Blob}
+     * @type {string}
      * @memberof SignUpWithShopRequest
      */
-    profileImg?: Blob;
+    profileImg?: string;
     /**
      * 
      * @type {string}

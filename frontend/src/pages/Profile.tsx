@@ -19,12 +19,10 @@ import { editAuth, editClient } from "../app/authAPI";
 import { useNavigate } from "react-router-dom";
 import Popup from "../components/Popup";
 
-const initialValues = {
-  email: "",
-  password: "",
-  confirmpassword: "",
-  photo:
-    "https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg",
+const initialValuesProfile = {
+  name: "",
+  gender: "",
+  profile_image: ""
 };
 
 const initialValues2 = {
@@ -50,6 +48,7 @@ const Profile: React.FC = () => {
 
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [modalStatus, setModalStatus] = useState(true);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const genderOptions = ["Male", "Female", "Non-binary", "Other"];
 
@@ -79,7 +78,9 @@ const Profile: React.FC = () => {
   const handleSubmitPersonalInfo = async (values: any) => {
     if (isLoading) return;
     const { fullname, phone, gender } = values;
-    dispatch<any>(editClient(fullname, phone, gender));
+    let { profile_image } = values;
+    if (profile_image == "") profile_image = user?.profile_image && "";
+    dispatch<any>(editClient(fullname, phone, gender, profile_image));
   };
 
   const handleSubmitAccountInfo = async (values: any) => {
@@ -107,142 +108,169 @@ const Profile: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <Row className="d-flex justify-content-center mt-4">
-                  <Col lg={4} className="d-flex flex-column align-items-center">
-                    <p className="mt-4 mb-2">Photo</p>
-                    <Image
-                      className="profile-img rounded-5"
-                      fluid
-                      rounded
-                      src={initialValues.photo}
-                    />
-                    <Button className="text-white mt-3">Change</Button>
-                  </Col>
-                  <Col lg={8}>
-                    <Formik
-                      initialValues={initialValues}
-                      validationSchema={validationSchema}
-                      onSubmit={handleSubmitPersonalInfo}
-                      className="mt-4"
-                    >
-                      {({ handleChange, handleBlur }) => (
-                        <Form>
-                          <div className="mt-4 mb-4">
-                            <h3 className="">Personal Info</h3>
-                            <hr className="my-2"></hr>
-                          </div>
-                          <BootstrapForm.Group className="mb-2">
-                            <BootstrapForm.Label>Full Name</BootstrapForm.Label>
-                            <BootstrapForm.Control
-                              type="text"
-                              name="fullname"
-                              placeholder="Full Name"
-                              defaultValue={user?.name}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </BootstrapForm.Group>
+                <Formik
+                  initialValues={initialValuesProfile}
+                  validationSchema={validationSchema}
+                  onSubmit={handleSubmitPersonalInfo}
+                  className="mt-4"
+                >
+                  {({ handleChange, handleBlur, setFieldValue }) => (
+                    <Form>
+                      <div className="mt-4">
+                        <h3 className="">Personal Info</h3>
+                        <hr className="my-2"></hr>
+                      </div>
+                      <BootstrapForm.Group className="mb-2">
+                        <div className="d-flex flex-column justify-content-center align-items-center">
+                          <p className="mt-4 mb-2">Photo</p>
+                          <Image
+                            className="profile-img rounded-5"
+                            rounded
+                            src={profileImage ? profileImage : user?.profile_image}
+                          />
+                          <input
+                            type="file"
+                            id="profile_image"
+                            accept=".jpeg,.png,.jpg"
+                            className="d-none"
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                              if (event.currentTarget.files) {
+                                var reader = new FileReader();
+                                reader.readAsDataURL(event.currentTarget.files[0]);
+                                if (reader != null) {
+                                  reader.onload = () => {
+                                    const decoder = new TextDecoder();
+                                    setFieldValue("profile_image", reader.result);
+                                    if (typeof (reader.result) === "string") {
+                                      setProfileImage(reader.result)
+                                    }
+                                  }
+                                  reader.onerror = (error) => {
+                                    console.log("Error: " + error);
+                                  }
+                                }
+                              }
+                            }}
+                          />
+                          <label
+                            htmlFor="profile_image"
+                            className="btn btn-primary text-white my-3"
+                          >
+                            Change Picture
+                          </label>
+                        </div>
+                      </BootstrapForm.Group>
 
-                          <BootstrapForm.Group className="mb-2">
-                            <BootstrapForm.Label>Gender</BootstrapForm.Label>
-                            <Field
-                              as="select"
-                              name="gender"
-                              className="form-control"
-                              defaultValue={user?.gender}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            >
-                              <option value="">Not specified</option>
-                              {genderOptions.map((gender) => (
-                                <option key={gender} value={gender}>
-                                  {gender}
-                                </option>
-                              ))}
-                            </Field>
-                          </BootstrapForm.Group>
+                      <BootstrapForm.Group className="mb-2">
+                        <BootstrapForm.Label>Full Name</BootstrapForm.Label>
+                        <BootstrapForm.Control
+                          type="text"
+                          name="fullname"
+                          placeholder="Full Name"
+                          defaultValue={user?.name}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </BootstrapForm.Group>
 
-                          <BootstrapForm.Group className="mb-2">
-                            <BootstrapForm.Label>
-                              Phone Number
-                            </BootstrapForm.Label>
-                            <BootstrapForm.Control
-                              type="tel"
-                              name="phone"
-                              defaultValue={user?.phone_number}
-                              placeholder="Enter your phone number"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </BootstrapForm.Group>
+                      <BootstrapForm.Group className="mb-2">
+                        <BootstrapForm.Label>Gender</BootstrapForm.Label>
+                        <Field
+                          as="select"
+                          name="gender"
+                          className="form-control"
+                          defaultValue={user?.gender}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        >
+                          <option value="">Not specified</option>
+                          {genderOptions.map((gender) => (
+                            <option key={gender} value={gender}>
+                              {gender}
+                            </option>
+                          ))}
+                        </Field>
+                      </BootstrapForm.Group>
 
-                          <div className="d-flex justify-content-end align-items-center mt-4">
-                            <Button type="submit" className="text-white">
-                              {isLoading ? "Pending" : "Save"}
-                            </Button>
-                          </div>
-                        </Form>
-                      )}
-                    </Formik>
+                      <BootstrapForm.Group className="mb-2">
+                        <BootstrapForm.Label>
+                          Phone Number
+                        </BootstrapForm.Label>
+                        <BootstrapForm.Control
+                          type="tel"
+                          name="phone"
+                          defaultValue={user?.phone_number}
+                          placeholder="Enter your phone number"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </BootstrapForm.Group>
 
-                    <Formik
-                      initialValues={initialValues2}
-                      validationSchema={validationSchema2}
-                      onSubmit={handleSubmitAccountInfo}
-                      className="mt-4"
-                    >
-                      {({ handleChange, handleBlur }) => (
-                        <Form>
-                          <div className="mt-4 mb-4">
-                            <h3 className="">Account Info</h3>
-                            <hr className="my-2"></hr>
-                          </div>
+                      <div className="d-flex justify-content-end align-items-center mt-4">
+                        <Button type="submit" className="text-white">
+                          {isLoading ? "Pending" : "Save"}
+                        </Button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
 
-                          <BootstrapForm.Group className="mb-2">
-                            <BootstrapForm.Label>Email</BootstrapForm.Label>
-                            <BootstrapForm.Control
-                              type="email"
-                              placeholder="Email"
-                              name="email"
-                              defaultValue={auth?.email}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </BootstrapForm.Group>
+                <Formik
+                  initialValues={initialValues2}
+                  validationSchema={validationSchema2}
+                  onSubmit={handleSubmitAccountInfo}
+                  className="mt-4"
+                >
+                  {({ handleChange, handleBlur }) => (
+                    <Form>
+                      <div className="mt-4 mb-4">
+                        <h3 className="">Account Info</h3>
+                        <hr className="my-2"></hr>
+                      </div>
 
-                          <BootstrapForm.Group className="mb-2">
-                            <BootstrapForm.Label>Password</BootstrapForm.Label>
-                            <BootstrapForm.Control
-                              type="password"
-                              name="password"
-                              placeholder="Has to be 8 letter or longer"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </BootstrapForm.Group>
+                      <BootstrapForm.Group className="mb-2">
+                        <BootstrapForm.Label>Email</BootstrapForm.Label>
+                        <BootstrapForm.Control
+                          type="email"
+                          placeholder="Email"
+                          name="email"
+                          defaultValue={auth?.email}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </BootstrapForm.Group>
 
-                          <BootstrapForm.Group className="mb-3">
-                            <BootstrapForm.Label>
-                              Confirm Password
-                            </BootstrapForm.Label>
-                            <BootstrapForm.Control
-                              type="password"
-                              name="confirmpassword"
-                              placeholder="Has to be 8 letter or longer"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </BootstrapForm.Group>
-                          <div className="d-flex justify-content-end align-items-center mt-4">
-                            <Button type="submit" className="text-white">
-                              {isLoading ? "Pending" : "Save"}
-                            </Button>
-                          </div>
-                        </Form>
-                      )}
-                    </Formik>
-                  </Col>
-                </Row>
+                      <BootstrapForm.Group className="mb-2">
+                        <BootstrapForm.Label>Password</BootstrapForm.Label>
+                        <BootstrapForm.Control
+                          type="password"
+                          name="password"
+                          placeholder="Has to be 8 letter or longer"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </BootstrapForm.Group>
+
+                      <BootstrapForm.Group className="mb-3">
+                        <BootstrapForm.Label>
+                          Confirm Password
+                        </BootstrapForm.Label>
+                        <BootstrapForm.Control
+                          type="password"
+                          name="confirmpassword"
+                          placeholder="Has to be 8 letter or longer"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      </BootstrapForm.Group>
+                      <div className="d-flex justify-content-end align-items-center mt-4">
+                        <Button type="submit" className="text-white">
+                          {isLoading ? "Pending" : "Save"}
+                        </Button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
               </Card.Body>
             </Col>
             <Col lg={4} className="p-0">
