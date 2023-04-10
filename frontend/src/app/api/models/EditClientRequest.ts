@@ -45,10 +45,10 @@ export interface EditClientRequest {
     phoneNumber?: string;
     /**
      * 
-     * @type {Blob}
+     * @type {string}
      * @memberof EditClientRequest
      */
-    profileImage?: Blob;
+    profileImage?: string;
 }
 
 /**

@@ -152,7 +152,6 @@ const Dashboard: React.FC = () => {
                   <h4 className="mt-3 fw-bold">My Profile</h4>
                   <Image
                     className="profile-img border rounded-5 my-3"
-                    fluid
                     rounded
                     src={user?.profile_image ? user.profile_image : "https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg"}
                   />
