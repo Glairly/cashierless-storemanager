@@ -7,8 +7,11 @@ import {
   GetClientTransactionsFapiV1GetClientTransactionsGetRequest,
   InferenceImapiV1InferencePostRequest,
   InferenceRequest,
+  LoginWithFaceCapiV1LoginWithFacePostRequest,
+  SendFileRequest,
 } from "../../app/api";
 import {
+  setCustomerInfo,
   setFailure,
   setInferenceResult,
   setPending,
@@ -50,6 +53,39 @@ export const checkingout =
       dispatch(setInferenceResult(res));
       dispatch(setSuccess());
     } catch (error) {
+      dispatch(setFailure("Error has occured please try again"));
+    }
+  };
+
+export const recognizeFace =
+  (imgSrc: string): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    dispatch(setPending());
+
+    try {
+      const request = {
+        sendFileRequest: {
+          file: imgSrc,
+        } as SendFileRequest,
+      } as LoginWithFaceCapiV1LoginWithFacePostRequest;
+
+      const meta = {
+        headers: {
+          // Authorization: `Bearer ${auth.token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().loginWithFaceCapiV1LoginWithFacePost(
+        request,
+        meta
+      );
+
+      dispatch(setCustomerInfo(res));
+      dispatch(setSuccess());
+    } catch (error) {
+      dispatch(setCustomerInfo(null));
       dispatch(setFailure("Error has occured please try again"));
     }
   };

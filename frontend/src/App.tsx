@@ -20,6 +20,7 @@ import { RootState } from "./app/store";
 import { useSelector } from "react-redux";
 import "./App.css";
 import Setup from "./pages/store/Setup";
+import FaceCam from "./pages/store/FaceCam";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
@@ -50,6 +51,7 @@ const App: React.FC = () => {
       {inference.shop_id && inference.machine_id && (
         <>
           <Route path="/Store" element={<Store />}></Route>
+          <Route path="/store/login" element={<FaceCam />}></Route>
           <Route path="/Store/CheckOut" element={<CheckOut />}></Route>
           <Route path="/Store/Payment" element={<Payment />}></Route>
         </>
