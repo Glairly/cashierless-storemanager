@@ -15,9 +15,9 @@ import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { editAuth, editClient } from "../app/authAPI";
-import { useNavigate } from "react-router-dom";
+import { editAuth, editClient } from "../features/auth/authAPI";
 import Popup from "../components/Popup";
+import { setIdle } from "../features/auth/authSlice";
 
 const initialValuesProfile = {
   name: "",
@@ -61,6 +61,9 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     switch (pendingStatus) {
+      case "idle":
+        setShouldShowModal(false);
+        break;
       case "pending":
         setShouldShowModal(false);
         break;
@@ -89,12 +92,14 @@ const Profile: React.FC = () => {
     dispatch<any>(editAuth(email, password, confirmpassword));
   };
 
+  const onPopupHide = () => {
+    dispatch<any>(setIdle());
+  };
+
   return (
     <div className="profile">
       <Navbar.DashbaordNavbar />
       <Container className="py-4">
-        {isLoading ? "Load" : "not load"}
-        {error ? error : "No error"}
         <Card className="rounded-5">
           <Row className="d-flex flex-row justify-content-center">
             <Col lg={8} className="py-2 px-4">
@@ -289,7 +294,7 @@ const Profile: React.FC = () => {
           body={error || ""}
           status={modalStatus}
           onHide={() => {
-            setShouldShowModal(false);
+            onPopupHide();
           }}
         />
       </Container>

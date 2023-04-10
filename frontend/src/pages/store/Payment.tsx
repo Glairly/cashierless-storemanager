@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Pay } from "./model";
-
-interface PaymentProps {
-  client_id: number;
-  shop_id: number;
-  items: Pay[];
-  barcodes: [];
-}
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import { Item } from "../../features/inference/inferenceSlice";
 
 interface qrProp {
   qrcode: string;
@@ -15,49 +10,53 @@ interface qrProp {
 }
 
 const Payment: React.FC = () => {
-  const location = useLocation();
-  const [data, setData] = useState<PaymentProps>();
   const [res, setRes] = useState<qrProp>();
 
+  const { inferenceResult, shop_id, pendingStatus, isLoading, error } =
+    useSelector((state: RootState) => state.inference);
+
+  const toRequestItem = (item: Item) => {
+    return {
+      item_id: item.id,
+      quantity: 1,
+    };
+  };
+
   const genQr = async () => {
-    const request: PaymentProps = {
-      client_id: 6,
-      shop_id: 3,
-      items: location.state.items,
+    if (!inferenceResult) return;
+    if (!shop_id) return;
+
+    const request = {
+      client_id: 0,
+      shop_id: shop_id,
+      items: inferenceResult.items.map((x) => toRequestItem(x as Item)),
       barcodes: [],
     };
 
-    console.log(request);
-
     try {
       const response = await fetch(
-        "http://localhost:8000/fapi/v1/generate_promptpay_qr",
+        "http://localhost/fapi/v1/generate_promptpay_qr",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(request),
-          // mode: "no-cors",
         }
       );
       const data = await response.json();
-      console.log("Helloworld:", data);
       setRes(data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    } catch (error) {}
   };
 
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
+        `http://localhost/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
       );
       const data = await response.json();
       if (data.status == "Complete") {
         return true;
       }
     } catch (error) {
-      console.error("Error:", error);
     }
 
     return false;
@@ -65,7 +64,6 @@ const Payment: React.FC = () => {
 
   const intervalGetTransaction = () => {
     setTimeout(async () => {
-      console.log("Checking..");
       if (
         res?.pending_transaction_id &&
         (await get_pending_transaction(res.pending_transaction_id.toString()))
@@ -78,10 +76,9 @@ const Payment: React.FC = () => {
   };
 
   useEffect(() => {
-    setData(location.state);
     setTimeout(genQr, 2000);
     intervalGetTransaction();
-  }, []);
+  }, [inferenceResult]);
   return (
     <div className="d-flex flex-column">
       <div className="d-flex justify-content-center">

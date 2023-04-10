@@ -23,8 +23,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { useDispatch } from "react-redux";
-import { fetchWallet } from "../app/authAPI";
-import { fetchClientTransaction } from "../app/transactionAPI";
+import { fetchWallet } from "../features/auth/authAPI";
+import { fetchClientTransaction } from "../features/transaction/transactionAPI";
 
 interface transaction {
   id: number;

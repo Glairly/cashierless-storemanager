@@ -111,7 +111,6 @@ class ItemsService:
             if bbox.type == BBoxType.barcode:
                 result = self.get_item_by_barcode(barcode=bbox.label)
             else:
-                print(item_type_cache[bbox.label])
                 result = self.get_item_by_shop_id_and_type(shop_id=shop_id, type=item_type_cache[bbox.label])
 
             results.append(result)

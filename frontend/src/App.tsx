@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Redirect, Navigate } from "react-router-dom";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Dashboard from "./pages/Dashboard";
@@ -16,8 +16,16 @@ import Stocking from "./pages/admin/Stocking";
 import Store from "./pages/store/Store";
 import CheckOut from "./pages/store/CheckOut";
 import Payment from "./pages/store/Payment";
+import { RootState } from "./app/store";
+import { useSelector } from "react-redux";
+import "./App.css";
+import Setup from "./pages/store/Setup";
 
 const App: React.FC = () => {
+  const auth = useSelector((state: RootState) => state.auth.auth);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const inference = useSelector((state: RootState) => state.inference);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -26,16 +34,29 @@ const App: React.FC = () => {
       <Route path="/ContactUs" element={<ContactUs />}></Route>
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
-      <Route path="/Dashboard" element={<Dashboard />}></Route>
+      {user?.is_shop_owner ? (
+        <Route path="/Dashboard" element={<AdminDashboard />}></Route>
+      ) : (
+        <Route path="/Dashboard" element={<Dashboard />}></Route>
+      )}
       <Route path="/Transaction" element={<Transaction />}></Route>
       <Route path="/Profile" element={<Profile />}></Route>
       <Route path="/Admin/Register" element={<AdminRegister />}></Route>
-      <Route path="/Admin/Dashboard" element={<AdminDashboard />}></Route>
+      {/* <Route path="/Admin/Dashboard" element={<AdminDashboard />}></Route> */}
       <Route path="/Admin/SalesHistory" element={<SalesHistory />}></Route>
       <Route path="/Admin/Stocking" element={<Stocking />}></Route>
-      <Route path="/Store" element={<Store />}></Route>
-      <Route path="/Store/CheckOut" element={<CheckOut />}></Route>
-      <Route path="/Store/Payment" element={<Payment />}></Route>
+
+      <Route path="/Store/Setup" element={<Setup />}></Route>
+      {inference.shop_id && inference.machine_id && (
+        <>
+          <Route path="/Store" element={<Store />}></Route>
+          <Route path="/Store/CheckOut" element={<CheckOut />}></Route>
+          <Route path="/Store/Payment" element={<Payment />}></Route>
+        </>
+      )}
+      <Route path="/Store/*" element={<Navigate to="/Store/Setup" replace />} />
+
+      <Route path="*" element={<div>Page not found</div>}></Route>
     </Routes>
   );
 };

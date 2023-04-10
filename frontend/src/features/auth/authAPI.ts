@@ -1,5 +1,5 @@
 import { ThunkAction } from "redux-thunk";
-import { RootState } from "./store";
+import { RootState } from "../../app/store";
 import {
   resetAuth,
   setMessage,
@@ -10,7 +10,7 @@ import {
   setPending,
   setSuccess,
   setFailure,
-} from "../features/auth/authSlice";
+} from "./authSlice";
 import { Action } from "redux";
 
 import {
@@ -20,10 +20,10 @@ import {
   EditClientRequest,
   EditUserCapiV1EditUserPostRequest,
   GetClientByIdCapiV1GetClientByIdGetRequest
-} from "./api";
-import { LoginCapiV1LoginPostRequest } from "./api";
-import { SignUpRequest, SignupCapiV1SignupPostRequest } from './api';
-import { SignUpWithShopRequest, SignupWithShopCapiV1SignupWithShopPostRequest } from "./api";
+} from "../../app/api";
+import { LoginCapiV1LoginPostRequest } from "../../app/api";
+import { SignUpRequest, SignupCapiV1SignupPostRequest } from '../../app/api';
+import { SignUpWithShopRequest, SignupWithShopCapiV1SignupWithShopPostRequest } from "../../app/api";
 
 
 export const login =

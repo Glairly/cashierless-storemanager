@@ -1,12 +1,12 @@
 import { ThunkAction } from "redux-thunk";
-import { RootState } from "./store";
+import { RootState } from "../../app/store";
 import { Action } from "redux";
 
 import {
   DefaultApi,
   GetClientTransactionsFapiV1GetClientTransactionsGetRequest,
-} from "./api";
-import { setClientTransaction } from "../features/transaction/transactionSlice";
+} from "../../app/api";
+import { setClientTransaction } from "./transactionSlice";
 
 export const fetchClientTransaction =
   (): ThunkAction<void, RootState, null, Action<string>> =>
