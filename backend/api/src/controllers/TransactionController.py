@@ -58,8 +58,7 @@ class TransactionController:
         shop = self.__shopService.get_shop_by_id(shop_id=request.shop_id)
         if shop is None or shop.phone_number is None:
             raise HTTPException(status_code=400, detail="Shop is not available")
-        # TODO: change to not really deactivate
-        totalPrice, _ = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
+        totalPrice, _ = self.__itemsService.get_transaction_payment_info(request.items, request.barcodes)
         return self.__transactionService.generate_promptpay_qr(shop.id, shop.phone_number, totalPrice)
 
     def payment_confirm(self, request: PendingTransactionRequest):

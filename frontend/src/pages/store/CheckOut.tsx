@@ -46,7 +46,7 @@ const CheckOut: React.FC = () => {
         <Col>
           <div className="d-flex flex-column h-100 justify-content-between pt-3">
             <div>
-              <h4 className="fw-bold">Summary</h4>
+              <h4 className="fw-bold">Products List</h4>
               <div style={{ borderBottom: "solid" }} className="mb-3" />
               {inferenceResult?.items.map((item) => {
                 const _item = item as Item;
@@ -58,8 +58,8 @@ const CheckOut: React.FC = () => {
                   >
                     <span>{_item.name}</span>
                     <span>
-                      <span style={{ paddingRight: "1rem" }}>x1</span>
-                      {_item.price}฿
+                      <span style={{ paddingRight: "1rem" }}>x{_item.quantity}</span>
+                      {_item.price * _item.quantity}฿
                     </span>
                   </div>
                 );

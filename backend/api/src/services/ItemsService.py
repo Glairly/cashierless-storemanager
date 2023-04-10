@@ -59,6 +59,37 @@ class ItemsService:
         db.session.commit()
         return barcode
     
+    def get_transaction_payment_info(self, items: List[TransactionItemRequest], barcodes: List[str]):
+        totalPrice = 0
+        totalItems = 0
+
+        # Query all items
+        for item in items:
+            item_id = item.item_id
+            quantity = item.quantity
+
+            item = db.session.query(Item).filter(Item.id == item_id).first()
+
+            if item is None:
+                raise HTTPException(status_code=404, detail="Item not found")
+            
+            if item.quantity < quantity:
+                raise HTTPException(status_code=400, detail="Not enough items in stock")
+
+            totalPrice += item.price * quantity
+            totalItems += quantity
+        
+        # Query all barcodes's items
+        barcode_items = db.session.query(Item).join(Barcode).filter(Barcode.active and Barcode.barcode.in_(barcodes)).all()
+        for item in barcode_items:
+            if item.quantity < quantity:
+                 HTTPException(status_code=400, detail="Not enough items in stock")
+            
+            totalPrice += item.price
+            totalItems += 1
+
+        return totalPrice, totalItems
+
 
     def transaction_deactivate_item(self, items: List[TransactionItemRequest], barcodes: List[str]):
         totalPrice = 0
@@ -102,6 +133,22 @@ class ItemsService:
     def get_item_by_shop_id_and_type(self, shop_id: int, type: ItemType):
         return db.session.query(Item).filter(and_(Item.shop_id == shop_id, Item.type == type)).first()
 
+    def merge_items(self, items: List[Item]):
+        output_dict = {}
+
+        for item in items:
+            name = item.name
+            price = item.price
+            _type = item.type
+            id = item.id
+            if name in output_dict:
+                output_dict[name].quantity += 1
+            else:
+                output_dict[name] = Item(id=id,name= name, quantity=1, price= price, type= _type)
+
+        return list(output_dict.values())
+        
+
     def get_item_by_bboxes(self, shop_id:int, bboxes: List[BBox]):
         results = []
 
@@ -117,4 +164,4 @@ class ItemsService:
         
         totalPrice = reduce(lambda x, y: x + y.price, results, 0)
         totalItems = len(results)
-        return results, totalPrice, totalItems
+        return self.merge_items(results), totalPrice, totalItems

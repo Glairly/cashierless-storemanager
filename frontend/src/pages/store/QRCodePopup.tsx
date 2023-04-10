@@ -25,6 +25,7 @@ interface qrProp {
 const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const [res, setRes] = useState<qrProp>();
   const [isTransactionComplete, setTransactionComplete] = useState(false);
+  const [timeOutId, setTimeOutId] = useState(0);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -81,8 +82,9 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   };
 
   const intervalGetTransaction = function () {
-    setTimeout(async function () {
-      if (!show) return;
+    if (!show) return;
+
+    const id = setTimeout(async function () {
       if (
         res?.pending_transaction_id &&
         (await get_pending_transaction(res.pending_transaction_id.toString()))
@@ -97,11 +99,15 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
         intervalGetTransaction();
       }
     }, 1000);
+
+    setTimeOutId(id)
   };
 
   useEffect(() => {
     if (show) {
       genQr();
+    }else {
+        window.clearTimeout(timeOutId)
     }
   }, [show]);
 
