@@ -25,7 +25,7 @@ interface qrProp {
 const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const [res, setRes] = useState<qrProp>();
   const [isTransactionComplete, setTransactionComplete] = useState(false);
-  const [timeOutId, setTimeOutId] = useState(0);
+  const [timeOutId, setTimeOutId] = useState<any>();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
