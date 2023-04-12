@@ -3,6 +3,7 @@ import { Button, Modal, Image } from "react-bootstrap";
 import { RootState } from "../../app/store";
 import {
   Item,
+  setCustomerInfo,
   setInferenceResult,
 } from "../../features/inference/inferenceSlice";
 import { useSelector } from "react-redux";
@@ -11,6 +12,11 @@ import PrompyPayLogo from "../../assets/prompt-pay-logo.png";
 import CheckMarked from "../../components/svgs/CheckMarked";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import {
+  DoAnonyTransaction,
+  DoTransaction,
+} from "../../features/transaction/transactionAPI";
+import { TransactionItemRequest } from "../../app/api";
 
 interface QRCodePopupProps {
   show: boolean;
@@ -30,14 +36,27 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { inferenceResult, shop_id, pendingStatus, isLoading, error } =
-    useSelector((state: RootState) => state.inference);
+  const {
+    inferenceResult,
+    customerInfo,
+    shop_id,
+    pendingStatus,
+    isLoading,
+    error,
+  } = useSelector((state: RootState) => state.inference);
 
   const toRequestItem = (item: Item) => {
     return {
       item_id: item.id,
-      quantity: 1,
+      quantity: item.quantity,
     };
+  };
+
+  const toTransactionItemRequest = (item: Item) => {
+    return {
+      itemId: item.id,
+      quantity: item.quantity,
+    } as TransactionItemRequest;
   };
 
   const genQr = async () => {
@@ -92,7 +111,23 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
         setTransactionComplete(true);
 
         setTimeout(() => {
+          if (!inferenceResult) return;
+          if (!shop_id) return;
+
+          const items = inferenceResult.items.map((x) =>
+            toTransactionItemRequest(x as Item)
+          );
+
+          if (customerInfo?.user?.id) {
+            dispatch<any>(DoTransaction(items, []));
+          } else {
+            dispatch<any>(DoAnonyTransaction(items, []));
+          }
+
+          dispatch<any>(setCustomerInfo(null));
           dispatch<any>(setInferenceResult(null));
+          setRes(null)
+
           navigate("/store");
         }, 5000);
       } else {
@@ -100,14 +135,14 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
       }
     }, 1000);
 
-    setTimeOutId(id)
+    setTimeOutId(id);
   };
 
   useEffect(() => {
     if (show) {
       genQr();
-    }else {
-        window.clearTimeout(timeOutId)
+    } else {
+      window.clearTimeout(timeOutId);
     }
   }, [show]);
 

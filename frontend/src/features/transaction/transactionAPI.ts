@@ -70,6 +70,8 @@ export const DoTransaction =
       const meta = {
         headers: {
           Authorization: `Bearer ${customerInfo.access_token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
         },
       } as RequestInit;
 
@@ -93,8 +95,6 @@ export const DoAnonyTransaction =
     dispatch(setPending());
     try {
       const { inference } = getState();
-      const { customerInfo } = inference;
-      if (!customerInfo?.user?.id) return;
 
       const request = {
         anonymousTransactionRequest: {
@@ -106,7 +106,8 @@ export const DoAnonyTransaction =
 
       const meta = {
         headers: {
-          Authorization: `Bearer ${customerInfo.access_token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
         },
       } as RequestInit;
 

@@ -44,40 +44,47 @@ const CheckOut: React.FC = () => {
         </Col>
         <Col sm={6}>
           <div className="d-flex flex-column h-100 justify-content-start">
-            {customerInfo?.user && (
-              <div className="mb-4">
+            <Card className="mb-4">
+              <Card.Body>
                 <h6 className="fw-bold">Customer Info</h6>
                 <div style={{ borderBottom: "solid" }} className="mb-3" />
                 <div className="d-flex flex-row">
-                  <Image
-                    src={
-                      customerInfo.user.profile_image ||
-                      "https://randomuser.me/api/portraits/men/1.jpg"
-                    }
-                    className="rounded"
-                    style={{ width: "60px", height: "60px" }}
-                  />
-                  <div className="border mx-2"></div>
-                  <div className="">
-                    <p
-                      className="mb-0"
-                      style={{ fontSize: "16px", fontWeight: "bold" }}
-                    >
-                      {customerInfo.user.name}
-                    </p>
-                    <p className="mb-0" style={{ color: "gray" }}>
-                      {customerInfo.user.phone_number || "no phone number"}
-                    </p>
-                  </div>
+                  {customerInfo?.user ? (
+                    <>
+                      <Image
+                        src={
+                          customerInfo.user.profile_image ||
+                          "https://randomuser.me/api/portraits/men/1.jpg"
+                        }
+                        className="rounded"
+                        style={{ width: "60px", height: "60px" }}
+                      />
+                      <div className="border mx-2"></div>
+                      <div className="">
+                        <p
+                          className="mb-0"
+                          style={{ fontSize: "16px", fontWeight: "bold" }}
+                        >
+                          {customerInfo.user.name}
+                        </p>
+                        <p className="mb-0" style={{ color: "gray" }}>
+                          {customerInfo.user.phone_number || "no phone number"}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <Link to="/store/login" className="w-100">
+                      <Button className="text-white w-100">Sign in</Button>
+                    </Link>
+                  )}
                 </div>
-              </div>
-            )}
+              </Card.Body>
+            </Card>
 
             <Card
               className="flex-grow-1"
               style={{
-                filter:
-                  "drop-shadow(0px 4px 16px rgba(102, 102, 102, 0.15))",
+                filter: "drop-shadow(0px 4px 16px rgba(102, 102, 102, 0.15))",
               }}
             >
               <Card.Body className="d-flex flex-column">

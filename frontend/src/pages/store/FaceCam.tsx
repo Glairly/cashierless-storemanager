@@ -1,7 +1,7 @@
 import { Button, Col, Container, Row, Image } from "react-bootstrap";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkingout,
@@ -78,14 +78,39 @@ const FaceCam: React.FC = () => {
             <h4 className="mt-5">Put your face in the frame</h4>
             <div className="mb-4 bg-primary border-bottom border-gray pb-1"></div>
             <div>
-              <Button
-                className="text-white w-100"
-                style={{ height: "144px", fontSize: "32px", fontWeight: 800 }}
-                disabled={isLoading}
-                onClick={capture}
-              >
-                {isLoading ? "Please wait" : "Login"}
-              </Button>
+              <Row>
+                <Col sm={8}>
+                  <Button
+                    className="text-white w-100"
+                    style={{
+                      height: "144px",
+                      fontSize: "32px",
+                      fontWeight: 800,
+                    }}
+                    disabled={isLoading}
+                    onClick={capture}
+                    variant="success"
+                  >
+                    {isLoading ? "Please wait" : "Login"}
+                  </Button>
+                </Col>
+
+                <Col>
+                  <Link to="/store">
+                    <Button
+                      className="text-white w-100"
+                      style={{
+                        height: "144px",
+                        fontSize: "32px",
+                        fontWeight: 800,
+                      }}
+                      variant="danger"
+                    >
+                      Skip
+                    </Button>
+                  </Link>
+                </Col>
+              </Row>
             </div>
           </div>
         </div>
