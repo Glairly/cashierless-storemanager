@@ -9,10 +9,7 @@ import {
 } from "../../features/inference/inferenceAPI";
 import { RootState } from "../../app/store";
 import Popup from "../../components/Popup";
-import {
-  setIdle,
-  setInferenceResult,
-} from "../../features/inference/inferenceSlice";
+import { setIdle } from "../../features/inference/inferenceSlice";
 
 const FaceCam: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
@@ -41,12 +38,17 @@ const FaceCam: React.FC = () => {
   }, [error]);
 
   useEffect(() => {
-    if (!customerInfo) return;
+    if (!customerInfo?.user) return;
+    if (pendingStatus == "idle") return;
 
     if (customerInfo?.access_token) {
       setShouldShowModal(true);
       setModalStatus(true);
       setModalBody("Welcome " + customerInfo.user.name);
+
+      setTimeout(() => {
+        navigate("/store");
+      }, 5000);
     }
   }, [customerInfo]);
 
@@ -65,9 +67,10 @@ const FaceCam: React.FC = () => {
       <div className="d-flex flex-row justify-content-center align-items-stretch h-100">
         <div className="d-flex flex-column justify-content-between pe-5 flex-grow-1">
           <div>
-            <h1>Welcome to HW-Store</h1>
+            <h1>Signing In</h1>
             <p style={{ color: "gray" }}>
-              HW-store is cashierless store for your convience store experiece
+              By Signed In we can record purchase history to keep track of your
+              spending
             </p>
           </div>
           <div>Should have a example here</div>
@@ -94,7 +97,7 @@ const FaceCam: React.FC = () => {
           show={shouldShowModal}
           onHide={function (): void {
             setShouldShowModal(false);
-            dispatch<any>(setInferenceResult(null));
+            dispatch<any>(setIdle());
           }}
           title={"Result"}
           body={modalBody}
