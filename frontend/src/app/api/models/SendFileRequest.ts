@@ -21,10 +21,10 @@ import { exists, mapValues } from '../runtime';
 export interface SendFileRequest {
     /**
      * 
-     * @type {Blob}
+     * @type {string}
      * @memberof SendFileRequest
      */
-    file: Blob;
+    file: string;
 }
 
 /**

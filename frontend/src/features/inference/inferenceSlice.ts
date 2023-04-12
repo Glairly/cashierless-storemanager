@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { InferenceResult } from "../../app/api";
+import { Client } from "../auth/authSlice";
 
 export interface Item {
   id: number;
@@ -10,8 +11,14 @@ export interface Item {
   type: number;
 }
 
+export interface CustomerInfo {
+  user: Client | null;
+  access_token: string;
+}
+
 interface TransactionState {
   inferenceResult: InferenceResult | null;
+  customerInfo: CustomerInfo | null;
   shop_id: number | null;
   is_barcode_enabled: boolean;
   machine_id: number | null;
@@ -28,6 +35,7 @@ const initialState: TransactionState = {
   pendingStatus: "idle",
   isLoading: false,
   error: null,
+  customerInfo: null
 };
 
 const transactionSlice = createSlice({
@@ -45,6 +53,9 @@ const transactionSlice = createSlice({
     },
     setMachineId(state, action) {
       state.machine_id = action.payload;
+    },
+    setCustomerInfo(state, action){
+      state.customerInfo = action.payload;
     },
     setIdle(state) {
       return {
@@ -86,6 +97,7 @@ export const {
   setShopId,
   setBarcodeEnabled,
   setMachineId,
+  setCustomerInfo,
   setPending,
   setSuccess,
   setFailure,

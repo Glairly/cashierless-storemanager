@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface Client {
+export interface Client {
   id: number;
   name: string;
   phone_number: string;
@@ -11,12 +11,12 @@ interface Client {
   profile_image: string;
 }
 
-interface ClientWallet {
+export interface ClientWallet {
   id: number;
   balance: number;
 }
 
-interface Auth {
+export interface Auth {
   id: number;
   username: String;
   email: string;
