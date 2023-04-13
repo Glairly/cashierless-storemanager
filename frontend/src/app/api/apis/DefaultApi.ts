@@ -33,6 +33,7 @@ import type {
   SignUpRequest,
   SignUpWithShopRequest,
   TransactionRequest,
+  TransactionTopupRequest,
 } from '../models';
 import {
     AddBarcodeRequestFromJSON,
@@ -71,6 +72,8 @@ import {
     SignUpWithShopRequestToJSON,
     TransactionRequestFromJSON,
     TransactionRequestToJSON,
+    TransactionTopupRequestFromJSON,
+    TransactionTopupRequestToJSON,
 } from '../models';
 
 export interface AddBarcodeToItemSmapiV1AddBarcodeToItemPostRequest {
@@ -119,6 +122,10 @@ export interface EditUserCapiV1EditUserPostRequest {
 
 export interface GeneratePromptpayQrFapiV1GeneratePromptpayQrPostRequest {
     transactionRequest: TransactionRequest;
+}
+
+export interface GeneratePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRequest {
+    transactionTopupRequest: TransactionTopupRequest;
 }
 
 export interface GetClientByIdCapiV1GetClientByIdGetRequest {
@@ -646,6 +653,43 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async generatePromptpayQrFapiV1GeneratePromptpayQrPost(requestParameters: GeneratePromptpayQrFapiV1GeneratePromptpayQrPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.generatePromptpayQrFapiV1GeneratePromptpayQrPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Generate Promptpay Qr Topup
+     */
+    async generatePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRaw(requestParameters: GeneratePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.transactionTopupRequest === null || requestParameters.transactionTopupRequest === undefined) {
+            throw new runtime.RequiredError('transactionTopupRequest','Required parameter requestParameters.transactionTopupRequest was null or undefined when calling generatePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fapi/v1/generate_promptpay_qr_topup`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TransactionTopupRequestToJSON(requestParameters.transactionTopupRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Generate Promptpay Qr Topup
+     */
+    async generatePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPost(requestParameters: GeneratePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.generatePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -21,4 +21,5 @@ export * from './SignUpRequest';
 export * from './SignUpWithShopRequest';
 export * from './TransactionItemRequest';
 export * from './TransactionRequest';
+export * from './TransactionTopupRequest';
 export * from './ValidationError';
