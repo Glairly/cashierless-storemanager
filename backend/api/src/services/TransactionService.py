@@ -33,6 +33,21 @@ class TransactionService:
         img_byte_arr = img_byte_arr.getvalue()
 
         return  { "qrcode": base64.b64encode(img_byte_arr), "pending_transaction_id": pending_transaction.id }
+    
+    def generate_promptpay_pr_topup(self, client_id, amount: float):
+        topup_transaction = TopupTransaction(client_id=client_id, amount=amount)
+
+        db.session.add(topup_transaction)
+        db.session.commit()
+        db.session.refresh(topup_transaction)
+
+        qr = qrcode.to_image(qrcode.generate_payload("0909079790", amount))
+
+        img_byte_arr = io.BytesIO()
+        qr.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+
+        return { "qrcode": base64.b64encode(img_byte_arr), "pending_topup_transaction_id": topup_transaction.id }
 
     def edit_transaction_status(self, pending_transaction_id: int, status: str):
         pending_transaction = db.session.query(PendingTransaction).filter(PendingTransaction.id == pending_transaction_id).first()
@@ -50,6 +65,12 @@ class TransactionService:
         if pending_transaction is None:
             raise HTTPException(status_code=400,detail="Could not find pending transaction")
         return pending_transaction
+    
+    def get_topup_transaction_status(self, topup_transaction_id:int):
+        topup_transaction = db.session.query(TopupTransaction).filter(TopupTransaction.id == topup_transaction_id).first()
+        if topup_transaction is None:
+            raise HTTPException(status_code=400,detail="Could not find pending topup transaction")
+        return topup_transaction
 
     def create_transaction_none_commit(self, request: TransactionRequest, totalPrice: float, totalItems: int):
         transaction_items = []

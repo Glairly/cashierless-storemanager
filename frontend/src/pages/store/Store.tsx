@@ -7,7 +7,7 @@ import { checkingout } from "../../features/inference/inferenceAPI";
 import { RootState } from "../../app/store";
 import Popup from "../../components/Popup";
 import { setInferenceResult } from "../../features/inference/inferenceSlice";
-import { EmptyNavbar } from "../../components/Navbar";
+// import { EmptyNavbar } from "../../components/Navbar";
 
 interface Data {
   shop_id: number;

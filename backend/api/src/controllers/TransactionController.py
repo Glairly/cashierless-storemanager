@@ -29,6 +29,7 @@ class TransactionController:
         self.router.add_api_route("/do_transaction", self.do_transaction, methods=["POST"])
         self.router.add_api_route("/do_anonymous_transaction", self.do_anonymous_transaction, methods=["POST"])
         self.router.add_api_route("/generate_promptpay_qr", self.generate_promptpay_qr, methods=["POST"])
+        self.router.add_api_route("/generate_promptpay_qr_topup", self.generate_promptpay_qr_topup, methods=["POST"])
         self.router.add_api_route("/payment_confirm", self.payment_confirm, methods=["POST"])
         self.router.add_api_route("/get_pending_transaction", self.get_pending_transaction, methods=["GET"])
         self.router.add_api_route("/get_client_transactions", self.get_client_transactions, methods=["GET"])
@@ -61,6 +62,9 @@ class TransactionController:
         # TODO: change to not really deactivate
         totalPrice, _ = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
         return self.__transactionService.generate_promptpay_qr(shop.id, shop.phone_number, totalPrice)
+    
+    def generate_promptpay_qr_topup(self, request:TransactionTopupRequest):
+        return self.__transactionService.generate_promptpay_pr_topup(request.total_topup)
 
     def payment_confirm(self, request: PendingTransactionRequest):
         return self.__transactionService.edit_transaction_status(int(request.transactionId), request.status)

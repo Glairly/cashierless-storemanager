@@ -18,12 +18,21 @@ export interface Transaction {
   transaction_items: TransactionItem[];
 }
 
+export interface TopupTransaction {
+  id: number;
+  client_id: number;
+  topup_price: number;
+  date: Date;
+}
+
 interface TransactionState {
-  clientTransaction: Transaction[]
+  clientTransaction: Transaction[];
+  topupTransaction: TopupTransaction | null;
 }
 
 const initialState: TransactionState = {
-  clientTransaction: []
+  clientTransaction: [],
+  topupTransaction: null,
 };
 
 const transactionSlice = createSlice({
@@ -32,10 +41,13 @@ const transactionSlice = createSlice({
   reducers: {
     setClientTransaction(state, action) {
       state.clientTransaction = action.payload;
+    },
+    setTopupTransaction(state, action) {
+      state.topupTransaction = action.payload;
     }
   },
 });
 
-export const { setClientTransaction } = transactionSlice.actions;
+export const { setClientTransaction, setTopupTransaction } = transactionSlice.actions;
 
 export default transactionSlice.reducer;
