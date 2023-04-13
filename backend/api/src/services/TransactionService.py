@@ -34,14 +34,14 @@ class TransactionService:
 
         return  { "qrcode": base64.b64encode(img_byte_arr), "pending_transaction_id": pending_transaction.id }
     
-    def generate_promptpay_pr_topup(self, client_id, amount: float):
-        topup_transaction = TopupTransaction(client_id=client_id, amount=amount)
+    def generate_promptpay_pr_topup(self, client_id, total_topup: float):
+        topup_transaction = TopupTransaction(client_id=client_id, amount=total_topup)
 
         db.session.add(topup_transaction)
         db.session.commit()
         db.session.refresh(topup_transaction)
 
-        qr = qrcode.to_image(qrcode.generate_payload("0909079790", amount))
+        qr = qrcode.to_image(qrcode.generate_payload("0909079790", total_topup))
 
         img_byte_arr = io.BytesIO()
         qr.save(img_byte_arr, format='PNG')

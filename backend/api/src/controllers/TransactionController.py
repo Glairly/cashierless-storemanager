@@ -64,7 +64,7 @@ class TransactionController:
         return self.__transactionService.generate_promptpay_qr(shop.id, shop.phone_number, totalPrice)
     
     def generate_promptpay_qr_topup(self, request:TransactionTopupRequest):
-        return self.__transactionService.generate_promptpay_pr_topup(request.total_topup)
+        return self.__transactionService.generate_promptpay_pr_topup(request.client_id, request.total_topup)
 
     def payment_confirm(self, request: PendingTransactionRequest):
         return self.__transactionService.edit_transaction_status(int(request.transactionId), request.status)
