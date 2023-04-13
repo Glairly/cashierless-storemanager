@@ -18,12 +18,6 @@ export interface Transaction {
   transaction_items: TransactionItem[];
 }
 
-export interface TopupTransaction {
-  id: number;
-  client_id: number;
-  topup_price: number;
-  date: Date;
-}
 
 interface TransactionState {
   clientTransaction: Transaction[];

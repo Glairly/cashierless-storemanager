@@ -59,6 +59,17 @@ class TransactionService:
         db.session.commit()
 
         return f"Completely change transaction({pending_transaction_id}) status to {status}"
+    
+    def edit_topup_transaction_status(self, pending_topup_transaction_id: int, status: str):
+        pending_topup_transaction = db.session.query(TopupTransaction).filter(TopupTransaction.id == pending_topup_transaction_id).first()
+
+        if pending_topup_transaction is None:
+            raise HTTPException(status_code=400,detail="Could not find pending topup transaction")
+        
+        pending_topup_transaction.status = status
+        db.session.commit()
+
+        return f"Completely change transaction({pending_topup_transaction}) status to {status}"
 
     def get_pending_transaction_status(self, pending_transaction_id:int):
         pending_transaction = db.session.query(PendingTransaction).filter(PendingTransaction.id == pending_transaction_id).first()
@@ -66,8 +77,8 @@ class TransactionService:
             raise HTTPException(status_code=400,detail="Could not find pending transaction")
         return pending_transaction
     
-    def get_topup_transaction_status(self, topup_transaction_id:int):
-        topup_transaction = db.session.query(TopupTransaction).filter(TopupTransaction.id == topup_transaction_id).first()
+    def get_pending_topup_transaction_status(self, pending_topup_transaction_id:int):
+        topup_transaction = db.session.query(TopupTransaction).filter(TopupTransaction.id == pending_topup_transaction_id).first()
         if topup_transaction is None:
             raise HTTPException(status_code=400,detail="Could not find pending topup transaction")
         return topup_transaction
