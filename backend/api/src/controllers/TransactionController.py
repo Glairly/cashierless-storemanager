@@ -31,7 +31,9 @@ class TransactionController:
         self.router.add_api_route("/generate_promptpay_qr", self.generate_promptpay_qr, methods=["POST"])
         self.router.add_api_route("/generate_promptpay_qr_topup", self.generate_promptpay_qr_topup, methods=["POST"])
         self.router.add_api_route("/payment_confirm", self.payment_confirm, methods=["POST"])
+        self.router.add_api_route("/topup_confirm", self.topup_confirm, methods=["POST"])
         self.router.add_api_route("/get_pending_transaction", self.get_pending_transaction, methods=["GET"])
+        self.router.add_api_route("/get_pending_topup_transaction", self.get_pending_topup_transaction, methods=["GET"])
         self.router.add_api_route("/get_client_transactions", self.get_client_transactions, methods=["GET"])
 
     def do_transaction(self, request: TransactionRequest):
@@ -69,8 +71,14 @@ class TransactionController:
     def payment_confirm(self, request: PendingTransactionRequest):
         return self.__transactionService.edit_transaction_status(int(request.transactionId), request.status)
     
+    def topup_confirm(self, request: PendingTopupTransactionRequest):
+        return self.__transactionService.edit_topup_transaction_status(int(request.transactionId), request.status)
+    
     def get_pending_transaction(self, pending_transaction_id: int):
         return self.__transactionService.get_pending_transaction_status(pending_transaction_id)
+    
+    def get_pending_topup_transaction(self, pending_topup_transaction_id: int):
+        return self.__transactionService.get_pending_topup_transaction_status(pending_topup_transaction_id)
     
     def get_client_transactions(self, client_id: int):
         return self.__transactionService.get_client_transactions(client_id)

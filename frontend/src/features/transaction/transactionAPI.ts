@@ -35,14 +35,3 @@ export const fetchClientTransaction =
       dispatch(setClientTransaction(res));
     } catch (error) {}
   };
-
-export const TopUpClient =
-  (): ThunkAction<void, RootState, null, Action<string>> =>
-  async (dispatch, getState) => {
-    try {
-      const { auth } = getState();
-      if (!auth.user?.id) return false;
-    } catch (error) {
-      
-    }
-  }
