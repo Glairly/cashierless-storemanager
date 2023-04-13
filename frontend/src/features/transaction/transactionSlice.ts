@@ -18,11 +18,19 @@ export interface Transaction {
   transaction_items: TransactionItem[];
 }
 
+export interface TopupTransaction {
+  id: number;
+  client_id: number;
+  topup_price: number;
+  date: Date;
+}
+
 interface TransactionState {
   clientTransaction: Transaction[];
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
   isLoading: boolean;
   error: null;
+  topupTransaction: TopupTransaction | null;
 }
 
 const initialState: TransactionState = {
@@ -30,6 +38,7 @@ const initialState: TransactionState = {
   pendingStatus: "idle",
   isLoading: false,
   error: null,
+  topupTransaction: null,
 };
 
 const transactionSlice = createSlice({
@@ -38,6 +47,9 @@ const transactionSlice = createSlice({
   reducers: {
     setClientTransaction(state, action) {
       state.clientTransaction = action.payload;
+    },
+    setTopupTransaction(state, action) {
+      state.topupTransaction = action.payload;
     },
 
     setIdle(state) {
@@ -76,7 +88,7 @@ const transactionSlice = createSlice({
 });
 
 export const {
-  setClientTransaction,
+  setClientTransaction, setTopupTransaction,
   setPending,
   setSuccess,
   setFailure,
