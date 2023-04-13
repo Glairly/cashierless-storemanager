@@ -19,6 +19,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {
   setBarcodeEnabled,
+  setIdle,
   setMachineId,
   setShopId,
 } from "../../features/inference/inferenceSlice";
@@ -42,6 +43,10 @@ const Setup: React.FC = () => {
   });
 
   const inference = useSelector((state: RootState) => state.inference);
+
+  useEffect(()=> {
+    dispatch<any>(setIdle())
+  }, [])
 
   useEffect(() => {
     setInitialValues({

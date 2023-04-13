@@ -10,6 +10,8 @@ import {
 } from "../../features/inference/inferenceSlice";
 import { useDispatch } from "react-redux";
 import QRCodePopup from "./QRCodePopup";
+import { setIdle as setIIdle } from "../../features/inference/inferenceSlice";
+import { setIdle as setTIdle} from "../../features/transaction/transactionSlice";
 
 const CheckOut: React.FC = () => {
   const location = useLocation();
@@ -31,6 +33,8 @@ const CheckOut: React.FC = () => {
 
   useEffect(() => {
     setData(location.state);
+    dispatch<any>(setIIdle());
+    dispatch<any>(setTIdle())
   }, []);
 
   const { inferenceResult, customerInfo, pendingStatus, isLoading, error } =
