@@ -18,6 +18,7 @@ export interface Transaction {
   transaction_items: TransactionItem[];
 }
 
+
 interface TransactionState {
   clientTransaction: Transaction[];
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
@@ -29,7 +30,7 @@ const initialState: TransactionState = {
   clientTransaction: [],
   pendingStatus: "idle",
   isLoading: false,
-  error: null,
+  error: null
 };
 
 const transactionSlice = createSlice({
@@ -39,7 +40,6 @@ const transactionSlice = createSlice({
     setClientTransaction(state, action) {
       state.clientTransaction = action.payload;
     },
-
     setIdle(state) {
       return {
         ...state,

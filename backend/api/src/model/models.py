@@ -129,7 +129,7 @@ class Transaction(Base):
     shop_id= Column(Integer, ForeignKey("shops.id"))
     total_price = Column(Float)
     total_items = Column(Integer)
-    date = Column(Time)
+    date = Column(Time, default=datetime.datetime.now)
 
     transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
 
@@ -153,6 +153,16 @@ class PendingTransaction(Base):
     currency_code= Column(String, default="TH")
     status= Column(String, default="Pending")
 
+class TopupTransaction(Base):
+    __tablename__ = "topup_transactions"
+
+    id= Column(Integer, primary_key=True, index=True)
+    client_id= Column(Integer)
+    cashierless_account_number= Column(String, default="0909079790")
+    amount= Column(Float)
+    date= Column(Time, default=datetime.datetime.now())
+    currency_code= Column(String, default="TH")
+    status= Column(String, default="Pending")
 
 class ClientFaceIdentity(Base):
     __tablename__ = 'client_face_ids'

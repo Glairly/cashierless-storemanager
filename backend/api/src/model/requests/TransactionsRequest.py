@@ -12,3 +12,7 @@ class AnonymousTransactionRequest(BaseRequest):
 
 class TransactionRequest(AnonymousTransactionRequest):
     client_id: int
+
+class TransactionTopupRequest(BaseRequest):
+    client_id: int
+    total_topup: int
