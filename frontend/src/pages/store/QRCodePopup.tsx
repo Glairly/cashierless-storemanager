@@ -63,7 +63,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
       );
       const data = await response.json();
       setRes({ ...data } as qrProp);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const get_pending_transaction = async (id: string) => {
@@ -75,7 +75,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
       if (data.status == "Complete") {
         return true;
       }
-    } catch (error) {}
+    } catch (error) { }
 
     return false;
   };
@@ -135,7 +135,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
         ) : (
           <div className="d-flex flex-column justify-content-center align-items-center">
             <CheckMarked />
-            <p>Transaction Complated</p>
+            <p>Transaction Completed</p>
           </div>
         )}
       </Modal.Body>
