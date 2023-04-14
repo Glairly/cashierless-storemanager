@@ -14,6 +14,7 @@ export * from './HTTPValidationError';
 export * from './InferenceRequest';
 export * from './InferenceResult';
 export * from './LocationInner';
+export * from './PendingTopupTransactionRequest';
 export * from './PendingTransactionRequest';
 export * from './SendFileRequest';
 export * from './ShopCreateRequest';
