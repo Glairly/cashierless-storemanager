@@ -9,7 +9,10 @@ import {
 } from "../../features/inference/inferenceAPI";
 import { RootState } from "../../app/store";
 import Popup from "../../components/Popup";
-import { setIdle } from "../../features/inference/inferenceSlice";
+import {
+  setCustomerInfo,
+  setIdle,
+} from "../../features/inference/inferenceSlice";
 
 const FaceCam: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
@@ -27,6 +30,7 @@ const FaceCam: React.FC = () => {
 
   useEffect(() => {
     dispatch<any>(setIdle());
+    dispatch<any>(setCustomerInfo(null));
   }, []);
 
   useEffect(() => {
@@ -127,6 +131,8 @@ const FaceCam: React.FC = () => {
           title={"Result"}
           body={modalBody}
           status={modalStatus}
+          footer={<div></div>}
+          isCloseBtn={false}
         />
       </div>
     </Container>

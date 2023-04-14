@@ -10,6 +10,7 @@ interface CustomModalProps {
   body: string;
   footer?: JSX.Element;
   status: boolean;
+  isCloseBtn?: boolean;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -18,11 +19,12 @@ const CustomModal: React.FC<CustomModalProps> = ({
   title,
   body,
   footer,
+  isCloseBtn = true,
   status = true,
 }) => {
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
+      <Modal.Header closeButton={isCloseBtn}>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>

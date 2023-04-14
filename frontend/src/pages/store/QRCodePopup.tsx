@@ -3,6 +3,7 @@ import { Button, Modal, Image } from "react-bootstrap";
 import { RootState } from "../../app/store";
 import {
   Item,
+  setCaptureImage,
   setCustomerInfo,
   setInferenceResult,
 } from "../../features/inference/inferenceSlice";
@@ -126,7 +127,8 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
           dispatch<any>(setCustomerInfo(null));
           dispatch<any>(setInferenceResult(null));
-          setRes(null)
+          dispatch<any>(setCaptureImage(null));
+          setRes(undefined)
 
           navigate("/store");
         }, 5000);

@@ -20,6 +20,7 @@ interface TransactionState {
   inferenceResult: InferenceResult | null;
   customerInfo: CustomerInfo | null;
   shop_id: number | null;
+  captured_image: string | null;
   is_barcode_enabled: boolean;
   machine_id: number | null;
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
@@ -35,7 +36,8 @@ const initialState: TransactionState = {
   pendingStatus: "idle",
   isLoading: false,
   error: null,
-  customerInfo: null
+  customerInfo: null,
+  captured_image: null,
 };
 
 const transactionSlice = createSlice({
@@ -56,6 +58,9 @@ const transactionSlice = createSlice({
     },
     setCustomerInfo(state, action){
       state.customerInfo = action.payload;
+    },
+    setCaptureImage(state, action){
+      state.captured_image = action.payload;
     },
     setIdle(state) {
       return {
@@ -102,6 +107,7 @@ export const {
   setSuccess,
   setFailure,
   setIdle,
+  setCaptureImage
 } = transactionSlice.actions;
 
 export default transactionSlice.reducer;

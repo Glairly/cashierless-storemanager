@@ -10,6 +10,8 @@ import {
 } from "../../features/inference/inferenceSlice";
 import { useDispatch } from "react-redux";
 import QRCodePopup from "./QRCodePopup";
+import { setIdle as setIIdle } from "../../features/inference/inferenceSlice";
+import { setIdle as setTIdle } from "../../features/transaction/transactionSlice";
 
 const CheckOut: React.FC = () => {
   const location = useLocation();
@@ -31,24 +33,43 @@ const CheckOut: React.FC = () => {
 
   useEffect(() => {
     setData(location.state);
+    dispatch<any>(setIIdle());
+    dispatch<any>(setTIdle());
   }, []);
 
-  const { inferenceResult, customerInfo, pendingStatus, isLoading, error } =
-    useSelector((state: RootState) => state.inference);
+  const {
+    inferenceResult,
+    customerInfo,
+    captured_image,
+    pendingStatus,
+    isLoading,
+    error,
+  } = useSelector((state: RootState) => state.inference);
 
   return (
     <Container className="align-items-center p-5 w-100 h-100">
       <Row className="h-100">
         <Col sm={6}>
-          <Image className="rounded" src={data?.base64} />
+          <Image
+            className="rounded"
+            src={captured_image || ""}
+            style={{
+              filter: "drop-shadow(0px 4px 16px rgba(102, 102, 102, 0.15))",
+            }}
+          />
         </Col>
         <Col sm={6}>
           <div className="d-flex flex-column h-100 justify-content-start">
-            <Card className="mb-4">
+            <Card
+              className="mb-4"
+              style={{
+                filter: "drop-shadow(0px 4px 16px rgba(102, 102, 102, 0.15))",
+              }}
+            >
               <Card.Body>
                 <h6 className="fw-bold">Customer Info</h6>
                 <div style={{ borderBottom: "solid" }} className="mb-3" />
-                <div className="d-flex flex-row">
+                <div className="d-flex flex-row w-100">
                   {customerInfo?.user ? (
                     <>
                       <Image
@@ -60,7 +81,7 @@ const CheckOut: React.FC = () => {
                         style={{ width: "60px", height: "60px" }}
                       />
                       <div className="border mx-2"></div>
-                      <div className="">
+                      <div className="flex-grow-1">
                         <p
                           className="mb-0"
                           style={{ fontSize: "16px", fontWeight: "bold" }}
@@ -71,6 +92,11 @@ const CheckOut: React.FC = () => {
                           {customerInfo.user.phone_number || "no phone number"}
                         </p>
                       </div>
+                      <Link to="/store/login" className="align-self-center h-100">
+                        <Button className="text-white w-100 h-100" variant="danger">
+                          Logout
+                        </Button>
+                      </Link>
                     </>
                   ) : (
                     <Link to="/store/login" className="w-100">

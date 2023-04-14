@@ -7,6 +7,7 @@ import { checkingout } from "../../features/inference/inferenceAPI";
 import { RootState } from "../../app/store";
 import Popup from "../../components/Popup";
 import {
+  setCaptureImage,
   setIdle,
   setInferenceResult,
 } from "../../features/inference/inferenceSlice";
@@ -57,6 +58,7 @@ const Store: React.FC = () => {
     if (imageSrc) {
       setImgSrc(imageSrc);
       const file = imageSrc.split(",", 2)[1];
+      dispatch<any>(setCaptureImage(imageSrc));
       dispatch<any>(checkingout(file));
     }
   }, [webcamRef]);
@@ -87,8 +89,12 @@ const Store: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100">
-          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
+        <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100 w-50">
+          <Webcam
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+          />
         </div>
 
         <Popup
