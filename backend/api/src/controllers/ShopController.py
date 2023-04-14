@@ -20,13 +20,9 @@ class ShopController:
 
         self.router.add_api_route("/create_shop_by_client_id", self.create_shop_by_client_id, methods=["POST"])
         self.router.add_api_route("/get_shop_by_client_id", self.get_shop_by_client_id, methods=["GET"])
-        self.router.add_api_route("/get_shop_by_id", self.get_shop_by_id, methods=["GET"])
 
     def get_shop_by_client_id(self, client_id: str):
         return self.__shopService.get_shop_by_client_id(client_id)
 
     def create_shop_by_client_id(self, payload: ShopCreateRequest):    
         return self.__shopService.create_shop_by_client_id(payload)
-    
-    def get_shop_by_id(self, shop_id: str):
-        return self.__shopService.get_shop_by_id(shop_id)

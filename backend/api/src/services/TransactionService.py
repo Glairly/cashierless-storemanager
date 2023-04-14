@@ -17,7 +17,7 @@ import base64
 
 class TransactionService:
     def get_client_transactions(self, client_id: int):
-        return db.session.query(Transaction).filter(Transaction.client_id == client_id).options(subqueryload(Transaction.transaction_items)).all()
+        return db.session.query(Transaction).filter(Transaction.id == client_id).options(subqueryload(Transaction.transaction_items)).all()
 
     def generate_promptpay_qr(self, shop_id: str, phone_number:str, amount: float):   
         pending_transaction = PendingTransaction(payee_id=shop_id ,payee_account_number=phone_number, amount=amount)
