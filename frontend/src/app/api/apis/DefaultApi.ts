@@ -115,6 +115,10 @@ export interface DoTransactionFapiV1DoTransactionPostRequest {
     transactionRequest: TransactionRequest;
 }
 
+export interface DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest {
+    transactionRequest: TransactionRequest;
+}
+
 export interface EditClientCapiV1EditClientPostRequest {
     editClientRequest: EditClientRequest;
 }
@@ -157,6 +161,10 @@ export interface GetPendingTransactionFapiV1GetPendingTransactionGetRequest {
 
 export interface GetShopByClientIdCapiV1GetShopByClientIdGetRequest {
     clientId: string;
+}
+
+export interface GetShopByIdCapiV1GetShopByIdGetRequest {
+    shopId: string;
 }
 
 export interface InferenceImapiV1InferencePostRequest {
@@ -557,6 +565,43 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async doTransactionFapiV1DoTransactionPost(requestParameters: DoTransactionFapiV1DoTransactionPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.doTransactionFapiV1DoTransactionPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Do Transaction With Wallet
+     */
+    async doTransactionWithWalletFapiV1DoTransactionWithWalletPostRaw(requestParameters: DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.transactionRequest === null || requestParameters.transactionRequest === undefined) {
+            throw new runtime.RequiredError('transactionRequest','Required parameter requestParameters.transactionRequest was null or undefined when calling doTransactionWithWalletFapiV1DoTransactionWithWalletPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fapi/v1/do_transaction_with_wallet`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TransactionRequestToJSON(requestParameters.transactionRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Do Transaction With Wallet
+     */
+    async doTransactionWithWalletFapiV1DoTransactionWithWalletPost(requestParameters: DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.doTransactionWithWalletFapiV1DoTransactionWithWalletPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -971,6 +1016,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getShopByClientIdCapiV1GetShopByClientIdGet(requestParameters: GetShopByClientIdCapiV1GetShopByClientIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.getShopByClientIdCapiV1GetShopByClientIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Shop By Id
+     */
+    async getShopByIdCapiV1GetShopByIdGetRaw(requestParameters: GetShopByIdCapiV1GetShopByIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.shopId === null || requestParameters.shopId === undefined) {
+            throw new runtime.RequiredError('shopId','Required parameter requestParameters.shopId was null or undefined when calling getShopByIdCapiV1GetShopByIdGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.shopId !== undefined) {
+            queryParameters['shop_id'] = requestParameters.shopId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/capi/v1/get_shop_by_id`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Shop By Id
+     */
+    async getShopByIdCapiV1GetShopByIdGet(requestParameters: GetShopByIdCapiV1GetShopByIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getShopByIdCapiV1GetShopByIdGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
