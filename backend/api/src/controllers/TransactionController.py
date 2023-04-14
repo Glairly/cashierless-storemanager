@@ -85,4 +85,4 @@ class TransactionController:
         return self.__transactionService.get_client_transactions(client_id)
     
     def topup(self, request: TransactionTopupRequest):
-        return self.__transactionService.create_transaction_for_topup(request, totalPrice)
+        return self.__transactionService.create_transaction_for_topup(request)
