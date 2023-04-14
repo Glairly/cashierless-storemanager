@@ -24,15 +24,13 @@ interface TransactionState {
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
   isLoading: boolean;
   error: null;
-  topupTransaction: TopupTransaction | null;
 }
 
 const initialState: TransactionState = {
   clientTransaction: [],
   pendingStatus: "idle",
   isLoading: false,
-  error: null,
-  topupTransaction: null,
+  error: null
 };
 
 const transactionSlice = createSlice({
@@ -42,10 +40,6 @@ const transactionSlice = createSlice({
     setClientTransaction(state, action) {
       state.clientTransaction = action.payload;
     },
-    setTopupTransaction(state, action) {
-      state.topupTransaction = action.payload;
-    },
-
     setIdle(state) {
       return {
         ...state,
@@ -82,7 +76,7 @@ const transactionSlice = createSlice({
 });
 
 export const {
-  setClientTransaction, setTopupTransaction,
+  setClientTransaction,
   setPending,
   setSuccess,
   setFailure,
