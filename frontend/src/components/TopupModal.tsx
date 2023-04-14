@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "../app/store";
 import PrompyPayLogo from "../assets/prompt-pay-logo.png";
 import CheckMarked from "./svgs/CheckMarked";
+import { fetchWallet } from "../features/auth/authAPI";
+import { topup } from "../features/transaction/transactionAPI";
 
 interface TopupModalProps {
   show: boolean;
@@ -24,6 +26,7 @@ const TopupModal: React.FC<TopupModalProps> = ({ show, onHide }) => {
   const [topupAmount, setTopupAmount] = useState(0);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -76,6 +79,8 @@ const TopupModal: React.FC<TopupModalProps> = ({ show, onHide }) => {
         setTimeout(() => {
           navigate("/dashboard");
         }, 5000);
+        dispatch<any>(topup(topupAmount));
+        dispatch<any>(fetchWallet());
       } else {
         intervalGetTransaction();
       }
