@@ -4,6 +4,7 @@ import {
   CardGroup,
   Col,
   Container,
+  Form,
   Image,
   Modal,
   Row,
@@ -25,41 +26,11 @@ import { RootState } from "../app/store";
 import { useDispatch } from "react-redux";
 import { fetchWallet } from "../features/auth/authAPI";
 import { fetchClientTransaction } from "../features/transaction/transactionAPI";
-
-interface transaction {
-  id: number;
-  store: string;
-  date: Date;
-  viewDetailLink: string;
-  price: number;
-}
-
-const mockTransaction: transaction[] = [
-  {
-    id: 1,
-    store: "Hardware store",
-    date: new Date(),
-    viewDetailLink: "/transaction/1",
-    price: 120,
-  },
-  {
-    id: 2,
-    store: "Hardware store",
-    date: new Date(),
-    viewDetailLink: "/transaction/2",
-    price: 120,
-  },
-  {
-    id: 3,
-    store: "Hardware store",
-    date: new Date(),
-    viewDetailLink: "/transaction/3",
-    price: 120,
-  },
-];
+import TopupModal from "../components/TopupModal";
 
 const Dashboard: React.FC = () => {
   const [showScan, setShowScan] = useState(false);
+  const [showTopup, setShowTopup] = useState(false);
   const handleCloseScan = () => setShowScan(false);
   const handleShowScan = () => setShowScan(true);
 
@@ -115,6 +86,7 @@ const Dashboard: React.FC = () => {
                     <Button
                       variant="primary"
                       className="text-white w-100 card-button"
+                      onClick={() => setShowTopup(true)}
                     >
                       <BsFillCreditCardFill className="me-1" />
                       <span>Top Up</span>
@@ -203,6 +175,7 @@ const Dashboard: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <TopupModal show={showTopup} onHide={() => setShowTopup(false)} />
     </div>
   );
 };

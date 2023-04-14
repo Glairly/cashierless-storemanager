@@ -10,6 +10,8 @@ import {
   GetClientTransactionsFapiV1GetClientTransactionsGetRequest,
   TransactionItemRequest,
   TransactionRequest,
+  TopupFapiV1TopupPostRequest,
+  TransactionTopupRequest,
 } from "../../app/api";
 import {
   setClientTransaction,
@@ -122,3 +124,45 @@ export const DoAnonyTransaction =
       dispatch(setFailure("Error has occurred"));
     }
   };
+
+export const TopUpClient =
+  (): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    try {
+      const { auth } = getState();
+      if (!auth.user?.id) return false;
+    } catch (error) {
+      
+    }
+  }
+
+export const topup = 
+  (totalTopup: number): ThunkAction<void, RootState, null, Action<string>> => 
+    async (dispatch, getState) => {
+    try {
+      const { auth } = getState();
+
+      if (!auth.user?.id) return false;
+      const request = {
+        transactionTopupRequest: {
+          clientId: auth.user.id,
+          totalTopup: totalTopup
+        } as TransactionTopupRequest
+      } as TopupFapiV1TopupPostRequest
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().topupFapiV1TopupPost(
+        request,
+        meta
+      );
+    } catch (error) {
+      
+    }
+  }

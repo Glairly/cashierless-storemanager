@@ -15,6 +15,7 @@ models/HTTPValidationError.ts
 models/InferenceRequest.ts
 models/InferenceResult.ts
 models/LocationInner.ts
+models/PendingTopupTransactionRequest.ts
 models/PendingTransactionRequest.ts
 models/SendFileRequest.ts
 models/ShopCreateRequest.ts
@@ -22,6 +23,7 @@ models/SignUpRequest.ts
 models/SignUpWithShopRequest.ts
 models/TransactionItemRequest.ts
 models/TransactionRequest.ts
+models/TransactionTopupRequest.ts
 models/ValidationError.ts
 models/index.ts
 runtime.ts
