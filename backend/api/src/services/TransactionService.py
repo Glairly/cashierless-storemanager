@@ -95,7 +95,7 @@ class TransactionService:
             db.session.add(tt)
             transaction_items.append(tt)
 
-        transaction = Transaction(client_id=request.client_id, shop_id=request.shop_id, total_items=totalItems, total_price=totalPrice, transaction_items=transaction_items)
+        transaction = Transaction(client_id=request.client_id, shop_id=request.shop_id, shop_name=request.shop_name, total_items=totalItems, total_price=totalPrice, transaction_items=transaction_items)
         db.session.add(transaction)
 
     def create_anonymous_transaction_none_commit(self, request: AnonymousTransactionRequest, totalPrice: float, totalItems: int):
@@ -110,7 +110,7 @@ class TransactionService:
             db.session.add(tt)
             transaction_items.append(tt)
 
-        transaction = Transaction(client_id=None, shop_id=request.shop_id, total_items=totalItems, total_price=totalPrice, transaction_items=transaction_items)
+        transaction = Transaction(client_id=None, shop_id=request.shop_id, shop_name=request.shop_name, total_items=totalItems, total_price=totalPrice, transaction_items=transaction_items)
         db.session.add(transaction)
 
     def create_transaction_for_topup(self, request: TransactionTopupRequest):
@@ -119,6 +119,6 @@ class TransactionService:
         wallet.balance += request.total_topup
         db.session.commit()
 
-        transaction = Transaction(client_id=request.client_id,shop_id=0,total_price=request.total_topup,total_items=0,transaction_items=[])
+        transaction = Transaction(client_id=request.client_id,shop_id=0,shop_name="Topup Service", total_price=request.total_topup,total_items=0,transaction_items=[])
         db.session.add(transaction)
         db.session.commit()

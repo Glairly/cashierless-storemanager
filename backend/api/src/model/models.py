@@ -127,6 +127,7 @@ class Transaction(Base):
     id= Column(Integer, primary_key=True, index=True)
     client_id= Column(Integer, ForeignKey("clients.id"), nullable=True)
     shop_id= Column(Integer, ForeignKey("shops.id"))
+    shop_name= Column(String)
     total_price = Column(Float)
     total_items = Column(Integer)
     date = Column(Time, default=datetime.datetime.now)
