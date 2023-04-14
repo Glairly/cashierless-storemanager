@@ -27,6 +27,7 @@ import type {
   HTTPValidationError,
   InferenceRequest,
   InferenceResult,
+  PendingTopupTransactionRequest,
   PendingTransactionRequest,
   SendFileRequest,
   ShopCreateRequest,
@@ -60,6 +61,8 @@ import {
     InferenceRequestToJSON,
     InferenceResultFromJSON,
     InferenceResultToJSON,
+    PendingTopupTransactionRequestFromJSON,
+    PendingTopupTransactionRequestToJSON,
     PendingTransactionRequestFromJSON,
     PendingTransactionRequestToJSON,
     SendFileRequestFromJSON,
@@ -144,6 +147,10 @@ export interface GetItemWithBarcodesSmapiV1GetItemWithBarcodesGetRequest {
     itemId: number;
 }
 
+export interface GetPendingTopupTransactionFapiV1GetPendingTopupTransactionGetRequest {
+    pendingTopupTransactionId: number;
+}
+
 export interface GetPendingTransactionFapiV1GetPendingTransactionGetRequest {
     pendingTransactionId: number;
 }
@@ -191,6 +198,15 @@ export interface SignupCapiV1SignupPostRequest {
 
 export interface SignupWithShopCapiV1SignupWithShopPostRequest {
     signUpWithShopRequest: SignUpWithShopRequest;
+}
+
+export interface TopupConfirmFapiV1TopupConfirmPostRequest {
+    pendingTopupTransactionRequest: PendingTopupTransactionRequest;
+}
+
+export interface TopupFapiV1TopupPostRequest {
+    totalPrice: number;
+    transactionRequest: TransactionRequest;
 }
 
 /**
@@ -846,6 +862,44 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Pending Topup Transaction
+     */
+    async getPendingTopupTransactionFapiV1GetPendingTopupTransactionGetRaw(requestParameters: GetPendingTopupTransactionFapiV1GetPendingTopupTransactionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.pendingTopupTransactionId === null || requestParameters.pendingTopupTransactionId === undefined) {
+            throw new runtime.RequiredError('pendingTopupTransactionId','Required parameter requestParameters.pendingTopupTransactionId was null or undefined when calling getPendingTopupTransactionFapiV1GetPendingTopupTransactionGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.pendingTopupTransactionId !== undefined) {
+            queryParameters['pending_topup_transaction_id'] = requestParameters.pendingTopupTransactionId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fapi/v1/get_pending_topup_transaction`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Pending Topup Transaction
+     */
+    async getPendingTopupTransactionFapiV1GetPendingTopupTransactionGet(requestParameters: GetPendingTopupTransactionFapiV1GetPendingTopupTransactionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getPendingTopupTransactionFapiV1GetPendingTopupTransactionGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Pending Transaction
      */
     async getPendingTransactionFapiV1GetPendingTransactionGetRaw(requestParameters: GetPendingTransactionFapiV1GetPendingTransactionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -1361,6 +1415,88 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async signupWithShopCapiV1SignupWithShopPost(requestParameters: SignupWithShopCapiV1SignupWithShopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.signupWithShopCapiV1SignupWithShopPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Topup Confirm
+     */
+    async topupConfirmFapiV1TopupConfirmPostRaw(requestParameters: TopupConfirmFapiV1TopupConfirmPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.pendingTopupTransactionRequest === null || requestParameters.pendingTopupTransactionRequest === undefined) {
+            throw new runtime.RequiredError('pendingTopupTransactionRequest','Required parameter requestParameters.pendingTopupTransactionRequest was null or undefined when calling topupConfirmFapiV1TopupConfirmPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fapi/v1/topup_confirm`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PendingTopupTransactionRequestToJSON(requestParameters.pendingTopupTransactionRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Topup Confirm
+     */
+    async topupConfirmFapiV1TopupConfirmPost(requestParameters: TopupConfirmFapiV1TopupConfirmPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.topupConfirmFapiV1TopupConfirmPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Topup
+     */
+    async topupFapiV1TopupPostRaw(requestParameters: TopupFapiV1TopupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.totalPrice === null || requestParameters.totalPrice === undefined) {
+            throw new runtime.RequiredError('totalPrice','Required parameter requestParameters.totalPrice was null or undefined when calling topupFapiV1TopupPost.');
+        }
+
+        if (requestParameters.transactionRequest === null || requestParameters.transactionRequest === undefined) {
+            throw new runtime.RequiredError('transactionRequest','Required parameter requestParameters.transactionRequest was null or undefined when calling topupFapiV1TopupPost.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.totalPrice !== undefined) {
+            queryParameters['totalPrice'] = requestParameters.totalPrice;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fapi/v1/topup`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TransactionRequestToJSON(requestParameters.transactionRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Topup
+     */
+    async topupFapiV1TopupPost(requestParameters: TopupFapiV1TopupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.topupFapiV1TopupPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

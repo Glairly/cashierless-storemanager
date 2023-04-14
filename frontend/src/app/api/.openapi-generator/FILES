@@ -15,6 +15,7 @@ models/HTTPValidationError.ts
 models/InferenceRequest.ts
 models/InferenceResult.ts
 models/LocationInner.ts
+models/PendingTopupTransactionRequest.ts
 models/PendingTransactionRequest.ts
 models/SendFileRequest.ts
 models/ShopCreateRequest.ts
