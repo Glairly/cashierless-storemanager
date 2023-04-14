@@ -206,7 +206,7 @@ export interface TopupConfirmFapiV1TopupConfirmPostRequest {
 
 export interface TopupFapiV1TopupPostRequest {
     totalPrice: number;
-    transactionRequest: TransactionRequest;
+    transactionTopupRequest: TransactionTopupRequest;
 }
 
 /**
@@ -1463,8 +1463,8 @@ export class DefaultApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('totalPrice','Required parameter requestParameters.totalPrice was null or undefined when calling topupFapiV1TopupPost.');
         }
 
-        if (requestParameters.transactionRequest === null || requestParameters.transactionRequest === undefined) {
-            throw new runtime.RequiredError('transactionRequest','Required parameter requestParameters.transactionRequest was null or undefined when calling topupFapiV1TopupPost.');
+        if (requestParameters.transactionTopupRequest === null || requestParameters.transactionTopupRequest === undefined) {
+            throw new runtime.RequiredError('transactionTopupRequest','Required parameter requestParameters.transactionTopupRequest was null or undefined when calling topupFapiV1TopupPost.');
         }
 
         const queryParameters: any = {};
@@ -1482,7 +1482,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: TransactionRequestToJSON(requestParameters.transactionRequest),
+            body: TransactionTopupRequestToJSON(requestParameters.transactionTopupRequest),
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {
