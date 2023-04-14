@@ -113,7 +113,7 @@ class TransactionService:
         transaction = Transaction(client_id=None, shop_id=request.shop_id, total_items=totalItems, total_price=totalPrice, transaction_items=transaction_items)
         db.session.add(transaction)
 
-    def create_transaction_for_topup(self, request: TransactionRequest, totalPrice: float):
+    def create_transaction_for_topup(self, request: TransactionTopupRequest, totalPrice: float):
         client_id = db.session.query(Client).filter(Client.id == request.client_id).first()
         wallet = db.session.query(ClientWallet).filter(ClientWallet.id == client_id.wallet_id).first()
         wallet.balance += totalPrice
