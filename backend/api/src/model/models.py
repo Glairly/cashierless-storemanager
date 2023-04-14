@@ -129,7 +129,7 @@ class Transaction(Base):
     shop_id= Column(Integer, ForeignKey("shops.id"))
     total_price = Column(Float)
     total_items = Column(Integer)
-    date = Column(Time)
+    date = Column(Time, default=datetime.datetime.now)
 
     transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
 
