@@ -119,5 +119,6 @@ class TransactionService:
         wallet.balance += request.total_topup
         db.session.commit()
 
-        transaction = Transaction(client_id=request.client_id,shop_id=0,total_price=request.total_topup,total_item=0)
+        transaction = Transaction(client_id=request.client_id,shop_id=0,total_price=request.total_topup,total_items=0,transaction_items=[])
         db.session.add(transaction)
+        db.session.commit()
