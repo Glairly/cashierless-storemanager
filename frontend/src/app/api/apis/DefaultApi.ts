@@ -205,7 +205,6 @@ export interface TopupConfirmFapiV1TopupConfirmPostRequest {
 }
 
 export interface TopupFapiV1TopupPostRequest {
-    totalPrice: number;
     transactionTopupRequest: TransactionTopupRequest;
 }
 
@@ -1459,19 +1458,11 @@ export class DefaultApi extends runtime.BaseAPI {
      * Topup
      */
     async topupFapiV1TopupPostRaw(requestParameters: TopupFapiV1TopupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        if (requestParameters.totalPrice === null || requestParameters.totalPrice === undefined) {
-            throw new runtime.RequiredError('totalPrice','Required parameter requestParameters.totalPrice was null or undefined when calling topupFapiV1TopupPost.');
-        }
-
         if (requestParameters.transactionTopupRequest === null || requestParameters.transactionTopupRequest === undefined) {
             throw new runtime.RequiredError('transactionTopupRequest','Required parameter requestParameters.transactionTopupRequest was null or undefined when calling topupFapiV1TopupPost.');
         }
 
         const queryParameters: any = {};
-
-        if (requestParameters.totalPrice !== undefined) {
-            queryParameters['totalPrice'] = requestParameters.totalPrice;
-        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
