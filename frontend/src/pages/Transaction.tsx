@@ -3,7 +3,8 @@ import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 import * as Navbar from "../components/Navbar";
 import { RootState } from "../app/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllShop } from "../features/transaction/transactionAPI";
 
 interface TransactionProps {
   id: number;
@@ -14,11 +15,19 @@ interface TransactionProps {
   status: "Success" | "Failure" | "Pending";
 }
 
+interface shop {
+  id: number;
+  name: string;
+}
+
 const Transaction: React.FC = () => {
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
+  const [shop, setShop] = useState<shop[] | null>();
 
   const [paginationItems, setPaginationItems] = useState([] as any[]);
+
+  const dispatch = useDispatch();
 
   const transactions = useSelector(
     (state: RootState) => state.transaction.clientTransaction
@@ -32,6 +41,11 @@ const Transaction: React.FC = () => {
     const date = new Date(strDate);
     const formattedDate = date.toLocaleString();
     return formattedDate
+  }
+
+  const handleShopName = (shop_id: number): shop | undefined => {
+    const obj = shop?.find(key => key.id === shop_id)
+    return obj;
   }
 
   useEffect(() => {
@@ -51,7 +65,7 @@ const Transaction: React.FC = () => {
         </Pagination.Item>
       );
     }
-
+    dispatch<any>(getAllShop()).then((result: any) => setShop(result));
     setPaginationItems(temp);
   }, [transactions]);
 
@@ -91,20 +105,21 @@ const Transaction: React.FC = () => {
           </thead>
           <tbody>
             {transactions.map((transaction) => (
-              <tr key={transaction.id} className="text-center ">
+              <tr key={transaction.id} className="text-center align-middle">
                 <td>{transaction.id}</td>
-                <td>{transaction.shop_id}</td>
+                <td>{handleShopName(transaction.shop_id)?.name}</td>
                 <td>{handleDateFormat(transaction?.date) || "Unknown date"}</td>
                 <td>
-                  {transaction.transaction_items.map((x) => (
-                    <>
-                      {x.item_id} x {x.quantity}
-                      <br />
-                    </>
-                  ))}
+                  {transaction.transaction_items.length === 0 ? "-" :
+                    transaction.transaction_items.map((x) => (
+                      <>
+                        {x.item_id} x {x.quantity}
+                        <br />
+                      </>
+                    ))}
                 </td>
                 <td>{transaction.total_price + " ฿"}</td>
-                <td>{transaction.total_items}</td>
+                <td>{transaction.total_items == 0 ? "-" : transaction.total_items}</td>
                 <td>
                   <Button className="text-white">
                     <BsFillTrashFill />

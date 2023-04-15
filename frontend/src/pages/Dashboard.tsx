@@ -25,12 +25,18 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { useDispatch } from "react-redux";
 import { fetchWallet } from "../features/auth/authAPI";
-import { fetchClientTransaction } from "../features/transaction/transactionAPI";
+import { getAllShop, fetchClientTransaction } from "../features/transaction/transactionAPI";
 import TopupModal from "../components/TopupModal";
+
+interface shop {
+  id: number;
+  name: string;
+}
 
 const Dashboard: React.FC = () => {
   const [showScan, setShowScan] = useState(false);
   const [showTopup, setShowTopup] = useState(false);
+  const [shop, setShop] = useState<shop[]>();
   const handleCloseScan = () => setShowScan(false);
   const handleShowScan = () => setShowScan(true);
 
@@ -39,6 +45,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction());
+    dispatch<any>(getAllShop()).then((result: any) => setShop(result));
+    console.log(shop);
   }, [dispatch]);
 
   const user = useSelector((state: RootState) => state.auth.user);
@@ -51,6 +59,11 @@ const Dashboard: React.FC = () => {
     const date = new Date(strDate);
     const formattedDate = date.toLocaleString();
     return formattedDate
+  }
+
+  const handleShopName = (shop_id: number): shop | undefined => {
+    const obj = shop?.find(key => key.id === shop_id)
+    return obj;
   }
 
   return (
@@ -148,9 +161,11 @@ const Dashboard: React.FC = () => {
                     <div className="w-100" key={item.id}>
                       <div className="d-flex justify-content-between">
                         <p className="mb-1">
+                          {handleShopName(item.shop_id)?.name || "Unkown Shop"}
+                        </p>
+                        <p>
                           {handleDateFormat(item.date) || "Unknown Date"}
                         </p>
-                        <p>{item.total_items == 0 ? "Topup Service" : `${item.total_items} Items`}</p>
                       </div>
                       <div className="d-flex justify-content-between mt-0">
                         <Link to={`/transaction/${item.id}`}>View Detail</Link>

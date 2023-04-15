@@ -167,13 +167,11 @@ export const topup =
     }
     }
   
-export const GetAllShop =
+export const getAllShop =
   (): ThunkAction<void, RootState, null, Action<string>> =>
-    async (dispatch, getState) => { 
+    async () => { 
       try {
         const res = await new DefaultApi().getAllShopCapiV1GetAllShopGet();
         return res
-      } catch (error) {
-        
-      }
+      } catch (error) { }
     }
