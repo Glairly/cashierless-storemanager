@@ -6,7 +6,8 @@ import {
   Form as BootstrapForm,
   Image,
   Row,
-  Dropdown
+  Dropdown,
+  Modal
 } from "react-bootstrap";
 import * as Navbar from "../../components/Navbar";
 import ShoppingMan from "../../assets/shopping_man.png";
@@ -17,8 +18,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerShop } from "../../features/auth/authAPI";
 import * as Yup from "yup";
 import { RootState } from "../../app/store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Popup from "../../components/Popup";
+import Webcam from "react-webcam";
 
 interface RegisterShopValues {
   username: string;
@@ -84,7 +86,7 @@ const SignupSchema = Yup.object().shape({
 const renderForm: React.FC = (initialValues) => {
   const dispatch = useDispatch();
   const msg = useSelector((state: RootState) => state.auth.msg);
-  const { pendingStatus } = useSelector(
+  const { pendingStatus, isLoading } = useSelector(
     (state: RootState) => state.auth
   );
   const genderOptions = ["Male", "Female", "Non-binary", "Other"];
@@ -93,10 +95,24 @@ const renderForm: React.FC = (initialValues) => {
   const [modalStatus, setModalStatus] = useState(true);
   const [selectedOption, setSelectedOption] = useState("");
 
+  const [isFaceModal, setIsFaceModal] = useState(false);
+  const webcamRef = useRef<Webcam>(null);
+  const [imgSrc, setImgSrc] = useState<string>("");
+
   const handleSubmit = async (values: any) => {
     await dispatch<any>(registerShop(values));
     setShouldShowModal(true);
   };
+
+  const capture = useCallback(async () => {
+    setImgSrc("");
+    if (isLoading) return;
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+      const file = imageSrc.split(",", 2)[1];
+      setImgSrc(file);
+    }
+  }, [webcamRef]);
 
   useEffect(() => {
     switch (pendingStatus) {
@@ -112,6 +128,7 @@ const renderForm: React.FC = (initialValues) => {
         setModalStatus(false);
         break;
     }
+    setShouldShowModal(false);
   }, [pendingStatus]);
 
   return (
@@ -287,9 +304,43 @@ const renderForm: React.FC = (initialValues) => {
                 {(msg) => <small style={{ color: "red" }}>{msg}</small>}
               </ErrorMessage>
             </BootstrapForm.Group>
+
+            <BootstrapForm.Group className="mb-4">
+              <div className="d-flex flex-column justify-content-center rounded align-items-stretch">
+                <BootstrapForm.Label>Face detection</BootstrapForm.Label>
+                <Button
+                  variant={`${!imgSrc ? "danger" : "success"} text-white`}
+                  onClick={() => setIsFaceModal(true)}>
+                  {!imgSrc ? "Click to Capture Face Image" : "Capture Image Done!"}
+                </Button>
+              </div>
+            </BootstrapForm.Group>
+
             <Button type="submit" variant="primary" className="text-white w-100">
               Submit
             </Button>
+
+            <Modal show={isFaceModal} onHide={() => setIsFaceModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Face detection</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="d-flex flex-column justify-content-center rounded align-items-stretch h-100">
+                  {!imgSrc ? <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" /> : <Image src={"data:image/jpeg;base64," + imgSrc} />}
+                  <Button
+                    variant={`${!imgSrc ? "danger" : "success"} text-white my-2`}
+                    onClick={capture}
+                  >
+                    {!imgSrc ? "Capture Image" : "Recapture Image"}
+                  </Button>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => { setIsFaceModal(false); setFieldValue("face_img", imgSrc); }}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </Form>
         )}
       </Formik>

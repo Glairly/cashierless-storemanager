@@ -131,7 +131,7 @@ class AuthService:
         hashed_password = self.__pwd_context.hash(signupRequest.password)
 
         shop_wallet = ShopWallet()
-        shop = Shop(phone_number=signupRequest.shop_phone_number, name= signupRequest.name, machine_id= signupRequest.machine_id, wallet=shop_wallet)
+        shop = Shop(phone_number=signupRequest.shop_phone_number, name= signupRequest.name, wallet=shop_wallet)
 
         wallet = ClientWallet()
         client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet, profile_image=signupRequest.profile_img)
