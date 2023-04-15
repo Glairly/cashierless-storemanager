@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Time, LargeBinary
+from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey, Time, LargeBinary, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, ColumnProperty
 import datetime
@@ -127,10 +127,9 @@ class Transaction(Base):
     id= Column(Integer, primary_key=True, index=True)
     client_id= Column(Integer, ForeignKey("clients.id"), nullable=True)
     shop_id= Column(Integer, ForeignKey("shops.id"))
-    shop_name= Column(String)
     total_price = Column(Float)
     total_items = Column(Integer)
-    date = Column(Time, default=datetime.datetime.now)
+    date = Column(DateTime, default=datetime.datetime.now)
 
     transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
 

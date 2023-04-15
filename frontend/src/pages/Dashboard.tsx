@@ -47,6 +47,12 @@ const Dashboard: React.FC = () => {
     (state: RootState) => state.transaction.clientTransaction
   );
 
+  const handleDateFormat = (strDate: string): string => {
+    const date = new Date(strDate);
+    const formattedDate = date.toLocaleString();
+    return formattedDate
+  }
+
   return (
     <div>
       <Navbar.DashbaordNavbar />
@@ -142,9 +148,9 @@ const Dashboard: React.FC = () => {
                     <div className="w-100" key={item.id}>
                       <div className="d-flex justify-content-between">
                         <p className="mb-1">
-                          {item.date?.toLocaleString() || "Unknown Date"}
+                          {handleDateFormat(item.date) || "Unknown Date"}
                         </p>
-                        <p>{item.total_items} Items</p>
+                        <p>{item.total_items == 0 ? "Topup Service" : `${item.total_items} Items`}</p>
                       </div>
                       <div className="d-flex justify-content-between mt-0">
                         <Link to={`/transaction/${item.id}`}>View Detail</Link>

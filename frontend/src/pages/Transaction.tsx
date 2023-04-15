@@ -15,121 +15,6 @@ interface TransactionProps {
 }
 
 const Transaction: React.FC = () => {
-  const mockTransactions: TransactionProps[] = [
-    {
-      id: 1,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 2,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 3,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 4,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 5,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 6,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 7,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 8,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 9,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 10,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 11,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 12,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 13,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 14,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-  ];
-
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
 
@@ -143,12 +28,11 @@ const Transaction: React.FC = () => {
     setActivePage(page);
   };
 
-  const indexOfLastTransaction = activePage * transactionsPerPage;
-  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = mockTransactions.slice(
-    indexOfFirstTransaction,
-    indexOfLastTransaction
-  );
+  const handleDateFormat = (strDate: string): string => {
+    const date = new Date(strDate);
+    const formattedDate = date.toLocaleString();
+    return formattedDate
+  }
 
   useEffect(() => {
     const temp = [];
@@ -210,7 +94,7 @@ const Transaction: React.FC = () => {
               <tr key={transaction.id} className="text-center ">
                 <td>{transaction.id}</td>
                 <td>{transaction.shop_id}</td>
-                <td>{transaction?.date?.toLocaleString() || "Unknown date"}</td>
+                <td>{handleDateFormat(transaction?.date) || "Unknown date"}</td>
                 <td>
                   {transaction.transaction_items.map((x) => (
                     <>
