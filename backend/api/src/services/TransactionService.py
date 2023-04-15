@@ -17,7 +17,7 @@ import base64
 
 class TransactionService:
     def get_client_transactions(self, client_id: int):
-        return db.session.query(Transaction).filter(Transaction.id == client_id).options(subqueryload(Transaction.transaction_items)).all()
+        return db.session.query(Transaction).filter(Transaction.client_id == client_id).options(subqueryload(Transaction.transaction_items)).all()
 
     def generate_promptpay_qr(self, shop_id: str, phone_number:str, amount: float):   
         pending_transaction = PendingTransaction(payee_id=shop_id ,payee_account_number=phone_number, amount=amount)
@@ -119,6 +119,6 @@ class TransactionService:
         wallet.balance += request.total_topup
         db.session.commit()
 
-        transaction = Transaction(client_id=request.client_id,shop_id=0,total_price=request.total_topup,total_items=0,transaction_items=[])
+        transaction = Transaction(client_id=request.client_id,shop_id=0, total_price=request.total_topup,total_items=0,transaction_items=[])
         db.session.add(transaction)
         db.session.commit()

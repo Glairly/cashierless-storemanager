@@ -15,6 +15,16 @@ class ShopService:
             raise HTTPException('Shop not found')
 
         return shop
+    
+    def get_all_shop(self):
+        result = db.session.query(Shop.id, Shop.name).all()
+        results_dict = []
+        for row in result:
+            row_dict = {}
+            for column, value in row._asdict().items():
+                row_dict[column] = value
+            results_dict.append(row_dict)
+        return results_dict
 
     def get_shop_by_client_id(self, client_id: int):
         # client = db.session.query(Client).filter(Client.id == client_id).options(subqueryload(C)).first()

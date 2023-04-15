@@ -115,6 +115,10 @@ export interface DoTransactionFapiV1DoTransactionPostRequest {
     transactionRequest: TransactionRequest;
 }
 
+export interface DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest {
+    transactionRequest: TransactionRequest;
+}
+
 export interface EditClientCapiV1EditClientPostRequest {
     editClientRequest: EditClientRequest;
 }
@@ -561,6 +565,43 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Do Transaction With Wallet
+     */
+    async doTransactionWithWalletFapiV1DoTransactionWithWalletPostRaw(requestParameters: DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.transactionRequest === null || requestParameters.transactionRequest === undefined) {
+            throw new runtime.RequiredError('transactionRequest','Required parameter requestParameters.transactionRequest was null or undefined when calling doTransactionWithWalletFapiV1DoTransactionWithWalletPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fapi/v1/do_transaction_with_wallet`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TransactionRequestToJSON(requestParameters.transactionRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Do Transaction With Wallet
+     */
+    async doTransactionWithWalletFapiV1DoTransactionWithWalletPost(requestParameters: DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.doTransactionWithWalletFapiV1DoTransactionWithWalletPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Edit Client
      */
     async editClientCapiV1EditClientPostRaw(requestParameters: EditClientCapiV1EditClientPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -705,6 +746,36 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async generatePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPost(requestParameters: GeneratePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.generatePromptpayQrTopupFapiV1GeneratePromptpayQrTopupPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get All Shop
+     */
+    async getAllShopCapiV1GetAllShopGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/capi/v1/get_all_shop`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get All Shop
+     */
+    async getAllShopCapiV1GetAllShopGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getAllShopCapiV1GetAllShopGetRaw(initOverrides);
         return await response.value();
     }
 

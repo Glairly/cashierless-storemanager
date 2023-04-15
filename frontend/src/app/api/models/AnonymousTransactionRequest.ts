@@ -34,6 +34,12 @@ export interface AnonymousTransactionRequest {
     shopId: number;
     /**
      * 
+     * @type {string}
+     * @memberof AnonymousTransactionRequest
+     */
+    shopName: string;
+    /**
+     * 
      * @type {Array<TransactionItemRequest>}
      * @memberof AnonymousTransactionRequest
      */
@@ -52,6 +58,7 @@ export interface AnonymousTransactionRequest {
 export function instanceOfAnonymousTransactionRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "shopId" in value;
+    isInstance = isInstance && "shopName" in value;
     isInstance = isInstance && "items" in value;
     isInstance = isInstance && "barcodes" in value;
 
@@ -69,6 +76,7 @@ export function AnonymousTransactionRequestFromJSONTyped(json: any, ignoreDiscri
     return {
         
         'shopId': json['shop_id'],
+        'shopName': json['shop_name'],
         'items': ((json['items'] as Array<any>).map(TransactionItemRequestFromJSON)),
         'barcodes': json['barcodes'],
     };
@@ -84,6 +92,7 @@ export function AnonymousTransactionRequestToJSON(value?: AnonymousTransactionRe
     return {
         
         'shop_id': value.shopId,
+        'shop_name': value.shopName,
         'items': ((value.items as Array<any>).map(TransactionItemRequestToJSON)),
         'barcodes': value.barcodes,
     };

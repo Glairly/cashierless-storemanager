@@ -14,7 +14,7 @@ export interface Transaction {
   shop_id: number;
   total_price: number;
   total_items: number;
-  date: Date;
+  date: string;
   transaction_items: TransactionItem[];
 }
 

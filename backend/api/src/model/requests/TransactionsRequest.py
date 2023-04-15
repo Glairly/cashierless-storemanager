@@ -7,6 +7,7 @@ class TransactionItemRequest(BaseRequest):
 
 class AnonymousTransactionRequest(BaseRequest):
     shop_id: int
+    shop_name: str
     items: List[TransactionItemRequest]
     barcodes: List[str]
 

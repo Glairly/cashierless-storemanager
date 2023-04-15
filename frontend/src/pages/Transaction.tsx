@@ -3,7 +3,8 @@ import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
 import { BsFillTrashFill } from "react-icons/bs";
 import * as Navbar from "../components/Navbar";
 import { RootState } from "../app/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllShop } from "../features/transaction/transactionAPI";
 
 interface TransactionProps {
   id: number;
@@ -14,126 +15,19 @@ interface TransactionProps {
   status: "Success" | "Failure" | "Pending";
 }
 
-const Transaction: React.FC = () => {
-  const mockTransactions: TransactionProps[] = [
-    {
-      id: 1,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 2,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 3,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 4,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 5,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 6,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 7,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 8,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 9,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 10,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 11,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 12,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 13,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-    {
-      id: 14,
-      store: "Hardware Store",
-      timestamp: new Date(),
-      product: "Lay Origianl x 1",
-      price: 20,
-      status: "Success",
-    },
-  ];
+interface shop {
+  id: number;
+  name: string;
+}
 
+const Transaction: React.FC = () => {
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
+  const [shop, setShop] = useState<shop[] | null>();
 
   const [paginationItems, setPaginationItems] = useState([] as any[]);
+
+  const dispatch = useDispatch();
 
   const transactions = useSelector(
     (state: RootState) => state.transaction.clientTransaction
@@ -143,12 +37,16 @@ const Transaction: React.FC = () => {
     setActivePage(page);
   };
 
-  const indexOfLastTransaction = activePage * transactionsPerPage;
-  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = mockTransactions.slice(
-    indexOfFirstTransaction,
-    indexOfLastTransaction
-  );
+  const handleDateFormat = (strDate: string): string => {
+    const date = new Date(strDate);
+    const formattedDate = date.toLocaleString();
+    return formattedDate
+  }
+
+  const handleShopName = (shop_id: number): shop | undefined => {
+    const obj = shop?.find(key => key.id === shop_id)
+    return obj;
+  }
 
   useEffect(() => {
     const temp = [];
@@ -167,7 +65,7 @@ const Transaction: React.FC = () => {
         </Pagination.Item>
       );
     }
-
+    dispatch<any>(getAllShop()).then((result: any) => setShop(result));
     setPaginationItems(temp);
   }, [transactions]);
 
@@ -207,20 +105,21 @@ const Transaction: React.FC = () => {
           </thead>
           <tbody>
             {transactions.map((transaction) => (
-              <tr key={transaction.id} className="text-center ">
+              <tr key={transaction.id} className="text-center align-middle">
                 <td>{transaction.id}</td>
-                <td>{transaction.shop_id}</td>
-                <td>{transaction?.date?.toLocaleString() || "Unknown date"}</td>
+                <td>{handleShopName(transaction.shop_id)?.name}</td>
+                <td>{handleDateFormat(transaction?.date) || "Unknown date"}</td>
                 <td>
-                  {transaction.transaction_items.map((x) => (
-                    <>
-                      {x.item_id} x {x.quantity}
-                      <br />
-                    </>
-                  ))}
+                  {transaction.transaction_items.length === 0 ? "-" :
+                    transaction.transaction_items.map((x) => (
+                      <>
+                        {x.item_id} x {x.quantity}
+                        <br />
+                      </>
+                    ))}
                 </td>
                 <td>{transaction.total_price + " ฿"}</td>
-                <td>{transaction.total_items}</td>
+                <td>{transaction.total_items == 0 ? "-" : transaction.total_items}</td>
                 <td>
                   <Button className="text-white">
                     <BsFillTrashFill />

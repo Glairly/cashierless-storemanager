@@ -11,7 +11,7 @@ import {
   TransactionItemRequest,
   TransactionRequest,
   TopupFapiV1TopupPostRequest,
-  TransactionTopupRequest,
+  TransactionTopupRequest
 } from "../../app/api";
 import {
   setClientTransaction,
@@ -165,4 +165,13 @@ export const topup =
     } catch (error) {
       
     }
-  }
+    }
+  
+export const getAllShop =
+  (): ThunkAction<void, RootState, null, Action<string>> =>
+    async () => { 
+      try {
+        const res = await new DefaultApi().getAllShopCapiV1GetAllShopGet();
+        return res
+      } catch (error) { }
+    }
