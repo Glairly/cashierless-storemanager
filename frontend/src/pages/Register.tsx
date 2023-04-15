@@ -121,6 +121,7 @@ const renderForm: React.FC = (props) => {
         setModalStatus(false);
         break;
     }
+    setShouldShowModal(false);
   }, [pendingStatus]);
 
   return (
@@ -282,7 +283,6 @@ const renderForm: React.FC = (props) => {
                   {!imgSrc ? "Click to Capture Face Image" : "Capture Image Done!"}
                 </Button>
               </div>
-
             </BootstrapForm.Group>
 
             <Button type="submit" variant="primary" className="text-white w-100">
