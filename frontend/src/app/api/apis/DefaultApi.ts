@@ -163,10 +163,6 @@ export interface GetShopByClientIdCapiV1GetShopByClientIdGetRequest {
     clientId: string;
 }
 
-export interface GetShopByIdCapiV1GetShopByIdGetRequest {
-    shopId: string;
-}
-
 export interface InferenceImapiV1InferencePostRequest {
     inferenceRequest: InferenceRequest;
 }
@@ -754,6 +750,36 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get All Shop
+     */
+    async getAllShopCapiV1GetAllShopGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/capi/v1/get_all_shop`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get All Shop
+     */
+    async getAllShopCapiV1GetAllShopGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getAllShopCapiV1GetAllShopGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Client By Id
      */
     async getClientByIdCapiV1GetClientByIdGetRaw(requestParameters: GetClientByIdCapiV1GetClientByIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -1016,44 +1042,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getShopByClientIdCapiV1GetShopByClientIdGet(requestParameters: GetShopByClientIdCapiV1GetShopByClientIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.getShopByClientIdCapiV1GetShopByClientIdGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Get Shop By Id
-     */
-    async getShopByIdCapiV1GetShopByIdGetRaw(requestParameters: GetShopByIdCapiV1GetShopByIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        if (requestParameters.shopId === null || requestParameters.shopId === undefined) {
-            throw new runtime.RequiredError('shopId','Required parameter requestParameters.shopId was null or undefined when calling getShopByIdCapiV1GetShopByIdGet.');
-        }
-
-        const queryParameters: any = {};
-
-        if (requestParameters.shopId !== undefined) {
-            queryParameters['shop_id'] = requestParameters.shopId;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/capi/v1/get_shop_by_id`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        if (this.isJsonMime(response.headers.get('content-type'))) {
-            return new runtime.JSONApiResponse<any>(response);
-        } else {
-            return new runtime.TextApiResponse(response) as any;
-        }
-    }
-
-    /**
-     * Get Shop By Id
-     */
-    async getShopByIdCapiV1GetShopByIdGet(requestParameters: GetShopByIdCapiV1GetShopByIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.getShopByIdCapiV1GetShopByIdGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
