@@ -11,9 +11,15 @@ export interface Item {
   type: number;
 }
 
+interface Wallet {
+  id: number;
+  balance: number;
+}
+
 export interface CustomerInfo {
   user: Client | null;
   access_token: string;
+  wallet: Wallet | null;
 }
 
 interface TransactionState {

@@ -25,5 +25,6 @@ models/TransactionItemRequest.ts
 models/TransactionRequest.ts
 models/TransactionTopupRequest.ts
 models/ValidationError.ts
+models/WalletTransactionRequest.ts
 models/index.ts
 runtime.ts

@@ -7,7 +7,6 @@ class TransactionItemRequest(BaseRequest):
 
 class AnonymousTransactionRequest(BaseRequest):
     shop_id: int
-    shop_name: str
     items: List[TransactionItemRequest]
     barcodes: List[str]
 
@@ -17,3 +16,6 @@ class TransactionRequest(AnonymousTransactionRequest):
 class TransactionTopupRequest(BaseRequest):
     client_id: int
     total_topup: int
+
+class WalletTransactionRequest(TransactionRequest):
+    transaction_id: int

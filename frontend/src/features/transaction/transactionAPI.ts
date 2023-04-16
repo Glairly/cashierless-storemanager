@@ -11,7 +11,10 @@ import {
   TransactionItemRequest,
   TransactionRequest,
   TopupFapiV1TopupPostRequest,
-  TransactionTopupRequest
+  TransactionTopupRequest,
+  DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest,
+  WalletTransactionRequest,
+  ResponseError
 } from "../../app/api";
 import {
   setClientTransaction,
@@ -48,6 +51,52 @@ export const fetchClientTransaction =
     } catch (error) {}
   };
 
+export const DoTransactionWithWallet =
+  (
+    items: TransactionItemRequest[],
+    barcodes: string[],
+    walletId: number
+  ): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    dispatch(setPending());
+    try {
+      const { inference } = getState();
+      const { customerInfo } = inference;
+      if (!customerInfo?.user?.id) return;
+
+      const request = {
+        walletTransactionRequest: {
+          shopId: inference.shop_id,
+          items: items,
+          barcodes: barcodes,
+          clientId: customerInfo.user.id,
+          transactionId: walletId
+        } as WalletTransactionRequest,
+      } as DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${customerInfo.access_token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().doTransactionWithWalletFapiV1DoTransactionWithWalletPost(
+        request,
+        meta
+      ).catch(error => {
+        error.response.json().then((errorBody: any) => {
+          dispatch(setFailure(errorBody.error));
+        })
+      });
+
+      dispatch(setSuccess());
+    } catch (error) {
+      dispatch(setFailure("Error has occurred"));
+    }
+  };
+  
 export const DoTransaction =
   (
     items: TransactionItemRequest[],
@@ -125,46 +174,35 @@ export const DoAnonyTransaction =
     }
   };
 
-export const TopUpClient =
-  (): ThunkAction<void, RootState, null, Action<string>> =>
-  async (dispatch, getState) => {
-    try {
-      const { auth } = getState();
-      if (!auth.user?.id) return false;
-    } catch (error) {
-      
-    }
-  }
-
 export const topup = 
   (totalTopup: number): ThunkAction<void, RootState, null, Action<string>> => 
-    async (dispatch, getState) => {
-    try {
-      const { auth } = getState();
+    async (_dispatch, getState) => {
+      try {
+        const { auth } = getState();
 
-      if (!auth.user?.id) return false;
-      const request = {
-        transactionTopupRequest: {
-          clientId: auth.user.id,
-          totalTopup: totalTopup
-        } as TransactionTopupRequest
-      } as TopupFapiV1TopupPostRequest
+        if (!auth.user?.id) return false;
+        const request = {
+          transactionTopupRequest: {
+            clientId: auth.user.id,
+            totalTopup: totalTopup
+          } as TransactionTopupRequest
+        } as TopupFapiV1TopupPostRequest
 
-      const meta = {
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      } as RequestInit;
+        const meta = {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        } as RequestInit;
 
-      const res = await new DefaultApi().topupFapiV1TopupPost(
-        request,
-        meta
-      );
-    } catch (error) {
-      
-    }
+        const res = await new DefaultApi().topupFapiV1TopupPost(
+          request,
+          meta
+        );
+      } catch (error) {
+        
+      }
     }
   
 export const getAllShop =

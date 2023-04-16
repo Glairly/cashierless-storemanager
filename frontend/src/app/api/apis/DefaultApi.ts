@@ -35,6 +35,7 @@ import type {
   SignUpWithShopRequest,
   TransactionRequest,
   TransactionTopupRequest,
+  WalletTransactionRequest,
 } from '../models';
 import {
     AddBarcodeRequestFromJSON,
@@ -77,6 +78,8 @@ import {
     TransactionRequestToJSON,
     TransactionTopupRequestFromJSON,
     TransactionTopupRequestToJSON,
+    WalletTransactionRequestFromJSON,
+    WalletTransactionRequestToJSON,
 } from '../models';
 
 export interface AddBarcodeToItemSmapiV1AddBarcodeToItemPostRequest {
@@ -116,7 +119,7 @@ export interface DoTransactionFapiV1DoTransactionPostRequest {
 }
 
 export interface DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest {
-    transactionRequest: TransactionRequest;
+    walletTransactionRequest: WalletTransactionRequest;
 }
 
 export interface EditClientCapiV1EditClientPostRequest {
@@ -568,8 +571,8 @@ export class DefaultApi extends runtime.BaseAPI {
      * Do Transaction With Wallet
      */
     async doTransactionWithWalletFapiV1DoTransactionWithWalletPostRaw(requestParameters: DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        if (requestParameters.transactionRequest === null || requestParameters.transactionRequest === undefined) {
-            throw new runtime.RequiredError('transactionRequest','Required parameter requestParameters.transactionRequest was null or undefined when calling doTransactionWithWalletFapiV1DoTransactionWithWalletPost.');
+        if (requestParameters.walletTransactionRequest === null || requestParameters.walletTransactionRequest === undefined) {
+            throw new runtime.RequiredError('walletTransactionRequest','Required parameter requestParameters.walletTransactionRequest was null or undefined when calling doTransactionWithWalletFapiV1DoTransactionWithWalletPost.');
         }
 
         const queryParameters: any = {};
@@ -583,7 +586,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: TransactionRequestToJSON(requestParameters.transactionRequest),
+            body: WalletTransactionRequestToJSON(requestParameters.walletTransactionRequest),
         }, initOverrides);
 
         if (this.isJsonMime(response.headers.get('content-type'))) {

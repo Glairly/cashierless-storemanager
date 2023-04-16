@@ -24,3 +24,4 @@ export * from './TransactionItemRequest';
 export * from './TransactionRequest';
 export * from './TransactionTopupRequest';
 export * from './ValidationError';
+export * from './WalletTransactionRequest';

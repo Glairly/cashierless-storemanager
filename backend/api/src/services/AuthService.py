@@ -105,6 +105,7 @@ class AuthService:
         wallet = ClientWallet()
         client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet, profile_image=signupRequest.profile_img)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
+        wallet.auth_id = auth
 
         if signupRequest.face_img is not None:
             face_id = self.__faceRecognitionService.create_face_id_none_commit(signupRequest.face_img)
@@ -172,5 +173,6 @@ class AuthService:
     def recognize_face(self, file: bytes):
         auth = self.__faceRecognitionService.find_face_id(file)
         access_token = self.__create_access_token(auth.to_dict())
-        return {"access_token": access_token, "token_type": "bearer", "user": auth.client.to_dict() if auth.client else None}
+        wallet = db.session.query(ClientWallet).filter(ClientWallet.id == auth.client.wallet_id).first()
+        return {"access_token": access_token, "token_type": "bearer", "user": auth.client.to_dict() if auth.client else None, "wallet": wallet}
     
