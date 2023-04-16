@@ -57,6 +57,10 @@ class TransactionController:
             self.__transactionService.edit_transaction_status(pending_transaction_id=request.transaction_id, status="Complete")
             db.session.commit()
             return JSONResponse(status_code=200, content="Transaction successful")
+        except HTTPException as e:
+            self.__transactionService.edit_transaction_status(pending_transaction_id=request.transaction_id, status="Failed")
+            db.session.commit()
+            return JSONResponse(status_code=400, content={"error": e.detail})
         except Exception as e:
             self.__transactionService.edit_transaction_status(pending_transaction_id=request.transaction_id, status="Failed")
             db.session.commit()

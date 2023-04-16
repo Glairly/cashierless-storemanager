@@ -44,7 +44,7 @@ const Transaction: React.FC = () => {
   }
 
   const handleShopName = (shop_id: number): shop | undefined => {
-    const obj = shop?.find(key => key.id === shop_id)
+    const obj = shop?.find(key => key.id == shop_id)
     return obj;
   }
 
@@ -107,7 +107,7 @@ const Transaction: React.FC = () => {
             {transactions.map((transaction) => (
               <tr key={transaction.id} className="text-center align-middle">
                 <td>{transaction.id}</td>
-                <td>{handleShopName(transaction.shop_id)?.name}</td>
+                <td>{handleShopName(transaction.shop_id)?.name || "Loading"}</td>
                 <td>{handleDateFormat(transaction?.date) || "Unknown date"}</td>
                 <td>
                   {transaction.transaction_items.length === 0 ? "-" :

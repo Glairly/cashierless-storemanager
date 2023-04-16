@@ -20,6 +20,7 @@ import {
   DoTransactionWithWallet,
 } from "../../features/transaction/transactionAPI";
 import { TransactionItemRequest } from "../../app/api";
+import CrossMarked from "../../components/svgs/CrossMarked";
 
 interface QRCodePopupProps {
   show: boolean;
@@ -78,7 +79,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
     try {
       const response = await fetch(
-        "http://localhost/fapi/v1/generate_promptpay_qr",
+        "http://localhost:8000/fapi/v1/generate_promptpay_qr",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -93,15 +94,15 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
+        `http://localhost:8000/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
       );
       const data = await response.json();
-      if (data.status == "Complete") {
-        return true;
+      if (data.status == "Complete" || data.status == "Failed") {
+        return data.status;
       }
     } catch (error) { }
 
-    return false;
+    return "Pending";
   };
 
   const intervalGetTransaction = function () {
@@ -109,34 +110,38 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
     const id = setTimeout(async function () {
       if (
-        res?.pending_transaction_id &&
-        (await get_pending_transaction(res.pending_transaction_id.toString()))
+        res?.pending_transaction_id
       ) {
-        setTransactionComplete(true);
+        const response = await get_pending_transaction(res.pending_transaction_id.toString());
+        if (response == "Complete" || response == "Failed") {
+          setTransactionComplete(true);
 
-        setTimeout(() => {
-          if (!inferenceResult) return;
-          if (!shop_id) return;
+          setTimeout(() => {
+            if (!inferenceResult) return;
+            if (!shop_id) return;
 
-          const items = inferenceResult.items.map((x) =>
-            toTransactionItemRequest(x as Item)
-          );
+            const items = inferenceResult.items.map((x) =>
+              toTransactionItemRequest(x as Item)
+            );
 
-          if (!payWithWallet) {
-            if (customerInfo?.user?.id) {
-              dispatch<any>(DoTransaction(items, []));
-            } else {
-              dispatch<any>(DoAnonyTransaction(items, []));
+            if (!payWithWallet && response == "Complete") {
+              if (customerInfo?.user?.id) {
+                dispatch<any>(DoTransaction(items, []));
+              } else {
+                dispatch<any>(DoAnonyTransaction(items, []));
+              }
             }
-          }
 
-          dispatch<any>(setCustomerInfo(null));
-          dispatch<any>(setInferenceResult(null));
-          dispatch<any>(setCaptureImage(null));
-          setRes(undefined)
-          dispatch<any>(setIdle())
-          navigate("/store");
-        }, 5000);
+            dispatch<any>(setCustomerInfo(null));
+            dispatch<any>(setInferenceResult(null));
+            dispatch<any>(setCaptureImage(null));
+            setRes(undefined)
+            dispatch<any>(setIdle())
+            navigate("/store");
+          }, 5000);
+        } else {
+          intervalGetTransaction();
+        }
       } else {
         intervalGetTransaction();
       }
@@ -199,11 +204,18 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
               </Button>}
           </div>
         ) : (
-          <div className="d-flex flex-column justify-content-center align-items-center">
-            <CheckMarked />
-            <p>Transaction Completed</p>
-          </div>
-        )}
+          pendingStatus == "fulfilled" ? (
+            <div className="d-flex flex-column justify-content-center align-items-center">
+              <CheckMarked />
+              <p>Transaction Completed</p>
+            </div>
+          ) : (
+            pendingStatus == "rejected" ? (
+              <div className="d-flex flex-column justify-content-center align-items-center">
+                <CrossMarked />
+                <p>{error}</p>
+              </div>) : (<></>)
+          ))}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>

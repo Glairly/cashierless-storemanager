@@ -13,7 +13,8 @@ import {
   TopupFapiV1TopupPostRequest,
   TransactionTopupRequest,
   DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest,
-  WalletTransactionRequest
+  WalletTransactionRequest,
+  ResponseError
 } from "../../app/api";
 import {
   setClientTransaction,
@@ -84,7 +85,11 @@ export const DoTransactionWithWallet =
       const res = await new DefaultApi().doTransactionWithWalletFapiV1DoTransactionWithWalletPost(
         request,
         meta
-      );
+      ).catch(error => {
+        error.response.json().then((errorBody: any) => {
+          dispatch(setFailure(errorBody.error));
+        })
+      });
 
       dispatch(setSuccess());
     } catch (error) {

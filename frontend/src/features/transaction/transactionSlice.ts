@@ -23,7 +23,7 @@ interface TransactionState {
   clientTransaction: Transaction[];
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
   isLoading: boolean;
-  error: null;
+  error: string | null;
 }
 
 const initialState: TransactionState = {
