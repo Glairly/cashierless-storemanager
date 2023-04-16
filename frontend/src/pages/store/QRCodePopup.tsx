@@ -5,6 +5,7 @@ import {
   Item,
   setCaptureImage,
   setCustomerInfo,
+  setIdle,
   setInferenceResult,
 } from "../../features/inference/inferenceSlice";
 import { useSelector } from "react-redux";
@@ -16,6 +17,7 @@ import { useDispatch } from "react-redux";
 import {
   DoAnonyTransaction,
   DoTransaction,
+  DoTransactionWithWallet,
 } from "../../features/transaction/transactionAPI";
 import { TransactionItemRequest } from "../../app/api";
 
@@ -33,6 +35,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const [res, setRes] = useState<qrProp>();
   const [isTransactionComplete, setTransactionComplete] = useState(false);
   const [timeOutId, setTimeOutId] = useState<any>();
+  const [payWithWallet, setPayWithWallet] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -119,17 +122,19 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
             toTransactionItemRequest(x as Item)
           );
 
-          if (customerInfo?.user?.id) {
-            dispatch<any>(DoTransaction(items, []));
-          } else {
-            dispatch<any>(DoAnonyTransaction(items, []));
+          if (!payWithWallet) {
+            if (customerInfo?.user?.id) {
+              dispatch<any>(DoTransaction(items, []));
+            } else {
+              dispatch<any>(DoAnonyTransaction(items, []));
+            }
           }
 
           dispatch<any>(setCustomerInfo(null));
           dispatch<any>(setInferenceResult(null));
           dispatch<any>(setCaptureImage(null));
           setRes(undefined)
-
+          dispatch<any>(setIdle())
           navigate("/store");
         }, 5000);
       } else {
@@ -139,6 +144,16 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
     setTimeOutId(id);
   };
+
+  const handlePayWithWallet = () => {
+    if (!inferenceResult) return;
+    if (!res) return;
+    const items = inferenceResult.items.map((x) =>
+      toTransactionItemRequest(x as Item)
+    );
+    dispatch<any>(DoTransactionWithWallet(items, [], res?.pending_transaction_id));
+    setPayWithWallet(true);
+  }
 
   useEffect(() => {
     if (show) {
@@ -174,6 +189,14 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
               style={{ width: 100 }}
               src={PrompyPayLogo}
             />
+            {customerInfo &&
+              <Button
+                variant="success text-white w-100 my-2"
+                disabled={isLoading}
+                onClick={handlePayWithWallet}
+              >
+                Checkout with wallet
+              </Button>}
           </div>
         ) : (
           <div className="d-flex flex-column justify-content-center align-items-center">
