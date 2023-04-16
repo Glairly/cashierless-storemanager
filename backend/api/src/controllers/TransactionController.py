@@ -48,15 +48,18 @@ class TransactionController:
         except Exception as e:
             return JSONResponse(status_code=500, content=e.args[0])
     
-    def do_transaction_with_wallet(self, request: TransactionRequest):
+    def do_transaction_with_wallet(self, request: WalletTransactionRequest):
         try:
             totalPrice, totalItems = self.__itemsService.transaction_deactivate_item(request.items, request.barcodes)
             self.__clientservice.deduct_none_commit(client_id=request.client_id,amount=totalPrice)
             self.__shopService.deposit_none_commit(shop_id=request.shop_id,amount=totalPrice)
             self.__transactionService.create_transaction_none_commit(request=request, totalPrice=totalPrice, totalItems=totalItems)
+            self.__transactionService.edit_transaction_status(pending_transaction_id=request.transaction_id, status="Complete")
             db.session.commit()
             return JSONResponse(status_code=200, content="Transaction successful")
         except Exception as e:
+            self.__transactionService.edit_transaction_status(pending_transaction_id=request.transaction_id, status="Failed")
+            db.session.commit()
             return JSONResponse(status_code=500, content=e.args[0])
 
     def do_anonymous_transaction(self, request: AnonymousTransactionRequest):

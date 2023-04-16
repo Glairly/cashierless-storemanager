@@ -16,3 +16,6 @@ class TransactionRequest(AnonymousTransactionRequest):
 class TransactionTopupRequest(BaseRequest):
     client_id: int
     total_topup: int
+
+class WalletTransactionRequest(TransactionRequest):
+    transaction_id: int
