@@ -378,10 +378,10 @@ const AdminRegister: React.FC = () => {
       <Navbar.HomeNavbar />
       <Container className="p-4">
         <Row className="justify-content-center align-items-center">
-          <Col lg={5} className="d-none d-lg-block">
+          <Col lg={4} className="d-none d-lg-block">
             <Image src={ShoppingMan} alt="" fluid />
           </Col>
-          <Col lg={5}>
+          <Col lg={6}>
             <Card className="py-5 rounded-5 align-items-center">
               <Card.Body>
                 <BsFillBasket2Fill size={30} className="basket-icon mb-3" />
