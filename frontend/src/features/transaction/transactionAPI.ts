@@ -125,20 +125,9 @@ export const DoAnonyTransaction =
     }
   };
 
-export const TopUpClient =
-  (): ThunkAction<void, RootState, null, Action<string>> =>
-  async (dispatch, getState) => {
-    try {
-      const { auth } = getState();
-      if (!auth.user?.id) return false;
-    } catch (error) {
-      
-    }
-  }
-
 export const topup = 
   (totalTopup: number): ThunkAction<void, RootState, null, Action<string>> => 
-    async (dispatch, getState) => {
+    async (_dispatch, getState) => {
     try {
       const { auth } = getState();
 
