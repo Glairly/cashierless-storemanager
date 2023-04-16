@@ -77,7 +77,7 @@ const CheckOut: React.FC = () => {
                           customerInfo.user.profile_image ||
                           "https://randomuser.me/api/portraits/men/1.jpg"
                         }
-                        className="rounded"
+                        className="rounded align-self-center"
                         style={{ width: "60px", height: "60px" }}
                       />
                       <div className="border mx-2"></div>
@@ -88,8 +88,13 @@ const CheckOut: React.FC = () => {
                         >
                           {customerInfo.user.name}
                         </p>
-                        <p className="mb-0" style={{ color: "gray" }}>
+                        <small className="mb-0" style={{ color: "gray" }}>
                           {customerInfo.user.phone_number || "no phone number"}
+                        </small>
+                        <p
+                          className="mb-0" style={{ fontSize: "16px" }}
+                        >
+                          Balance: {customerInfo.wallet?.balance}
                         </p>
                       </div>
                       <Link to="/store/login" className="align-self-center h-100">
