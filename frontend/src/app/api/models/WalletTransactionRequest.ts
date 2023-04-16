@@ -23,46 +23,60 @@ import {
 /**
  * 
  * @export
- * @interface AnonymousTransactionRequest
+ * @interface WalletTransactionRequest
  */
-export interface AnonymousTransactionRequest {
+export interface WalletTransactionRequest {
     /**
      * 
      * @type {number}
-     * @memberof AnonymousTransactionRequest
+     * @memberof WalletTransactionRequest
      */
     shopId: number;
     /**
      * 
      * @type {Array<TransactionItemRequest>}
-     * @memberof AnonymousTransactionRequest
+     * @memberof WalletTransactionRequest
      */
     items: Array<TransactionItemRequest>;
     /**
      * 
      * @type {Array<string>}
-     * @memberof AnonymousTransactionRequest
+     * @memberof WalletTransactionRequest
      */
     barcodes: Array<string>;
+    /**
+     * 
+     * @type {number}
+     * @memberof WalletTransactionRequest
+     */
+    clientId: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof WalletTransactionRequest
+     */
+    transactionId: number;
 }
 
 /**
- * Check if a given object implements the AnonymousTransactionRequest interface.
+ * Check if a given object implements the WalletTransactionRequest interface.
  */
-export function instanceOfAnonymousTransactionRequest(value: object): boolean {
+export function instanceOfWalletTransactionRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "shopId" in value;
     isInstance = isInstance && "items" in value;
     isInstance = isInstance && "barcodes" in value;
+    isInstance = isInstance && "clientId" in value;
+    isInstance = isInstance && "transactionId" in value;
 
     return isInstance;
 }
 
-export function AnonymousTransactionRequestFromJSON(json: any): AnonymousTransactionRequest {
-    return AnonymousTransactionRequestFromJSONTyped(json, false);
+export function WalletTransactionRequestFromJSON(json: any): WalletTransactionRequest {
+    return WalletTransactionRequestFromJSONTyped(json, false);
 }
 
-export function AnonymousTransactionRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): AnonymousTransactionRequest {
+export function WalletTransactionRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): WalletTransactionRequest {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -71,10 +85,12 @@ export function AnonymousTransactionRequestFromJSONTyped(json: any, ignoreDiscri
         'shopId': json['shop_id'],
         'items': ((json['items'] as Array<any>).map(TransactionItemRequestFromJSON)),
         'barcodes': json['barcodes'],
+        'clientId': json['client_id'],
+        'transactionId': json['transaction_id'],
     };
 }
 
-export function AnonymousTransactionRequestToJSON(value?: AnonymousTransactionRequest | null): any {
+export function WalletTransactionRequestToJSON(value?: WalletTransactionRequest | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -86,6 +102,8 @@ export function AnonymousTransactionRequestToJSON(value?: AnonymousTransactionRe
         'shop_id': value.shopId,
         'items': ((value.items as Array<any>).map(TransactionItemRequestToJSON)),
         'barcodes': value.barcodes,
+        'client_id': value.clientId,
+        'transaction_id': value.transactionId,
     };
 }
 

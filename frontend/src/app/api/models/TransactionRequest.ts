@@ -34,12 +34,6 @@ export interface TransactionRequest {
     shopId: number;
     /**
      * 
-     * @type {string}
-     * @memberof TransactionRequest
-     */
-    shopName: string;
-    /**
-     * 
      * @type {Array<TransactionItemRequest>}
      * @memberof TransactionRequest
      */
@@ -64,7 +58,6 @@ export interface TransactionRequest {
 export function instanceOfTransactionRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "shopId" in value;
-    isInstance = isInstance && "shopName" in value;
     isInstance = isInstance && "items" in value;
     isInstance = isInstance && "barcodes" in value;
     isInstance = isInstance && "clientId" in value;
@@ -83,7 +76,6 @@ export function TransactionRequestFromJSONTyped(json: any, ignoreDiscriminator: 
     return {
         
         'shopId': json['shop_id'],
-        'shopName': json['shop_name'],
         'items': ((json['items'] as Array<any>).map(TransactionItemRequestFromJSON)),
         'barcodes': json['barcodes'],
         'clientId': json['client_id'],
@@ -100,7 +92,6 @@ export function TransactionRequestToJSON(value?: TransactionRequest | null): any
     return {
         
         'shop_id': value.shopId,
-        'shop_name': value.shopName,
         'items': ((value.items as Array<any>).map(TransactionItemRequestToJSON)),
         'barcodes': value.barcodes,
         'client_id': value.clientId,
