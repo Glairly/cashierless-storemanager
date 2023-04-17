@@ -1,0 +1,32 @@
+.sidebar ul li:hover {
+    background-color: #d4e6f4;
+    border-left: 5px solid #2986cc;
+    border-radius: 5px;
+    cursor: pointer;
+    a {
+        span {
+            color: #2986cc;
+        }
+        svg {
+            color: #2986cc;
+        }
+    }
+}
+
+.sidebar {
+    border-right: 1px solid #e5e5e5;
+}
+
+.active {
+    background-color: #d4e6f4;
+    border-left: 5px solid #2986cc;
+    border-radius: 5px;
+}
+
+.blue {
+    color: #2986cc;
+}
+
+.gray {
+    color: #4c4c4c;
+}

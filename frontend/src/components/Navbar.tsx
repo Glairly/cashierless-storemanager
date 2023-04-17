@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Link, LinkProps, useNavigate } from "react-router-dom";
+import { Button, Container, Nav, Navbar, NavDropdown, Image, Dropdown, DropdownButton } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./Navbar.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { logout } from "../features/auth/authAPI";
+import { BsCurrencyExchange, BsWalletFill } from "react-icons/bs";
 
 interface item {
   NavText: string;
@@ -124,6 +125,50 @@ export const DashbaordNavbar: React.FC = () => {
             </ul>
           </Nav>
         </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+};
+
+interface NavbarProps {
+  title: string;
+  balance: number;
+  name: string;
+  profileImage: string;
+}
+
+export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, profileImage }) => {
+
+  return (
+    <Navbar bg="light" style={{ zIndex: "9999" }}>
+      <Container>
+        <Navbar.Brand className="ms-2 fw-bold">{title}</Navbar.Brand>
+        <Nav className="ms-auto py-0">
+          <Nav.Item className="d-none d-sm-flex align-items-center me-3">
+            <BsCurrencyExchange className="me-2 fw-bold" style={{ color: "#758096" }} />
+            <span className="fw-bold">${balance.toFixed(2)}</span>
+          </Nav.Item>
+          <DropdownButton
+            align="end"
+            variant="primary text-white align-self-center"
+            title={
+              <>
+                <Image
+                  src={profileImage}
+                  roundedCircle
+                  style={{ width: "25px", height: "25px" }}
+                  className="align-self-center me-1"
+                  alt={"profile_image"}
+                />
+                <span>{name}</span>
+              </>
+            }
+            id="dropdown-menu-align-end"
+            className="text-white"
+          >
+            <Dropdown.Item eventKey="1">Logout</Dropdown.Item>
+          </DropdownButton>
+        </Nav>
       </Container>
     </Navbar>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Routes, Redirect, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Dashboard from "./pages/Dashboard";
@@ -21,6 +21,8 @@ import { useSelector } from "react-redux";
 import "./App.css";
 import Setup from "./pages/store/Setup";
 import FaceCam from "./pages/store/FaceCam";
+import Layout from "./pages/Layout";
+import NewDashboard from "./pages/NewDashboard";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
@@ -32,6 +34,7 @@ const App: React.FC = () => {
       <Route path="/" element={<Home />} />
       <Route path="/AboutUs" element={<AboutUs />}></Route>
       <Route path="/Product" element={<Product />} />
+      <Route path="/New" element={<Layout navTitle="Dashboard" children={<NewDashboard />} />}></Route>
       <Route path="/ContactUs" element={<ContactUs />}></Route>
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
