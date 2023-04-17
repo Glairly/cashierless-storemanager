@@ -19,11 +19,13 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "../features/auth/authSlice";
 import transactionReducer from "../features/transaction/transactionSlice";
 import inferenceReducer from "../features/inference/inferenceSlice";
+import supplyReducer from "../features/supply/supplySlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   transaction: transactionReducer,
   inference: inferenceReducer,
+  supply: supplyReducer
 });
 
 const persistConfig = {

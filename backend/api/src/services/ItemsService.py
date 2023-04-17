@@ -165,3 +165,6 @@ class ItemsService:
         totalPrice = reduce(lambda x, y: x + y.price, results, 0)
         totalItems = len(results)
         return self.merge_items(results), totalPrice, totalItems
+    
+    def get_all_item_type(self):
+        return db.session.query(ItemType).all()

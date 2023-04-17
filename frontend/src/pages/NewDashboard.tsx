@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWallet } from "../features/auth/authAPI";
 import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
 import { RootState } from "../app/store";
+import { getAllItemType } from "../features/supply/supplyApi";
+import { ItemType } from "../features/supply/supplySlice";
 
 interface shop {
   id: number;
@@ -13,14 +15,16 @@ interface shop {
 
 const NewDashboard: React.FC = () => {
   const [shop, setShop] = useState<shop[]>();
+  const [itemType, setItemType] = useState<ItemType[]>();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction());
+    dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
     dispatch<any>(getAllShop()).then((result: any) => setShop(result));
-    console.log(shop);
+    // console.log(itemType);
   }, [dispatch]);
 
   const handleDateFormat = (strDate: string): string => {
@@ -29,10 +33,16 @@ const NewDashboard: React.FC = () => {
     return formattedDate
   }
 
-  const handleShopName = (shop_id: number): shop | undefined => {
+  const handleShopName = (shop_id: number): string | undefined => {
     const obj = shop?.find(key => key.id === shop_id)
-    return obj;
+    return obj?.name;
   }
+
+  const handleItemType = (item_id: number): string | undefined => {
+    const obj = itemType?.find(key => key.id === item_id)
+    return obj?.name;
+  }
+
   const wallet = useSelector((state: RootState) => state.auth.wallet);
   const clientTransaction = useSelector(
     (state: RootState) => state.transaction.clientTransaction
@@ -68,25 +78,19 @@ const NewDashboard: React.FC = () => {
             <tbody>
               {clientTransaction.slice(0, 3).map((transaction) => (
                 <tr className="align-middle" key={transaction.id}>
-                  <td className="py-3 ps-2">
+                  <td className="py-3 ps-3">
                     <div className="d-flex">
-                      <Image
-                        roundedCircle
-                        style={{ width: "50px", height: "50px" }}
-                        src={"https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg"}
-                        className="align-self-center me-2"
-                      />
                       <div className="d-flex flex-column justify-content-center">
-                        <span className="fw-bold">{handleShopName(transaction.shop_id)?.name || "Unkown Shop"}</span>
-                        <small>Transaction ID: {transaction.id}</small>
-                        <small>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
+                        <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                        <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
+                        <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
                       </div>
                     </div>
                   </td>
                   <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
                     transaction.transaction_items.map((x) => (
                       <>
-                        {x.item_id} x {x.quantity}
+                        {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
                         <br />
                       </>
                     ))}</td>

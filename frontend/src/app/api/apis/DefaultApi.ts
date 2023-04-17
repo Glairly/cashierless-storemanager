@@ -753,6 +753,36 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get All Item Type
+     */
+    async getAllItemTypeSmapiV1GetAllItemTypeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/smapi/v1/get_all_item_type`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get All Item Type
+     */
+    async getAllItemTypeSmapiV1GetAllItemTypeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getAllItemTypeSmapiV1GetAllItemTypeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get All Shop
      */
     async getAllShopCapiV1GetAllShopGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
