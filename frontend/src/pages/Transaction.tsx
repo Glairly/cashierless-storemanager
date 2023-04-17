@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
-import { BsFillTrashFill } from "react-icons/bs";
+import { BsFillCheckCircleFill, BsFillDashCircleFill, BsFillTrashFill } from "react-icons/bs";
 import * as Navbar from "../components/Navbar";
 import { RootState } from "../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllShop } from "../features/transaction/transactionAPI";
+import { ItemType } from "../features/supply/supplySlice";
+import { getAllItemType } from "../features/supply/supplyApi";
 
 interface TransactionProps {
   id: number;
@@ -24,6 +26,7 @@ const Transaction: React.FC = () => {
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
   const [shop, setShop] = useState<shop[] | null>();
+  const [itemType, setItemType] = useState<ItemType[]>();
 
   const [paginationItems, setPaginationItems] = useState([] as any[]);
 
@@ -43,9 +46,14 @@ const Transaction: React.FC = () => {
     return formattedDate
   }
 
-  const handleShopName = (shop_id: number): shop | undefined => {
+  const handleShopName = (shop_id: number): string | undefined => {
     const obj = shop?.find(key => key.id == shop_id)
-    return obj;
+    return obj?.name;
+  }
+
+  const handleItemType = (item_id: number): string | undefined => {
+    const obj = itemType?.find(key => key.id === item_id)
+    return obj?.name;
   }
 
   useEffect(() => {
@@ -66,71 +74,73 @@ const Transaction: React.FC = () => {
       );
     }
     dispatch<any>(getAllShop()).then((result: any) => setShop(result));
+    dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
     setPaginationItems(temp);
   }, [transactions]);
 
   return (
-    <div>
-      <Navbar.DashbaordNavbar />
-      <Container className="my-3">
-        <div className="d-flex flex-row">
-          <h2 className="fw-bold">Transaction History</h2>
-          <Pagination className="ms-auto">
-            <Pagination.First onClick={() => handlePageChange(1)} />
-            <Pagination.Prev
-              onClick={() => handlePageChange(activePage - 1)}
-              disabled={activePage === 1}
-            />
-            {paginationItems}
-            <Pagination.Next
-              onClick={() => handlePageChange(activePage + 1)}
-              disabled={activePage === paginationItems.length}
-            />
-            <Pagination.Last
-              onClick={() => handlePageChange(paginationItems.length)}
-            />
-          </Pagination>
-        </div>
-        <Table striped bordered hover>
-          <thead>
-            <tr className="text-center">
-              <th>ID</th>
-              <th>Store</th>
-              <th>Timestamp</th>
-              <th>Product</th>
-              <th>Price</th>
-              <th>Total items</th>
-              <th>Delete</th>
+    <Container className="my-3">
+      <div className="d-flex flex-row justify-content-center">
+        <Pagination className="">
+          <Pagination.First onClick={() => handlePageChange(1)} />
+          <Pagination.Prev
+            onClick={() => handlePageChange(activePage - 1)}
+            disabled={activePage === 1}
+          />
+          {paginationItems}
+          <Pagination.Next
+            onClick={() => handlePageChange(activePage + 1)}
+            disabled={activePage === paginationItems.length}
+          />
+          <Pagination.Last
+            onClick={() => handlePageChange(paginationItems.length)}
+          />
+        </Pagination>
+      </div>
+      <Table border={1}>
+        <thead style={{ backgroundColor: "#758096" }} className="text-white">
+          <tr>
+            <th className="fw-normal">Shop Name</th>
+            <th className="fw-normal text-center">Items</th>
+            <th className="fw-normal text-center">Price</th>
+            <th className="fw-normal text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transactions.map((transaction) => (
+            <tr className="align-middle" key={transaction.id}>
+              <td className="py-3 ps-3">
+                <div className="d-flex">
+                  <div className="d-flex flex-column justify-content-center">
+                    <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                    <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
+                    <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
+                  </div>
+                </div>
+              </td>
+              <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
+                transaction.transaction_items.map((x) => (
+                  <>
+                    {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
+                    <br />
+                  </>
+                ))}</td>
+              <td className="text-center">{transaction.total_price}</td>
+              <td>
+                <div
+                  className="d-flex flex-column align-items-center"
+                  style={"Complete" === "Complete" ? { color: "#43db00" } : { color: "red" }}
+                >
+                  {"Complete" === "Complete" ? <BsFillCheckCircleFill /> : <BsFillDashCircleFill />}
+                  <small>{"Complete"}</small>
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction.id} className="text-center align-middle">
-                <td>{transaction.id}</td>
-                <td>{handleShopName(transaction.shop_id)?.name || "Loading"}</td>
-                <td>{handleDateFormat(transaction?.date) || "Unknown date"}</td>
-                <td>
-                  {transaction.transaction_items.length === 0 ? "-" :
-                    transaction.transaction_items.map((x) => (
-                      <>
-                        {x.item_id} x {x.quantity}
-                        <br />
-                      </>
-                    ))}
-                </td>
-                <td>{transaction.total_price + " ฿"}</td>
-                <td>{transaction.total_items == 0 ? "-" : transaction.total_items}</td>
-                <td>
-                  <Button className="text-white">
-                    <BsFillTrashFill />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Container>
-    </div>
+          ))}
+
+        </tbody>
+      </Table>
+    </Container>
   );
 };
 

@@ -1,9 +1,9 @@
-.sidebar ul li:hover {
+.sidebar ul a:hover {
     background-color: #d4e6f4;
     border-left: 5px solid #2986cc;
     border-radius: 5px;
     cursor: pointer;
-    a {
+    li {
         span {
             color: #2986cc;
         }
