@@ -76,7 +76,14 @@ const NewDashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {clientTransaction.slice(0, 3).map((transaction) => (
+              {clientTransaction.length == 0 ? (
+                <tr className="align-middle">
+                  <td>No transaction history</td>
+                  <td className="text-center">-</td>
+                  <td className="text-center">-</td>
+                  <td className="text-center">-</td>
+                </tr>
+              ) : clientTransaction.slice(0, 3).map((transaction) => (
                 <tr className="align-middle" key={transaction.id}>
                   <td className="py-3 ps-3">
                     <div className="d-flex">
