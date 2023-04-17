@@ -138,6 +138,16 @@ interface NavbarProps {
 }
 
 export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, profileImage }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const user = useSelector((state: RootState) => state.auth.user);
+  const wallet = useSelector((state: RootState) => state.auth.wallet);
+
+  const onLogout = () => {
+    dispatch<any>(logout());
+    navigate("/");
+  };
 
   return (
     <Navbar bg="light" style={{ zIndex: "9999" }}>
@@ -146,7 +156,7 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
         <Nav className="ms-auto py-0">
           <Nav.Item className="d-none d-sm-flex align-items-center me-3">
             <BsCurrencyExchange className="me-2 fw-bold" style={{ color: "#758096" }} />
-            <span className="fw-bold">${balance.toFixed(2)}</span>
+            <span className="fw-bold">${wallet?.balance.toFixed(2)}</span>
           </Nav.Item>
           <DropdownButton
             align="end"
@@ -154,19 +164,19 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
             title={
               <>
                 <Image
-                  src={profileImage}
+                  src={user?.profile_image}
                   roundedCircle
                   style={{ width: "25px", height: "25px" }}
                   className="align-self-center me-1"
                   alt={"profile_image"}
                 />
-                <span>{name}</span>
+                <span>{user?.name}</span>
               </>
             }
             id="dropdown-menu-align-end"
             className="text-white"
           >
-            <Dropdown.Item eventKey="1">Logout</Dropdown.Item>
+            <Dropdown.Item eventKey="1" onClick={onLogout}>Logout</Dropdown.Item>
           </DropdownButton>
         </Nav>
       </Container>
