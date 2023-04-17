@@ -6,36 +6,6 @@ import { fetchWallet } from "../features/auth/authAPI";
 import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
 import { RootState } from "../app/store";
 
-const mock = [
-  {
-    id: 12345,
-    shop_name: "Topup Service",
-    shop_profile: "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg",
-    date: "04 Apr, 2020 03:47pm",
-    items: "Oishi yellow x 1",
-    price: 100,
-    status: "Complete"
-  },
-  {
-    id: 14523,
-    shop_name: "Topup Service",
-    shop_profile: "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg",
-    date: "04 Apr, 2020 03:47pm",
-    items: "Oishi yellow x 1",
-    price: 100,
-    status: "Complete"
-  },
-  {
-    id: 86567,
-    shop_name: "Topup Service",
-    shop_profile: "https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg",
-    date: "04 Apr, 2020 03:47pm",
-    items: "Oishi yellow x 1",
-    price: 100,
-    status: "Failed"
-  }
-]
-
 interface shop {
   id: number;
   name: string;
