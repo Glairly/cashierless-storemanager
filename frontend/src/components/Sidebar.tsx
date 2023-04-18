@@ -73,7 +73,7 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
             <span className={(active === "Personal Info" ? "blue" : "gray") + " d-none d-sm-inline"}>Personal Info</span>
           </li>
         </Link>
-        <Link to="" className={(active === "Account Info" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+        <Link to="/new4" className={(active === "Account Info" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
           <li
             className={"nav-item p-2 py-0 ms-1"}
             onClick={() => setActive("Account Info")}
