@@ -22,7 +22,7 @@ export interface CustomerInfo {
   wallet: Wallet | null;
 }
 
-interface TransactionState {
+interface InferenceState {
   inferenceResult: InferenceResult | null;
   customerInfo: CustomerInfo | null;
   shop_id: number | null;
@@ -34,7 +34,7 @@ interface TransactionState {
   error: null;
 }
 
-const initialState: TransactionState = {
+const initialState: InferenceState = {
   inferenceResult: null,
   shop_id: 3,
   is_barcode_enabled: false,
@@ -46,8 +46,8 @@ const initialState: TransactionState = {
   captured_image: null,
 };
 
-const transactionSlice = createSlice({
-  name: "transaction",
+const inferenceSlice = createSlice({
+  name: "inference",
   initialState,
   reducers: {
     setInferenceResult(state, action) {
@@ -114,6 +114,6 @@ export const {
   setFailure,
   setIdle,
   setCaptureImage
-} = transactionSlice.actions;
+} = inferenceSlice.actions;
 
-export default transactionSlice.reducer;
+export default inferenceSlice.reducer;
