@@ -50,6 +50,9 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
     error,
   } = useSelector((state: RootState) => state.inference);
 
+  const inferenceStatus = useSelector((state: RootState) => state.inference.pendingStatus);
+  const transactionStatus = useSelector((state: RootState) => state.transaction.pendingStatus);
+
   const toRequestItem = (item: Item) => {
     return {
       item_id: item.id,
@@ -79,7 +82,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
     try {
       const response = await fetch(
-        "http://localhost/fapi/v1/generate_promptpay_qr",
+        "http://localhost:8000/fapi/v1/generate_promptpay_qr",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -94,7 +97,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
+        `http://localhost:8000/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
       );
       const data = await response.json();
       if (data.status == "Complete" || data.status == "Failed") {
@@ -124,7 +127,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
               toTransactionItemRequest(x as Item)
             );
 
-            if (!payWithWallet && response == "Complete") {
+            if (transactionStatus == "pending" && response == "Complete") {
               if (customerInfo?.user?.id) {
                 dispatch<any>(DoTransaction(items, []));
               } else {
