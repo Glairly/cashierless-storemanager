@@ -44,7 +44,8 @@ class Detr(pl.LightningModule):
             self.model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", 
                                                                 num_labels=len(self.id2label),
                                                                 ignore_mismatched_sizes=True)
-             
+            self.validation_step_outputs = []
+
         def id2label(self):
             return self.id2label
         
@@ -73,55 +74,6 @@ class Detr(pl.LightningModule):
             b = self.box_cxcywh_to_xyxy(out_bbox) 
             b = b * torch.tensor([img_w, img_h, img_w, img_h], dtype=torch.float32).to(device)
             return b
-        
-        def to_evaluate_format(self, probas, bboxes):
-            return dict(
-                boxes =torch.tensor([bb for bb in bboxes.tolist()]).to(device),
-                scores=torch.tensor([p.max() for p in probas]).to(device),
-                labels=torch.tensor([p.argmax().item() for p in probas]).to(device),
-            )
-            
-        def accuracy(self, outputs, labels):
-            threshold=0.9
-
-            acc = []
-            logits = outputs['logits']
-            pred_boxes = outputs['pred_boxes']
-
-            # self.print(labels)
-
-            for idx in range(len(labels)):
-                target = labels[idx]
-                # keep only predictions with confidence >= threshold
-
-                # self.log("logit",logit, on_step=True)
-                probas = logits.softmax(-1)[idx,:, :-1]
-                keep = probas.max(-1).values > threshold
-                size = target['size']
-
-                # convert predicted boxes from [0; 1] to image scales
-                bboxes_scaled = self.rescale_bboxes(pred_boxes[idx, keep].cpu(), size)
-
-                preds = [self.to_evaluate_format(probas[keep], bboxes_scaled)]
-
-                class_labels = target['class_labels']
-                
-                boxes = target['boxes']
-                boxes = self.rescale_bboxes(boxes, size)
-                
-                actual = [
-                    dict(
-                        boxes = boxes.to(device),
-                        labels= torch.tensor(class_labels).to(device),
-                      )
-                ]
-                metric = MeanAveragePrecision()
-                metric.update(preds, actual)
-                
-                acc += [metric.compute()["map"]]
-            
-             
-            return torch.tensor(acc).mean()
 
         def common_step(self, batch, batch_idx):
             pixel_values = batch["pixel_values"]
@@ -131,43 +83,40 @@ class Detr(pl.LightningModule):
 
             outputs = self.model(pixel_values=pixel_values, pixel_mask=pixel_mask, labels=labels)
 
-            accuracy = self.accuracy(outputs, labels)
-
             loss = outputs.loss
             loss_dict = outputs.loss_dict
 
-            return loss, loss_dict, accuracy
+            return loss, loss_dict, 
         
 
         def training_step(self, batch, batch_idx):
-            loss, loss_dict, accuracy = self.common_step(batch, batch_idx)    
+            loss, loss_dict = self.common_step(batch, batch_idx)    
             # logs metrics for each training_step,
             # and the average across the epoch
             self.log("ptl/train_loss", loss)
-            self.log("ptl/train_accuracy", accuracy)
 
             self.log("training_loss", loss)
-            self.log("training_accuracy", accuracy)
             for k,v in loss_dict.items():
                 self.log("train_" + k, v.item())
 
             return loss
 
         def validation_step(self, batch, batch_idx):
-            loss, loss_dict, accuracy = self.common_step(batch, batch_idx)     
+            loss, loss_dict = self.common_step(batch, batch_idx)     
             self.log("validation_loss", loss)
-            self.log("validation_accuracy", accuracy)
 
             for k,v in loss_dict.items():
                 self.log("validation_" + k, v.item())
 
-            return {"val_loss": loss, "val_accuracy": accuracy }
+            self.validation_step_outputs.append(loss)
+            return {"val_loss": loss }
         
-        def validation_epoch_end(self, outputs):
-            avg_loss = torch.stack([x["val_loss"] for x in outputs]).mean()
-            avg_acc  = torch.stack([x["val_accuracy"] for x in outputs]).mean()
-            self.log("ptl/val_loss", avg_loss)
-            self.log("ptl/val_accuracy", avg_acc)
+        def on_validation_epoch_end(self):
+            epoch_average = torch.stack(self.validation_step_outputs).mean()
+          
+            self.log("ptl/val_loss", epoch_average)
+
+            self.validation_step_outputs.clear()
 
         def configure_optimizers(self):
             param_dicts = [

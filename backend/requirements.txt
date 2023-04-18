@@ -12,11 +12,11 @@ roboflow==0.2.18
 scikit-image==0.19.3
 scikit-learn==1.0.2
 scipy==1.7.3
-torch==1.13.0
-torchaudio==0.13.0
+torch
+torchaudio
 torchmetrics==0.10.2
-torchvision==0.14.0
-transformers==4.25.1
+torchvision
+transformers
 uvicorn==0.20.0
 faker==17.0.0
 timm==0.6.12
