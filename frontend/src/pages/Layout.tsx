@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NavbarComponent } from "../components/Navbar";
 import Sidebar from "../components/Sidebar"
-import NewDashboard from "./NewDashboard";
+import NewDashboard from "./Dashboard";
 import { ReactNode, useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 
