@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Modal, Image } from "react-bootstrap";
-import { RootState } from "../../app/store";
+import { RootState, store } from "../../app/store";
 import {
   Item,
   setCaptureImage,
@@ -8,8 +8,10 @@ import {
   setIdle,
   setInferenceResult,
 } from "../../features/inference/inferenceSlice";
+import {
+  setIdle as setTransactionIdle
+} from "../../features/transaction/transactionSlice";
 import { useSelector } from "react-redux";
-
 import PrompyPayLogo from "../../assets/prompt-pay-logo.png";
 import CheckMarked from "../../components/svgs/CheckMarked";
 import { useNavigate } from "react-router-dom";
@@ -45,10 +47,13 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
     inferenceResult,
     customerInfo,
     shop_id,
-    pendingStatus,
-    isLoading,
     error,
   } = useSelector((state: RootState) => state.inference);
+
+  const {
+    pendingStatus,
+    isLoading
+  } = useSelector((state: RootState) => state.transaction);
 
   const toRequestItem = (item: Item) => {
     return {
@@ -106,16 +111,16 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   };
 
   const intervalGetTransaction = function () {
+    const getState = () => store.getState();
     if (!show) return;
-
     const id = setTimeout(async function () {
+      const { transaction } = getState();
       if (
         res?.pending_transaction_id
       ) {
         const response = await get_pending_transaction(res.pending_transaction_id.toString());
         if (response == "Complete" || response == "Failed") {
           setTransactionComplete(true);
-
           setTimeout(() => {
             if (!inferenceResult) return;
             if (!shop_id) return;
@@ -123,8 +128,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
             const items = inferenceResult.items.map((x) =>
               toTransactionItemRequest(x as Item)
             );
-
-            if (!payWithWallet && response == "Complete") {
+            if (transaction.pendingStatus == "idle" && response == "Complete") {
               if (customerInfo?.user?.id) {
                 dispatch<any>(DoTransaction(items, []));
               } else {
@@ -135,15 +139,13 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
             dispatch<any>(setCustomerInfo(null));
             dispatch<any>(setInferenceResult(null));
             dispatch<any>(setCaptureImage(null));
-            setRes(undefined)
-            dispatch<any>(setIdle())
+            setRes(undefined);
             navigate("/store");
+            clearTimeout(id);
           }, 5000);
         } else {
           intervalGetTransaction();
         }
-      } else {
-        intervalGetTransaction();
       }
     }, 1000);
 
