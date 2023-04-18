@@ -7,6 +7,8 @@ import { fetchClientTransaction, getAllShop } from "../features/transaction/tran
 import { RootState } from "../app/store";
 import { getAllItemType } from "../features/supply/supplyApi";
 import { ItemType } from "../features/supply/supplySlice";
+import TopupModal from "../components/TopupModal";
+import { useNavigate } from "react-router-dom";
 
 interface shop {
   id: number;
@@ -18,6 +20,7 @@ const NewDashboard: React.FC = () => {
   const [itemType, setItemType] = useState<ItemType[]>();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch<any>(fetchWallet());
@@ -43,6 +46,10 @@ const NewDashboard: React.FC = () => {
     return obj?.name;
   }
 
+  const setTopup = () => {
+    navigate("/new2");
+  }
+
   const wallet = useSelector((state: RootState) => state.auth.wallet);
   const clientTransaction = useSelector(
     (state: RootState) => state.transaction.clientTransaction
@@ -60,7 +67,13 @@ const NewDashboard: React.FC = () => {
                   <span style={{ color: "#ff9600" }}>Current Cashierless Wallet Ballance</span>
                 </div>
                 <div className="d-flex flex-column justify-content-center">
-                  <Button className="text-white" style={{ backgroundColor: "#ff9600", borderStyle: "none" }}>+ Add Money to Wallet</Button>
+                  <Button
+                    className="text-white"
+                    style={{ backgroundColor: "#ff9600", borderStyle: "none" }}
+                    onClick={setTopup}
+                  >
+                    + Add Money to Wallet
+                  </Button>
                 </div>
               </div>
             </Card.Body>
@@ -113,7 +126,6 @@ const NewDashboard: React.FC = () => {
                   </td>
                 </tr>
               ))}
-
             </tbody>
           </Table>
         </div>

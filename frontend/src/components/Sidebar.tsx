@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
             <span className={(active === "Dashboard" ? "blue" : "gray") + " d-none d-sm-inline"}>Dashboard</span>
           </li>
         </Link>
-        <Link to="" className={(active === "Topup" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+        <Link to="/new2" className={(active === "Topup" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
           <li
             className={"nav-item p-2 py-0 ms-1"}
             onClick={() => setActive("Topup")}
