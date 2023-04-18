@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
-import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Product from "./pages/Product";
-import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Transaction from "./pages/Transaction";
 import AdminRegister from "./pages/admin/AdminRegister";
@@ -22,8 +20,10 @@ import "./App.css";
 import Setup from "./pages/store/Setup";
 import FaceCam from "./pages/store/FaceCam";
 import Layout from "./pages/Layout";
-import NewDashboard from "./pages/NewDashboard";
+import Dashboard from "./pages/Dashboard";
 import Topup from "./pages/Topup";
+import PersonalInfo from "./pages/PersonalInfo";
+import AccountInfo from "./pages/AccountInfo";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
@@ -35,21 +35,21 @@ const App: React.FC = () => {
       <Route path="/" element={<Home />} />
       <Route path="/AboutUs" element={<AboutUs />}></Route>
       <Route path="/Product" element={<Product />} />
-      <Route path="/New" element={<Layout navTitle="Dashboard" children={<NewDashboard />} />}></Route>
-      <Route path="/New1" element={<Layout navTitle="Transaction" children={<Transaction />} />}></Route>
-      <Route path="/New2" element={<Layout navTitle="Topup" children={<Topup />} />}></Route>
       <Route path="/ContactUs" element={<ContactUs />}></Route>
+
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
       {user?.is_shop_owner ? (
         <Route path="/Dashboard" element={<AdminDashboard />}></Route>
       ) : (
-        <Route path="/Dashboard" element={<Dashboard />}></Route>
+        <Route path="/Dashboard" element={<Layout navTitle="Dashboard" children={<Dashboard />} />}></Route>
       )}
-      <Route path="/Transaction" element={<Transaction />}></Route>
-      <Route path="/Profile" element={<Profile />}></Route>
+      <Route path="/Transaction" element={<Layout navTitle="Transaction" children={<Transaction />} />}></Route>
+      <Route path="/Topup" element={<Layout navTitle="Topup" children={<Topup />} />} />
+      <Route path="/PersonalInfo" element={<Layout navTitle="Personal Info" children={<PersonalInfo />} />}></Route>
+      <Route path="/AccountInfo" element={<Layout navTitle="Account Info" children={<AccountInfo />} />}></Route>
+      {/* <Route path="/Profile" element={<Profile />}></Route> */}
       <Route path="/Admin/Register" element={<AdminRegister />}></Route>
-      {/* <Route path="/Admin/Dashboard" element={<AdminDashboard />}></Route> */}
       <Route path="/Admin/SalesHistory" element={<SalesHistory />}></Route>
       <Route path="/Admin/Stocking" element={<Stocking />}></Route>
 

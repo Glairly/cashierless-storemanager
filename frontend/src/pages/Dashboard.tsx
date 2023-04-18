@@ -1,32 +1,13 @@
-import {
-  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  Image,
-  Modal,
-  Row,
-} from "react-bootstrap";
-import CarouselWithItems from "../components/Carousel";
-import * as Navbar from "../components/Navbar";
-import Scanner from "../components/Scanner";
-import "./Dashboard.scss";
-import {
-  BsUpcScan,
-  BsFillCreditCardFill,
-  BsClockHistory,
-  BsPencilFill,
-} from "react-icons/bs";
-import { Link } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { Button, Card, Image, Table } from "react-bootstrap";
+import { BsCurrencyDollar, BsFillCheckCircleFill, BsFillDashCircleFill } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchWallet } from "../features/auth/authAPI";
-import { getAllShop, fetchClientTransaction } from "../features/transaction/transactionAPI";
-import TopupModal from "../components/TopupModal";
+import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
+import { RootState } from "../app/store";
+import { getAllItemType } from "../features/supply/supplyApi";
+import { ItemType } from "../features/supply/supplySlice";
+import { useNavigate } from "react-router-dom";
 
 interface shop {
   id: number;
@@ -34,26 +15,19 @@ interface shop {
 }
 
 const Dashboard: React.FC = () => {
-  const [showScan, setShowScan] = useState(false);
-  const [showTopup, setShowTopup] = useState(false);
   const [shop, setShop] = useState<shop[]>();
-  const handleCloseScan = () => setShowScan(false);
-  const handleShowScan = () => setShowScan(true);
+  const [itemType, setItemType] = useState<ItemType[]>();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction());
+    dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
     dispatch<any>(getAllShop()).then((result: any) => setShop(result));
-    console.log(shop);
+    // console.log(itemType);
   }, [dispatch]);
-
-  const user = useSelector((state: RootState) => state.auth.user);
-  const wallet = useSelector((state: RootState) => state.auth.wallet);
-  const clientTransaction = useSelector(
-    (state: RootState) => state.transaction.clientTransaction
-  );
 
   const handleDateFormat = (strDate: string): string => {
     const date = new Date(strDate);
@@ -61,144 +35,102 @@ const Dashboard: React.FC = () => {
     return formattedDate
   }
 
-  const handleShopName = (shop_id: number): shop | undefined => {
+  const handleShopName = (shop_id: number): string | undefined => {
     const obj = shop?.find(key => key.id === shop_id)
-    return obj;
+    return obj?.name;
   }
 
+  const handleItemType = (item_id: number): string | undefined => {
+    const obj = itemType?.find(key => key.id === item_id)
+    return obj?.name;
+  }
+
+  const setTopup = () => {
+    navigate("/new2");
+  }
+
+  const wallet = useSelector((state: RootState) => state.auth.wallet);
+  const clientTransaction = useSelector(
+    (state: RootState) => state.transaction.clientTransaction
+  );
+
   return (
-    <div>
-      <Navbar.DashbaordNavbar />
-      <Container>
-        <Row className="d-flex flex-row justify-content-center align-items-stretch">
-          <Col lg={6} className="p-4">
-            <div className="mb-4">
-              <h1 className="fw-bold">Good to see you!</h1>
-              {/* <p className="mb-0">Click the button to see</p> */}
-              <p className="mt-0" style={{ color: "gray" }}>
-                What will you do today?
-              </p>
-              {/* <Button variant="primary" className="text-white w-25">
-                Product
-              </Button> */}
-            </div>
-            <Card>
-              <Card.Body>
-                <Row>
-                  <Col
-                    xs={8}
-                    className="d-flex flex-column justify-content-between py-2"
+    <div className="p-3 bg-light">
+      <div className="container-fluid">
+        <div className="row">
+          <Card className="rounded-4 mb-3" style={{ backgroundColor: "#ffeacc", borderStyle: "none" }}>
+            <Card.Body>
+              <div className="d-flex justify-content-between py-3">
+                <div className="d-flex flex-column justify-content-center">
+                  <span className="fs-2 fw-bold" style={{ color: "#ff9600" }}>$ {wallet?.balance.toFixed(2)}</span>
+                  <span style={{ color: "#ff9600" }}>Current Cashierless Wallet Ballance</span>
+                </div>
+                <div className="d-flex flex-column justify-content-center">
+                  <Button
+                    className="text-white"
+                    style={{ backgroundColor: "#ff9600", borderStyle: "none" }}
+                    onClick={setTopup}
                   >
-                    <h3>Balance</h3>
-                    <h1>{wallet?.balance} ฿</h1>
-                    {/* <small>Your account number is 123-456-789</small> */}
-                  </Col>
-                  <Col xs={4}>
-                    <Button
-                      variant="primary"
-                      className="text-white w-100 card-button"
-                      onClick={handleShowScan}
-                    >
-                      <BsUpcScan className="me-1" />
-                      <span>Scan</span>
-                    </Button>
-                    <Button
-                      variant="primary"
-                      className="text-white w-100 card-button"
-                      onClick={() => setShowTopup(true)}
-                    >
-                      <BsFillCreditCardFill className="me-1" />
-                      <span>Top Up</span>
-                    </Button>
-                    <Link to={"/Transaction"}>
-                      <Button
-                        variant="primary"
-                        className="text-white w-100 card-button"
-                      >
-                        <BsClockHistory className="me-1" />
-                        <span>Transaction</span>
-                      </Button>
-                    </Link>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            <CarouselWithItems
-              items={[
-                {
-                  id: 1,
-                  imgSrc:
-                    "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/assortment-of-colorful-ripe-tropical-fruits-top-royalty-free-image-995518546-1564092355.jpg",
-                  imgAlt: "nope",
-                  label: "Something",
-                  description: "Lorem Ipsum is Lorem Ipsum",
-                },
-              ]}
-            />
-          </Col>
-          <Col lg={4} className="py-4">
-            <Card className="h-100">
-              <Card.Body>
-                <CardGroup className="d-flex flex-column align-items-center mb-3 px-3">
-                  <h4 className="mt-3 fw-bold">My Profile</h4>
-                  <Image
-                    className="profile-img border rounded-5 my-3"
-                    rounded
-                    src={user?.profile_image ? user.profile_image : "https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg"}
-                  />
-                  <h5 className="fw-bold mb-0">{user?.name}</h5>
-                  <p>{user?.is_shop_owner ? "Shop Owner" : "Customer"}</p>
-                  <div className="d-flex flex-row">
-                    <Link to={"/Profile"}>
-                      <Button variant="primary text-white">Edit Profile</Button>
-                    </Link>
-                  </div>
-                  <div className="my-4 bg-primary border-bottom border-gray pb-1 mb-0 w-100" />
-                </CardGroup>
-                <CardGroup className="px-3">
-                  <h5 className="fw-bold mb-3">Your last transaction</h5>
-                  {clientTransaction.slice(0, 3).map((item) => (
-                    <div className="w-100" key={item.id}>
-                      <div className="d-flex justify-content-between">
-                        <p className="mb-1">
-                          {handleShopName(item.shop_id)?.name || "Unkown Shop"}
-                        </p>
-                        <p>
-                          {handleDateFormat(item.date) || "Unknown Date"}
-                        </p>
+                    + Add Money to Wallet
+                  </Button>
+                </div>
+              </div>
+            </Card.Body>
+          </Card>
+          <span className="fs-5 fw-bold ps-0 my-3">Transaction History</span>
+          <Table border={1}>
+            <thead style={{ backgroundColor: "#758096" }} className="text-white">
+              <tr>
+                <th className="fw-normal">Shop Name</th>
+                <th className="fw-normal text-center">Items</th>
+                <th className="fw-normal text-center">Price</th>
+                <th className="fw-normal text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clientTransaction.length == 0 ? (
+                <tr className="align-middle">
+                  <td>No transaction history</td>
+                  <td className="text-center">-</td>
+                  <td className="text-center">-</td>
+                  <td className="text-center">-</td>
+                </tr>
+              ) : clientTransaction.slice(0, 3).map((transaction) => (
+                <tr className="align-middle" key={transaction.id}>
+                  <td className="py-3 ps-3">
+                    <div className="d-flex">
+                      <div className="d-flex flex-column justify-content-center">
+                        <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                        <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
+                        <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
                       </div>
-                      <div className="d-flex justify-content-between mt-0">
-                        <Link to={`/transaction/${item.id}`}>View Detail</Link>
-                        <p>{item.total_price + " ฿"}</p>
-                      </div>
-                      <hr className="mt-0 mb-4" />
                     </div>
-                  ))}
-                </CardGroup>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-      <Modal show={showScan} onHide={handleCloseScan}>
-        <Modal.Header closeButton>
-          <Modal.Title>Scan</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Scanner />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseScan}>
-            Close
-          </Button>
-          <Button variant="primary text-white" onClick={handleCloseScan}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <TopupModal show={showTopup} onHide={() => setShowTopup(false)} />
+                  </td>
+                  <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
+                    transaction.transaction_items.map((x) => (
+                      <>
+                        {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
+                        <br />
+                      </>
+                    ))}</td>
+                  <td className="text-center">{transaction.total_price}</td>
+                  <td>
+                    <div
+                      className="d-flex flex-column align-items-center"
+                      style={"Complete" === "Complete" ? { color: "#43db00" } : { color: "red" }}
+                    >
+                      {"Complete" === "Complete" ? <BsFillCheckCircleFill /> : <BsFillDashCircleFill />}
+                      <small>{"Complete"}</small>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default Dashboard;
