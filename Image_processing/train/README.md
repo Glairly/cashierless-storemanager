@@ -19,4 +19,11 @@ python train_detr.py \
     --download_dataset true/false
 ```
 
+```
+python train_detr.py \
+    --epochs 0 \
+    --roboflow_version 2 \
+    --download_dataset true
+```
+
 3. waiting...

@@ -1,6 +1,9 @@
-torch==1.13.0
-torchvision==0.14.0
-transformers==4.25.1
+# torch==1.13.0
+# torchvision==0.14.0
+torch
+torchvision
+# transformers==4.25.
+transformers
 requests
 timm
 datasets
@@ -8,5 +11,5 @@ sahi
 roboflow
 fiftyone
 pytorch_lightning
-pycocotools
-pytorch-cuda==11.7
+# pycocotools
+# pytorch-cuda==11.7
