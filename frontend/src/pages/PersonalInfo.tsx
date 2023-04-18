@@ -148,44 +148,26 @@ const PersonalInfo: React.FC = () => {
                         onBlur={handleBlur}
                       />
                     </BootstrapForm.Group>
-                    {/* <BootstrapForm.Group className="mb-3">
-                        <BootstrapForm.Label>Gender</BootstrapForm.Label>
-                        <Dropdown className="border rounded-2" defaultValue={user?.gender}>
-                          <Dropdown.Toggle variant="secondary" id="gender" className="form-control">
-                            {selectedOption || "Select an option"}
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu className="form-control">
-                            {genderOptions.map((option) => (
-                              <Dropdown.Item
-                                key={option}
-                                onClick={() => {
-                                  setFieldValue("gender", option);
-                                  setSelectedOption(option)
-                                }}
-                              >
-                                {option}
-                              </Dropdown.Item>
-                            ))}
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </BootstrapForm.Group> */}
-                    <BootstrapForm.Group className="mb-2">
+                    <BootstrapForm.Group className="mb-3">
                       <BootstrapForm.Label>Gender</BootstrapForm.Label>
-                      <Field
-                        as="select"
-                        name="gender"
-                        className="form-control"
-                        defaultValue={user?.gender}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      >
-                        <option value="">Not specified</option>
-                        {genderOptions.map((gender) => (
-                          <option key={gender} value={gender}>
-                            {gender}
-                          </option>
-                        ))}
-                      </Field>
+                      <Dropdown className="border rounded-2" defaultValue={user?.gender}>
+                        <Dropdown.Toggle variant="secondary" id="gender" className="form-control">
+                          {selectedOption || "Select an option"}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="form-control">
+                          {genderOptions.map((option) => (
+                            <Dropdown.Item
+                              key={option}
+                              onClick={() => {
+                                setFieldValue("gender", option);
+                                setSelectedOption(option)
+                              }}
+                            >
+                              {option}
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
                     </BootstrapForm.Group>
                     <div className="d-flex justify-content-end align-items-center mt-4">
                       <Button type="submit" className="text-white">
