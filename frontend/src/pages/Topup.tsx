@@ -104,8 +104,20 @@ const Topup: React.FC = () => {
   return (
     <Container className="mt-3 p-3">
       {!isTopupConfirm ?
-        (<Card style={{ width: '100%', backgroundColor: "#bcffb2" }} className="border-0">
-          <Card style={{ borderLeft: "15px solid #1ee500", borderRight: "15px solid #1ee500", backgroundColor: "#117f00" }}>
+        (<Card style={{ width: '100%', backgroundColor: "#bcffb2" }} className="border-0 rounded-5">
+          <Card
+            style={
+              {
+                borderLeft: "15px solid #1ee500",
+                borderRight: "15px solid #1ee500",
+                backgroundColor: "#117f00",
+                borderTopRightRadius: "2rem",
+                borderTopLeftRadius: "2rem",
+                borderBottomRightRadius: "0rem",
+                borderBottomLeftRadius: "0rem"
+              }
+            }
+          >
             <Card.Body className="d-flex flex-column text-white text-center">
               <span className="fs-1 fw-bold">$ {wallet?.balance.toFixed(2)}</span>
               <span>Wallet ID : {wallet?.id}</span>
