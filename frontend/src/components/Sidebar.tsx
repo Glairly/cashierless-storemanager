@@ -64,7 +64,7 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
       </ul>
       <span className="fs-5 fw-bold ps-2 d-none d-sm-inline">Account Settings</span>
       <ul className="nav nav-pills flex-column mt-2 mb-4">
-        <Link to="" className={(active === "Personal Info" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+        <Link to="/new3" className={(active === "Personal Info" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
           <li
             className={"nav-item p-2 py-0 ms-1"}
             onClick={() => setActive("Personal Info")}

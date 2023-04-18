@@ -24,6 +24,7 @@ import FaceCam from "./pages/store/FaceCam";
 import Layout from "./pages/Layout";
 import NewDashboard from "./pages/NewDashboard";
 import Topup from "./pages/Topup";
+import PersonalInfo from "./pages/PersonalInfoSetting";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
@@ -38,6 +39,7 @@ const App: React.FC = () => {
       <Route path="/New" element={<Layout navTitle="Dashboard" children={<NewDashboard />} />}></Route>
       <Route path="/New1" element={<Layout navTitle="Transaction" children={<Transaction />} />}></Route>
       <Route path="/New2" element={<Layout navTitle="Topup" children={<Topup />} />}></Route>
+      <Route path="/New3" element={<Layout navTitle="Personal Info" children={<PersonalInfo />} />}></Route>
       <Route path="/ContactUs" element={<ContactUs />}></Route>
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
