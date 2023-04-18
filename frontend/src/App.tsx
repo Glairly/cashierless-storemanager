@@ -24,7 +24,7 @@ import FaceCam from "./pages/store/FaceCam";
 import Layout from "./pages/Layout";
 import NewDashboard from "./pages/NewDashboard";
 import Topup from "./pages/Topup";
-import PersonalInfo from "./pages/PersonalInfoSetting";
+import PersonalInfo from "./pages/PersonalInfo";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
