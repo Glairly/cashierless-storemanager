@@ -7,7 +7,7 @@
 FROM ubuntu:20.04
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y curl  &&\
+    apt-get install --no-install-recommends -y curl  && \
     apt-get install --no-install-recommends -y gcc && \
     apt-get install --no-install-recommends -y zbar-tools && \
     apt-get install --no-install-recommends -y build-essential && \
@@ -17,7 +17,7 @@ RUN apt-get update && \
  
 ENV CONDA_AUTO_UPDATE_CONDA=false \
     PATH=/opt/miniconda/bin:$PATH
-RUN curl -sLo ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
+RUN curl -sLo ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-py39_23.1.0-1-Linux-x86_64.sh \
     && chmod +x ~/miniconda.sh \
     && ~/miniconda.sh -b -p /opt/miniconda \
     && rm ~/miniconda.sh \
