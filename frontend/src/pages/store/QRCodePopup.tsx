@@ -37,6 +37,7 @@ interface qrProp {
 const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const [res, setRes] = useState<qrProp>();
   const [isTransactionComplete, setTransactionComplete] = useState(false);
+  const [getPendingStatus, setGetPendingStatus] = useState('');
   const [timeOutId, setTimeOutId] = useState<any>();
   const [payWithWallet, setPayWithWallet] = useState(false);
 
@@ -84,7 +85,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
     try {
       const response = await fetch(
-        "http://localhost/fapi/v1/generate_promptpay_qr",
+        "http://localhost:8000/fapi/v1/generate_promptpay_qr",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -99,14 +100,15 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
+        `http://localhost:8000/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
       );
       const data = await response.json();
       if (data.status == "Complete" || data.status == "Failed") {
+        setGetPendingStatus(data.status);
         return data.status;
       }
+      setGetPendingStatus(data.status);
     } catch (error) { }
-
     return "Pending";
   };
 
@@ -206,16 +208,16 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
               </Button>}
           </div>
         ) : (
-          pendingStatus == "fulfilled" ? (
+          pendingStatus == "fulfilled" || getPendingStatus == "Complete" ? (
             <div className="d-flex flex-column justify-content-center align-items-center">
               <CheckMarked />
               <p>Transaction Completed</p>
             </div>
           ) : (
-            pendingStatus == "rejected" ? (
+            pendingStatus == "rejected" || getPendingStatus == "Failed" ? (
               <div className="d-flex flex-column justify-content-center align-items-center">
                 <CrossMarked />
-                <p>{error}</p>
+                <p>{error || "Error occurs"}</p>
               </div>) : (<></>)
           ))}
       </Modal.Body>
