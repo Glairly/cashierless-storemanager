@@ -144,6 +144,7 @@ class TransactionItem(Base):
     id= Column(Integer, primary_key=True, index=True)
     transaction_id= Column(Integer, ForeignKey("transactions.id"))
     item_id= Column(Integer)
+    item_name = Column(String)
     quantity= Column(Integer)
     is_barcode= Column(Boolean, default=False)
 

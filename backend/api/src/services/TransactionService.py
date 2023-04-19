@@ -100,7 +100,7 @@ class TransactionService:
     def create_transaction_none_commit(self, request: TransactionRequest, totalPrice: float, totalItems: int):
         transaction_items = []
         for item in request.items:
-            tt = TransactionItem(item_id=item.item_id, quantity=item.quantity)
+            tt = TransactionItem(item_id=item.item_id, item_name= item.item_name, quantity=item.quantity)
             db.session.add(tt)
             transaction_items.append(tt)
 
@@ -115,7 +115,7 @@ class TransactionService:
     def create_anonymous_transaction_none_commit(self, request: AnonymousTransactionRequest, totalPrice: float, totalItems: int):
         transaction_items = []
         for item in request.items:
-            tt = TransactionItem(item_id=item.item_id, quantity=item.quantity)
+            tt = TransactionItem(item_id=item.item_id, item_name= item.item_name, quantity=item.quantity)
             db.session.add(tt)
             transaction_items.append(tt)
 
