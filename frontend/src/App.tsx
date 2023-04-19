@@ -39,11 +39,11 @@ const App: React.FC = () => {
 
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
-      {user?.is_shop_owner ? (
+      {/* {user?.is_shop_owner ? (
         <Route path="/Dashboard" element={<AdminDashboard />}></Route>
-      ) : (
-        <Route path="/Dashboard" element={<Layout navTitle="Dashboard" children={<Dashboard />} />}></Route>
-      )}
+      ) : ( */}
+      <Route path="/Dashboard" element={<Layout navTitle="Dashboard" children={<Dashboard />} />}></Route>
+      {/* )} */}
       <Route path="/Transaction" element={<Layout navTitle="Transaction" children={<Transaction />} />}></Route>
       <Route path="/Topup" element={<Layout navTitle="Topup" children={<Topup />} />} />
       <Route path="/PersonalInfo" element={<Layout navTitle="Personal Info" children={<PersonalInfo />} />}></Route>

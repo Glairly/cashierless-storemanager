@@ -168,7 +168,6 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
                   roundedCircle
                   style={{ width: "25px", height: "25px" }}
                   className="align-self-center me-1"
-                  alt={"profile_image"}
                 />
                 <span>{user?.name}</span>
               </>

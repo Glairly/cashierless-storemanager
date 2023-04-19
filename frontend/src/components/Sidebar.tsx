@@ -53,18 +53,31 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
             <span className={(props.active === "Transaction" ? "blue" : "gray") + " d-none d-sm-inline"}>Transaction</span>
           </li>
         </Link>
-        {user?.is_shop_owner &&
-          <Link to="" className={(props.active === "Report" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
-            <li
-              className={"nav-item p-2 py-0 ms-1"}
-            >
-              <BsGrid className={(props.active === "Report" ? "blue " : "gray ") + "me-2"} />
-              <span className={(props.active === "Report" ? "blue" : "gray") + " d-none d-sm-inline"}>Report</span>
-            </li>
-          </Link>
-        }
-
       </ul>
+      {user?.is_shop_owner &&
+        <>
+          <span className="fs-5 fw-bold ps-2 d-none d-sm-inline">Shop Management</span>
+          <ul className="nav nav-pills flex-column mt-2 mb-4">
+            <Link to="" className={(props.active === "Stocking" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+              <li
+                className={"nav-item p-2 py-0 ms-1"}
+              >
+                <BsGrid className={(props.active === "Stocking" ? "blue " : "gray ") + "me-2"} />
+                <span className={(props.active === "Stocking" ? "blue" : "gray") + " d-none d-sm-inline"}>Stocking</span>
+              </li>
+            </Link>
+            <Link to="" className={(props.active === "Shop Transaction" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+              <li
+                className={"nav-item p-2 py-0 ms-1"}
+              >
+                <BsTable className={(props.active === "Stocking" ? "blue " : "gray ") + "me-2"} />
+                <span className={(props.active === "Stocking" ? "blue" : "gray") + " d-none d-sm-inline"}>Shop Transaction</span>
+              </li>
+            </Link>
+          </ul>
+        </>
+
+      }
       <span className="fs-5 fw-bold ps-2 d-none d-sm-inline">Account Settings</span>
       <ul className="nav nav-pills flex-column mt-2 mb-4">
         <Link to="/PersonalInfo" className={(props.active === "Personal Info" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
