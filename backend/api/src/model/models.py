@@ -132,6 +132,8 @@ class Transaction(Base):
     date = Column(DateTime, default=datetime.datetime.now)
 
     transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
+    client = relationship("Client", back_populates="transactions")
+    shop = relationship("Shop", back_populates="transactions")
 
 class TransactionItem(Base):
     __tablename__ = "transaction_items"
