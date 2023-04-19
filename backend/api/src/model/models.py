@@ -43,6 +43,8 @@ class Client(Base):
 
     shop = relationship("Shop", backref='owner', primaryjoin="Shop.owner_id == Client.id", collection_class=list)
 
+    transactions = relationship("Transaction", order_by="Transaction.id", back_populates="client")
+
     def to_dict(self):
         result = {}
         for prop in self.__mapper__.iterate_properties:
@@ -64,6 +66,7 @@ class Shop(Base):
     wallet = relationship("ShopWallet", back_populates='owner', primaryjoin="ShopWallet.id == Shop.wallet_id")
     # owner = relationship("Client", back_populates='shop')
     items = relationship("Item", backref="shop", primaryjoin="Shop.id == Item.shop_id", collection_class=list)
+    transactions = relationship("Transaction", order_by="Transaction.id", back_populates="shop")
     def to_dict(self):
         result = {}
         for prop in self.__mapper__.iterate_properties:

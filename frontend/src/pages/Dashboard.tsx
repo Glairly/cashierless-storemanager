@@ -26,7 +26,6 @@ const Dashboard: React.FC = () => {
     dispatch<any>(fetchClientTransaction());
     dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
     dispatch<any>(getAllShop()).then((result: any) => setShop(result));
-    // console.log(itemType);
   }, [dispatch]);
 
   const handleDateFormat = (strDate: string): string => {
@@ -100,7 +99,7 @@ const Dashboard: React.FC = () => {
                   <td className="py-3 ps-3">
                     <div className="d-flex">
                       <div className="d-flex flex-column justify-content-center">
-                        <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                        <span className="fw-bold">{transaction.shop_name}</span>
                         <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
                         <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
                       </div>

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Client } from "../auth/authSlice";
 
 export interface TransactionItem {
   id: number;
@@ -7,16 +6,6 @@ export interface TransactionItem {
   item_id: number;
   quantity: number;
   is_barcode: boolean;
-}
-
-export interface Shop {
-  id: number;
-  wallet_id: number;
-  owner_id: number;
-  name: string;
-  machine_id: number;
-  phone_number: string;
-  join_data: string;
 }
 
 export interface Transaction {
@@ -27,8 +16,8 @@ export interface Transaction {
   total_items: number;
   date: string;
   transaction_items: TransactionItem[];
-  client: Client;
-  shop: Shop;
+  client_name: string;
+  shop_name: string;
 }
 
 
