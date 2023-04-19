@@ -66,6 +66,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const toTransactionItemRequest = (item: Item) => {
     return {
       itemId: item.id,
+      itemName: item.name,
       quantity: item.quantity,
     } as TransactionItemRequest;
   };

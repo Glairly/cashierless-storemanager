@@ -30,7 +30,7 @@ export interface TransactionItemRequest {
      * @type {string}
      * @memberof TransactionItemRequest
      */
-    itemName: string;
+    itemName?: string;
     /**
      * 
      * @type {number}
@@ -45,7 +45,6 @@ export interface TransactionItemRequest {
 export function instanceOfTransactionItemRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "itemId" in value;
-    isInstance = isInstance && "itemName" in value;
     isInstance = isInstance && "quantity" in value;
 
     return isInstance;
@@ -62,7 +61,7 @@ export function TransactionItemRequestFromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'itemId': json['item_id'],
-        'itemName': json['item_name'],
+        'itemName': !exists(json, 'item_name') ? undefined : json['item_name'],
         'quantity': json['quantity'],
     };
 }

@@ -108,7 +108,7 @@ const Dashboard: React.FC = () => {
                   <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
                     transaction.transaction_items.map((x) => (
                       <>
-                        {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
+                        {x.item_name} x {x.quantity}
                         <br />
                       </>
                     ))}</td>
