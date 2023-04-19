@@ -27,6 +27,12 @@ export interface TransactionItemRequest {
     itemId: number;
     /**
      * 
+     * @type {string}
+     * @memberof TransactionItemRequest
+     */
+    itemName: string;
+    /**
+     * 
      * @type {number}
      * @memberof TransactionItemRequest
      */
@@ -39,6 +45,7 @@ export interface TransactionItemRequest {
 export function instanceOfTransactionItemRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "itemId" in value;
+    isInstance = isInstance && "itemName" in value;
     isInstance = isInstance && "quantity" in value;
 
     return isInstance;
@@ -55,6 +62,7 @@ export function TransactionItemRequestFromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'itemId': json['item_id'],
+        'itemName': json['item_name'],
         'quantity': json['quantity'],
     };
 }
@@ -69,6 +77,7 @@ export function TransactionItemRequestToJSON(value?: TransactionItemRequest | nu
     return {
         
         'item_id': value.itemId,
+        'item_name': value.itemName,
         'quantity': value.quantity,
     };
 }
