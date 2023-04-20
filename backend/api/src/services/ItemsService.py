@@ -19,7 +19,7 @@ from ..singleton.ItemType import ITEMTYPE_CACHE
 
 class ItemsService:
     def add_item_type(self, payload: AddItemTypeRequest):
-        item_type = ItemType(name= payload.name, base_price= payload.base_price)
+        item_type = ItemType(name= payload.name, base_price= payload.base_price, retail_price= payload.retail_price)
         db.session.add(item_type)
 
         db.session.commit()

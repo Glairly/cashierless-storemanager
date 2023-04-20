@@ -123,6 +123,7 @@ class ItemType(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
     base_price = Column(Float, default=0.0)
+    retail_price = Column(Float, default=0.0)
 
 class Transaction(Base):
     __tablename__ = "transactions"
