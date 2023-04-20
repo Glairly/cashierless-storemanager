@@ -11,7 +11,17 @@ export interface Client {
   profile_image: string;
 }
 
-export interface ClientWallet {
+export interface Shop {
+  id: number;
+  wallet_id: number;
+  owner_id: number;
+  name: string;
+  machine_id: number;
+  phone_number: number;
+  wallet: Wallet;
+}
+
+export interface Wallet {
   id: number;
   balance: number;
 }
@@ -26,7 +36,9 @@ export interface Auth {
 interface AuthState {
   token: string | null;
   user: Client | null;
-  wallet: ClientWallet | null;
+  wallet: Wallet | null;
+  shop: Shop | null;
+  shop_wallet: Wallet | null;
   auth: Auth | null;
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
   isLoading: boolean;
@@ -38,6 +50,8 @@ const initialState: AuthState = {
   token: null,
   user: null,
   wallet: null,
+  shop: null,
+  shop_wallet: null,
   auth: null,
   pendingStatus: "idle",
   isLoading: false,
@@ -57,6 +71,9 @@ const authSlice = createSlice({
     },
     setMessage(state, action) {
       state.msg = action.payload;
+    },
+    setShop(state, action) {
+      state.shop = action.payload;
     },
     setWallet(state, action) {
       state.wallet = action.payload;
@@ -106,6 +123,7 @@ export const {
   setToken,
   setUser,
   setWallet,
+  setShop,
   setAuth,
   resetAuth,
   setPending,

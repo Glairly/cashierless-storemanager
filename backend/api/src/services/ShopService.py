@@ -28,7 +28,7 @@ class ShopService:
 
     def get_shop_by_client_id(self, client_id: int):
         # client = db.session.query(Client).filter(Client.id == client_id).options(subqueryload(C)).first()
-        shop = db.session.query(Shop).filter(Shop.owner_id == client_id).options(subqueryload(Shop.items)).first()
+        shop = db.session.query(Shop).filter(Shop.owner_id == client_id).options(subqueryload(Shop.items)).options(subqueryload(Shop.wallet)).first()
         
         if shop is None:
             raise HTTPException('Shop not found')

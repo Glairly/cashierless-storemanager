@@ -131,19 +131,21 @@ class AuthService:
 
         hashed_password = self.__pwd_context.hash(signupRequest.password)
 
-        shop_wallet = ShopWallet()
-        shop = Shop(phone_number=signupRequest.shop_phone_number, name= signupRequest.name, wallet=shop_wallet)
-
         wallet = ClientWallet()
         client = Client(phone_number=signupRequest.phone_number, gender=signupRequest.gender, birthdate=signupRequest.birthdate, name=signupRequest.name, is_shop_owner=signupRequest.is_shop_owner, wallet=wallet, profile_image=signupRequest.profile_img)
         auth = Auth(username=signupRequest.username, email=signupRequest.email, hashed_password=hashed_password, client=client)
+        
+        shop_wallet = ShopWallet()
         
         if signupRequest.face_img is not None:
             face_id = self.__faceRecognitionService.create_face_id_none_commit(signupRequest.face_img)
             face_id.auth = auth
             db.session.add(face_id)
 
-        db.session.add_all([shop_wallet, shop, auth, client, wallet])
+        db.session.add_all([shop_wallet, auth, client, wallet])
+        db.session.commit()
+        shop = Shop(phone_number=signupRequest.shop_phone_number, name= signupRequest.name, wallet=shop_wallet, owner_id=client.id)
+        db.session.add(shop)
         db.session.commit()
         return Auth(username=signupRequest.username, email=signupRequest.email, hashed_password="$secret", client_id=auth.client.id)
     

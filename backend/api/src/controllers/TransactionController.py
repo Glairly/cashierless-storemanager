@@ -36,6 +36,7 @@ class TransactionController:
         self.router.add_api_route("/get_pending_transaction", self.get_pending_transaction, methods=["GET"])
         self.router.add_api_route("/get_pending_topup_transaction", self.get_pending_topup_transaction, methods=["GET"])
         self.router.add_api_route("/get_client_transactions", self.get_client_transactions, methods=["GET"])
+        self.router.add_api_route("/get_shop_transactions", self.get_shop_transactions, methods=["GET"])
         self.router.add_api_route("/topup", self.topup, methods=["POST"])
 
     def do_transaction(self, request: TransactionRequest):
@@ -100,6 +101,9 @@ class TransactionController:
     
     def get_client_transactions(self, client_id: int):
         return self.__transactionService.get_client_transactions(client_id)
+    
+    def get_shop_transactions(self, shop_id: int):
+        return self.__transactionService.get_shop_transactions(shop_id)
     
     def topup(self, request: TransactionTopupRequest):
         return self.__transactionService.create_transaction_for_topup(request)

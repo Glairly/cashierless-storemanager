@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
         <>
           <span className="fs-5 fw-bold ps-2 d-none d-sm-inline">Shop Management</span>
           <ul className="nav nav-pills flex-column mt-2 mb-4">
-            <Link to="" className={(props.active === "Stocking" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+            <Link to="/Stocking" className={(props.active === "Stocking" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
               <li
                 className={"nav-item p-2 py-0 ms-1"}
               >
