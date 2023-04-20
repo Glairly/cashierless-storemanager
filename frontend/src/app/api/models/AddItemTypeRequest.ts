@@ -31,6 +31,12 @@ export interface AddItemTypeRequest {
      * @memberof AddItemTypeRequest
      */
     basePrice: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AddItemTypeRequest
+     */
+    retail: number;
 }
 
 /**
@@ -40,6 +46,7 @@ export function instanceOfAddItemTypeRequest(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "name" in value;
     isInstance = isInstance && "basePrice" in value;
+    isInstance = isInstance && "retail" in value;
 
     return isInstance;
 }
@@ -56,6 +63,7 @@ export function AddItemTypeRequestFromJSONTyped(json: any, ignoreDiscriminator: 
         
         'name': json['name'],
         'basePrice': json['base_price'],
+        'retail': json['retail'],
     };
 }
 
@@ -70,6 +78,7 @@ export function AddItemTypeRequestToJSON(value?: AddItemTypeRequest | null): any
         
         'name': value.name,
         'base_price': value.basePrice,
+        'retail': value.retail,
     };
 }
 

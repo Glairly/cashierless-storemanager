@@ -166,6 +166,10 @@ export interface GetShopByClientIdCapiV1GetShopByClientIdGetRequest {
     clientId: string;
 }
 
+export interface GetShopTransactionsFapiV1GetShopTransactionsGetRequest {
+    shopId: number;
+}
+
 export interface InferenceImapiV1InferencePostRequest {
     inferenceRequest: InferenceRequest;
 }
@@ -1075,6 +1079,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getShopByClientIdCapiV1GetShopByClientIdGet(requestParameters: GetShopByClientIdCapiV1GetShopByClientIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.getShopByClientIdCapiV1GetShopByClientIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Shop Transactions
+     */
+    async getShopTransactionsFapiV1GetShopTransactionsGetRaw(requestParameters: GetShopTransactionsFapiV1GetShopTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.shopId === null || requestParameters.shopId === undefined) {
+            throw new runtime.RequiredError('shopId','Required parameter requestParameters.shopId was null or undefined when calling getShopTransactionsFapiV1GetShopTransactionsGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.shopId !== undefined) {
+            queryParameters['shop_id'] = requestParameters.shopId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fapi/v1/get_shop_transactions`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Shop Transactions
+     */
+    async getShopTransactionsFapiV1GetShopTransactionsGet(requestParameters: GetShopTransactionsFapiV1GetShopTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getShopTransactionsFapiV1GetShopTransactionsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
