@@ -15,17 +15,12 @@ interface shop {
 }
 
 const Dashboard: React.FC = () => {
-  const [shop, setShop] = useState<shop[]>();
-  const [itemType, setItemType] = useState<ItemType[]>();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction());
-    dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
-    dispatch<any>(getAllShop()).then((result: any) => setShop(result));
   }, [dispatch]);
 
   const handleDateFormat = (strDate: string): string => {
@@ -34,18 +29,8 @@ const Dashboard: React.FC = () => {
     return formattedDate
   }
 
-  const handleShopName = (shop_id: number): string | undefined => {
-    const obj = shop?.find(key => key.id === shop_id)
-    return obj?.name;
-  }
-
-  const handleItemType = (item_id: number): string | undefined => {
-    const obj = itemType?.find(key => key.id === item_id)
-    return obj?.name;
-  }
-
   const setTopup = () => {
-    navigate("/new2");
+    navigate("/Topup");
   }
 
   const wallet = useSelector((state: RootState) => state.auth.wallet);
@@ -76,7 +61,7 @@ const Dashboard: React.FC = () => {
               </div>
             </Card.Body>
           </Card>
-          <span className="fs-5 fw-bold ps-0 my-3">Transaction History</span>
+          <span className="fs-5 fw-bold py-3 ps-0">Transaction History</span>
           <Table border={1}>
             <thead style={{ backgroundColor: "#758096" }} className="text-white">
               <tr>

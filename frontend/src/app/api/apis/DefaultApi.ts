@@ -150,6 +150,10 @@ export interface GetItemByBarcodeSmapiV1GetItemByBarcodeGetRequest {
     barcode: string;
 }
 
+export interface GetItemByShopIdSmapiV1GetItemByShopIdGetRequest {
+    shopId: number;
+}
+
 export interface GetItemWithBarcodesSmapiV1GetItemWithBarcodesGetRequest {
     itemId: number;
 }
@@ -927,6 +931,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getItemByBarcodeSmapiV1GetItemByBarcodeGet(requestParameters: GetItemByBarcodeSmapiV1GetItemByBarcodeGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.getItemByBarcodeSmapiV1GetItemByBarcodeGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Item By Shop Id
+     */
+    async getItemByShopIdSmapiV1GetItemByShopIdGetRaw(requestParameters: GetItemByShopIdSmapiV1GetItemByShopIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.shopId === null || requestParameters.shopId === undefined) {
+            throw new runtime.RequiredError('shopId','Required parameter requestParameters.shopId was null or undefined when calling getItemByShopIdSmapiV1GetItemByShopIdGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.shopId !== undefined) {
+            queryParameters['shop_id'] = requestParameters.shopId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/smapi/v1/get_item_by_shop_id`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Item By Shop Id
+     */
+    async getItemByShopIdSmapiV1GetItemByShopIdGet(requestParameters: GetItemByShopIdSmapiV1GetItemByShopIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getItemByShopIdSmapiV1GetItemByShopIdGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
