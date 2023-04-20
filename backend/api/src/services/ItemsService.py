@@ -36,6 +36,9 @@ class ItemsService:
     def get_item_by_barcode(self, barcode: str):
         item = db.session.query(Item).join(Barcode).filter(Barcode.barcode == barcode).first()
         return item
+    
+    def get_item_by_shop_id(self, shop_id: int):
+        return db.session.query(Item).filter(Item.shop_id == shop_id).all()
 
     def add_item_to_shop(self, payload: AddItemRequest):
         shop = db.session.query(Shop).filter(Shop.id == payload.shop_id).first()
