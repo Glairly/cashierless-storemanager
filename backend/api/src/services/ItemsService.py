@@ -176,24 +176,24 @@ class ItemsService:
     def edit_item(self, items: EditItemRequest):
         try:
             db_items = db.session.query(Item).filter(Item.shop_id == items.shop_id).all()
-            db_item_ids = [item.id for item in db_items]
-            input_item_ids = [item.id for item in items.items]
+            db_item_types = [item.type for item in db_items]
+            input_item_type = [item.type for item in items.items]
 
             # create new items
             for item in items.items:
-                if item.id not in db_item_ids:
+                if item.type not in db_item_types:
                     db_item = Item(name=item.name, quantity=item.quantity, price=item.price, type=item.type, shop_id=items.shop_id)
                     db.session.add(db_item)
             # update existing items
             for item in items.items:
-                if item.id in db_item_ids:
-                    db_item = db.session.query(Item).filter(Item.id == item.id).first()
+                if item.type in db_item_types:
+                    db_item = db.session.query(Item).filter(Item.type == item.type, Item.shop_id == items.shop_id).first()
                     db_item.name = item.name
                     db_item.price = item.price
                     db_item.quantity = item.quantity
             # delete missing items
             for item in db_items:
-                if item.id not in input_item_ids:
+                if item.type not in input_item_type:
                     db.session.delete(item)
             db.session.commit()
         except Exception as e:

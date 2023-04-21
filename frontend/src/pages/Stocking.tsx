@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { RootState } from "../app/store";
 import { BsArrowUpCircle, BsCashCoin, BsCurrencyBitcoin, BsFillDashCircleFill, BsFillXSquareFill, BsPlusCircleFill, BsTrashFill } from "react-icons/bs";
-import { getAllItemType, getItemByShopId } from "../features/supply/supplyApi";
+import { editItem, getAllItemType, getItemByShopId } from "../features/supply/supplyApi";
 import { Item } from "../features/inference/inferenceSlice";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -13,7 +13,7 @@ const schema = Yup.object().shape({
   name: Yup.string().required(),
   quantity: Yup.number().required(),
   price: Yup.number().required(),
-  type: Yup.string().required()
+  type: Yup.number().required()
 });
 
 const initialValue = {
@@ -34,8 +34,8 @@ const Stocking: React.FC = () => {
   const [isEditStock, setIsEditStock] = useState(false);
   const [isAddModal, setIsAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
-  const [stock, setStock] = useState<Item[] | null>(null);
-  const [requestStock, setRequestStock] = useState<Item[] | null>(null);
+  const [stock, setStock] = useState<Item[]>([]);
+  const [requestStock, setRequestStock] = useState<Item[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleItemType = (item_id: number): string | undefined => {
@@ -84,18 +84,31 @@ const Stocking: React.FC = () => {
     setStock(updatedCount || null);
   }
 
-  const handleAddStock = () => {
-    setSelectedOption("")
-    const avaibleItemType = itemTypes.filter((type) => !requestStock?.some((item) => item.type === type.id))
-    console.log(avaibleItemType);
+  const handleAddStock = (value: any) => {
+    setSelectedOption("");
+    setIsStockChange(true);
+    setIsAddModal(false);
+    if (!shop) return;
+    let tempItem: Item = {
+      id: 9999999,
+      shop_id: shop?.id,
+      quantity: value.quantity,
+      name: value.name,
+      price: value.price,
+      type: value.type,
+    };
+    setStock((prev) => [...prev, tempItem] as Item[]);
+    console.log(value)
+    console.log(stock);
+    console.log(requestStock);
   }
-
-  // const handleChangeInAddModal = (event: React.ChangeEvent<any>) => {
-  //   setAddItem({ ...addItem, [event.target.name]: event.target.value });
-  // };
 
   const handleAvaibleItemType = () => {
     return itemTypes.filter((type) => !requestStock?.some((item) => item.type === type.id));
+  }
+
+  const handleSubmit = () => {
+    // dispatch<any>(editItem(requestStock as ItemRequest))
   }
 
   useEffect(() => {
@@ -106,6 +119,10 @@ const Stocking: React.FC = () => {
       });
     dispatch<any>(getAllItemType());
   }, [dispatch])
+
+  // useEffect(() => {
+  //   console.log(requestStock)
+  // }, [requestStock])
 
   return (
     <Container className="mt-3">
@@ -375,7 +392,7 @@ const Stocking: React.FC = () => {
                         <Dropdown.Item
                           key={option.id}
                           onClick={() => {
-                            setFieldValue("type", option);
+                            setFieldValue("type", option.id);
                             setSelectedOption(option.name)
                           }}
                         >
