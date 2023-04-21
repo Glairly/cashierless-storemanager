@@ -30,7 +30,7 @@ export const getItemByShopId =
           shopId: auth.shop.id
         }
         const res = await new DefaultApi().getItemByShopIdSmapiV1GetItemByShopIdGet(request);
-        dispatch(setItem(res));
+        // dispatch(setItem(res));
         return res;
       } catch (error) { }
     }

@@ -38,7 +38,7 @@ class ItemsService:
         return item
     
     def get_item_by_shop_id(self, shop_id: int):
-        return db.session.query(Item).filter(Item.shop_id == shop_id).all()
+        return db.session.query(Item).filter(Item.shop_id == shop_id).order_by(Item.id).all()
 
     def add_item_to_shop(self, payload: AddItemRequest):
         shop = db.session.query(Shop).filter(Shop.id == payload.shop_id).first()

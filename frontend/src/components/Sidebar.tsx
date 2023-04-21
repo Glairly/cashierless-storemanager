@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
   const user = useSelector((state: RootState) => state.auth.user)
 
   return (
-    <div className="sidebar bg-light d-flex flex-column p-2 vh-100">
+    <div className="bg-light d-flex flex-column p-2 vh-100">
       <span className="d-flex mb-3 align-items-center pe-3 mb-4 d-none d-sm-inline fs-4 text-uppercase text-nowrap">
         🛒 Cashierless Store
       </span>

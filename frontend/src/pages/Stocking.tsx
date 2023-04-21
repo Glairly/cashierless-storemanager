@@ -4,13 +4,16 @@ import { getShopByClientId } from "../features/auth/authAPI";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { RootState } from "../app/store";
-import { BsArrowUpCircle, BsCashCoin, BsCurrencyBitcoin, BsFillDashCircleFill, BsPlusCircleFill, BsTrashFill } from "react-icons/bs";
+import { BsArrowUpCircle, BsCashCoin, BsCurrencyBitcoin, BsFillDashCircleFill, BsFillXSquareFill, BsPlusCircleFill, BsTrashFill } from "react-icons/bs";
 import { getAllItemType, getItemByShopId } from "../features/supply/supplyApi";
+import { Item } from "../features/inference/inferenceSlice";
 
 const Stocking: React.FC = () => {
   const dispatch = useDispatch();
   const [isStockChange, setIsStockChange] = useState(false);
+  const [isEditStock, setIsEditStock] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [stock, setStock] = useState<Item[] | null>(null);
 
   const items = useSelector((state: RootState) => state.supply.item);
   const shop = useSelector((state: RootState) => state.auth.shop);
@@ -22,7 +25,7 @@ const Stocking: React.FC = () => {
   }
 
   useEffect(() => {
-    dispatch<any>(getItemByShopId());
+    dispatch<any>(getItemByShopId()).then((result: any) => { setStock(result) });
     dispatch<any>(getAllItemType());
   }, [dispatch])
 
@@ -93,21 +96,36 @@ const Stocking: React.FC = () => {
       <Row>
         <Col className="d-flex justify-content-between py-3">
           <span className="fs-5 fw-bold">Manage Panel</span>
-          <Button className="text-white" disabled={!isStockChange}>Save you stock</Button>
+          {!isEditStock ? (
+            <Button className="text-white" onClick={() => setIsEditStock(true)}>Edit your stock</Button>
+          ) : (
+            <div>
+              <Button variant="success" className="text-white me-2">Add Item</Button>
+              <Button className="text-white me-2" disabled={!isStockChange}>Save you stock</Button>
+              <Button
+                className="text-white"
+                onClick={() => {
+                  setIsEditStock(false);
+                  setIsStockChange(false);
+                }}>
+                Cancel
+              </Button>
+            </div>
+          )}
         </Col>
       </Row>
       <Table border={1}>
         <thead style={{ backgroundColor: "#758096" }} className="text-white">
           <tr>
-            <th className="fw-normal border">Item Name</th>
-            <th className="fw-normal border">Type</th>
-            <th className="fw-normal text-center border">Price</th>
-            <th className="fw-normal text-center border">Count</th>
-            <th className="fw-normal text-center border">Delete</th>
+            <th className="fw-normal">Item Name</th>
+            <th className="fw-normal">Type</th>
+            <th className="fw-normal text-center">Price</th>
+            <th className="fw-normal text-center">Count</th>
+            {isEditStock && <th className="fw-normal text-center">Delete</th>}
           </tr>
         </thead>
         <tbody>
-          {items && items.map((item) => (
+          {stock && (stock.length != 0 ? stock.map((item) => (
             <tr className="align-middle" key={item.id}>
               <td>
                 <div className="d-flex flex-column">
@@ -118,43 +136,59 @@ const Stocking: React.FC = () => {
               <td>{handleItemType(item.type)}</td>
               <td className="text-center">{item.price}</td>
               <td className="">
-                <div className="d-flex flex-row justify-content-between align-items-center">
-                  <Button
-                    className="d-flex justify-content-center"
-                    onClick={() => setIsStockChange(true)}
-                    style={{ background: "none", border: "none", padding: "0px" }}
-                  >
-                    <BsFillDashCircleFill color={"red"} />
-                  </Button>
-                  {item.quantity}
-                  <Button
-                    className="d-flex justify-content-center"
-                    onClick={() => setIsStockChange(true)}
-                    style={{ background: "none", border: "none", padding: "0px" }}
-                  >
-                    <BsPlusCircleFill color={"lime"} />
-                  </Button>
-                </div>
+                {isEditStock ? (
+                  <div className="d-flex flex-row justify-content-between align-items-center">
+                    <Button
+                      className="d-flex justify-content-center"
+                      onClick={() => setIsStockChange(true)}
+                      style={{ background: "none", border: "none", padding: "0px" }}
+                    >
+                      <BsFillDashCircleFill color={"red"} />
+                    </Button>
+                    {item.quantity}
+                    <Button
+                      className="d-flex justify-content-center"
+                      onClick={() => setIsStockChange(true)}
+                      style={{ background: "none", border: "none", padding: "0px" }}
+                    >
+                      <BsPlusCircleFill color={"lime"} />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="d-flex flex-row justify-content-center align-items-center">
+                    {item.quantity}
+                  </div>
+                )}
+
               </td>
-              <td className="text-center">
+              {isEditStock && <td className="text-center">
                 <div className="d-flex justify-content-center">
                   <Button
                     className="d-flex justify-content-center"
                     onClick={() => { setIsStockChange(true); setShowDeleteModal(true); }}
                     style={{ background: "none", border: "none", padding: "0px" }}
                   >
-                    <BsTrashFill />
+                    <BsFillXSquareFill color="red" />
                   </Button>
                 </div>
-              </td>
+              </td>}
+            </tr>
+          )) : (
+            <tr className="align-middle">
+              <td>No Item</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
             </tr>
           ))}
-          {items.length == 0 && <tr className="align-middle">
-            <td>No transaction history</td>
-            <td className="text-center">-</td>
-            <td className="text-center">-</td>
-            <td className="text-center">-</td>
-          </tr>}
+          {!stock &&
+            <tr className="align-middle">
+              <td>Loading Item</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
+            </tr>
+          }
         </tbody>
       </Table>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
