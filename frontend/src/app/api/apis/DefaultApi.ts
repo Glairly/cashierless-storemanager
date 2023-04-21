@@ -24,6 +24,7 @@ import type {
   DetectionResult,
   EditAuthRequest,
   EditClientRequest,
+  EditItemRequest,
   HTTPValidationError,
   InferenceRequest,
   InferenceResult,
@@ -56,6 +57,8 @@ import {
     EditAuthRequestToJSON,
     EditClientRequestFromJSON,
     EditClientRequestToJSON,
+    EditItemRequestFromJSON,
+    EditItemRequestToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
     InferenceRequestFromJSON,
@@ -124,6 +127,10 @@ export interface DoTransactionWithWalletFapiV1DoTransactionWithWalletPostRequest
 
 export interface EditClientCapiV1EditClientPostRequest {
     editClientRequest: EditClientRequest;
+}
+
+export interface EditItemSmapiV1EditItemPostRequest {
+    editItemRequest: EditItemRequest;
 }
 
 export interface EditUserCapiV1EditUserPostRequest {
@@ -646,6 +653,43 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async editClientCapiV1EditClientPost(requestParameters: EditClientCapiV1EditClientPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.editClientCapiV1EditClientPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit Item
+     */
+    async editItemSmapiV1EditItemPostRaw(requestParameters: EditItemSmapiV1EditItemPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.editItemRequest === null || requestParameters.editItemRequest === undefined) {
+            throw new runtime.RequiredError('editItemRequest','Required parameter requestParameters.editItemRequest was null or undefined when calling editItemSmapiV1EditItemPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/smapi/v1/edit_item`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditItemRequestToJSON(requestParameters.editItemRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Edit Item
+     */
+    async editItemSmapiV1EditItemPost(requestParameters: EditItemSmapiV1EditItemPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.editItemSmapiV1EditItemPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
