@@ -1,6 +1,5 @@
-import { Button, Card, Col, Container, Modal, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Modal, Row, Table } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { getShopByClientId } from "../features/auth/authAPI";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { RootState } from "../app/store";
@@ -12,8 +11,10 @@ const Stocking: React.FC = () => {
   const dispatch = useDispatch();
   const [isStockChange, setIsStockChange] = useState(false);
   const [isEditStock, setIsEditStock] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isCountSpanClick, setIsCountSpanClick] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
   const [stock, setStock] = useState<Item[] | null>(null);
+  const [requestStock, setRequestStock] = useState<Item[] | null>(null);
 
   const items = useSelector((state: RootState) => state.supply.item);
   const shop = useSelector((state: RootState) => state.auth.shop);
@@ -24,8 +25,57 @@ const Stocking: React.FC = () => {
     return obj?.name;
   }
 
+  const handleStockCountIncrease = (id: number) => {
+    setIsStockChange(true);
+    const updatedCount = stock?.map(item => {
+      if (item.id === id) {
+        return { ...item, quantity: item.quantity + 1 };
+      }
+      return item;
+    });
+    setStock(updatedCount || null);
+  }
+  const handleStockCountDecrease = (id: number) => {
+    setIsStockChange(true);
+    const updatedCount = stock?.map(item => {
+      if (item.id === id) {
+        return { ...item, quantity: item.quantity - 1 };
+      }
+      return item;
+    });
+    setStock(updatedCount || null);
+  }
+
+  const handleCountSpan = (id: number) => {
+    setIsStockChange(true);
+    const count = prompt('Enter count:');
+    if (count) {
+      const updatedCount = stock?.map(item => {
+        if (item.id === id) {
+          return { ...item, quantity: parseInt(count) };
+        }
+        return item;
+      });
+      setStock(updatedCount || null)
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setIsStockChange(true);
+    const updatedCount = stock?.filter((item) => item.id !== id);
+    setStock(updatedCount || null);
+  }
+
+  const handleAddStock = () => {
+
+  }
+
   useEffect(() => {
-    dispatch<any>(getItemByShopId()).then((result: any) => { setStock(result) });
+    dispatch<any>(getItemByShopId())
+      .then((result: any) => {
+        setStock(result);
+        setRequestStock(result);
+      });
     dispatch<any>(getAllItemType());
   }, [dispatch])
 
@@ -101,12 +151,22 @@ const Stocking: React.FC = () => {
           ) : (
             <div>
               <Button variant="success" className="text-white me-2">Add Item</Button>
-              <Button className="text-white me-2" disabled={!isStockChange}>Save you stock</Button>
+              <Button className="text-white me-2"
+                disabled={!isStockChange}
+                onClick={() => {
+                  setIsEditStock(false);
+                  setIsStockChange(false);
+                  setRequestStock(stock);
+                }}
+              >
+                Save you stock
+              </Button>
               <Button
                 className="text-white"
                 onClick={() => {
                   setIsEditStock(false);
                   setIsStockChange(false);
+                  setStock(requestStock);
                 }}>
                 Cancel
               </Button>
@@ -140,15 +200,15 @@ const Stocking: React.FC = () => {
                   <div className="d-flex flex-row justify-content-between align-items-center">
                     <Button
                       className="d-flex justify-content-center"
-                      onClick={() => setIsStockChange(true)}
+                      onClick={() => handleStockCountDecrease(item.id)}
                       style={{ background: "none", border: "none", padding: "0px" }}
                     >
                       <BsFillDashCircleFill color={"red"} />
                     </Button>
-                    {item.quantity}
+                    <span style={{ cursor: "pointer" }} onClick={() => handleCountSpan(item.id)}>{item.quantity}</span>
                     <Button
                       className="d-flex justify-content-center"
-                      onClick={() => setIsStockChange(true)}
+                      onClick={() => handleStockCountIncrease(item.id)}
                       style={{ background: "none", border: "none", padding: "0px" }}
                     >
                       <BsPlusCircleFill color={"lime"} />
@@ -159,19 +219,19 @@ const Stocking: React.FC = () => {
                     {item.quantity}
                   </div>
                 )}
-
               </td>
               {isEditStock && <td className="text-center">
                 <div className="d-flex justify-content-center">
                   <Button
                     className="d-flex justify-content-center"
-                    onClick={() => { setIsStockChange(true); setShowDeleteModal(true); }}
+                    onClick={() => { setIsStockChange(true); handleDelete(item.id); }}
                     style={{ background: "none", border: "none", padding: "0px" }}
                   >
                     <BsFillXSquareFill color="red" />
                   </Button>
                 </div>
-              </td>}
+              </td>
+              }
             </tr>
           )) : (
             <tr className="align-middle">
@@ -191,20 +251,6 @@ const Stocking: React.FC = () => {
           }
         </tbody>
       </Table>
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Delete Item</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you wanted to delete this item.</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={() => setShowDeleteModal(false)}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Container>
   );
 }
