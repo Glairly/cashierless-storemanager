@@ -1,16 +1,16 @@
-import { Button, Card, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Container, Modal, Row, Table } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { getShopByClientId } from "../features/auth/authAPI";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { RootState } from "../app/store";
-import { BsArrowUpCircle, BsCashCoin, BsCurrencyBitcoin, BsPlusCircleFill } from "react-icons/bs";
+import { BsArrowUpCircle, BsCashCoin, BsCurrencyBitcoin, BsFillDashCircleFill, BsPlusCircleFill, BsTrashFill } from "react-icons/bs";
 import { getAllItemType, getItemByShopId } from "../features/supply/supplyApi";
-import { Item, ItemType, setItem } from "../features/supply/supplySlice";
 
 const Stocking: React.FC = () => {
   const dispatch = useDispatch();
   const [isStockChange, setIsStockChange] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const items = useSelector((state: RootState) => state.supply.item);
   const shop = useSelector((state: RootState) => state.auth.shop);
@@ -22,7 +22,6 @@ const Stocking: React.FC = () => {
   }
 
   useEffect(() => {
-    dispatch<any>(getShopByClientId());
     dispatch<any>(getItemByShopId());
     dispatch<any>(getAllItemType());
   }, [dispatch])
@@ -100,11 +99,11 @@ const Stocking: React.FC = () => {
       <Table border={1}>
         <thead style={{ backgroundColor: "#758096" }} className="text-white">
           <tr>
-            <th className="fw-normal">Item Name</th>
-            <th className="fw-normal">Type</th>
-            <th className="fw-normal text-center">Count</th>
-            <th className="fw-normal text-center">Price</th>
-            <th className="fw-normal text-center">Delete</th>
+            <th className="fw-normal border">Item Name</th>
+            <th className="fw-normal border">Type</th>
+            <th className="fw-normal text-center border">Price</th>
+            <th className="fw-normal text-center border">Count</th>
+            <th className="fw-normal text-center border">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -116,27 +115,62 @@ const Stocking: React.FC = () => {
                   <small style={{ color: "#758096" }} >Item Id: {item.id}</small>
                 </div>
               </td>
-              <td>{handleItemType(parseInt(item.type))}</td>
-              <td className="text-center">{item.quantity}</td>
+              <td>{handleItemType(item.type)}</td>
+              <td className="text-center">{item.price}</td>
               <td className="">
                 <div className="d-flex flex-row justify-content-between align-items-center">
-                  <Button className="rounded-circle me-1">-</Button>
-                  <BsPlusCircleFill color={"lime"} />
-                  {item.price}
-                  <Button className="rounded-circle ms-1">+</Button>
+                  <Button
+                    className="d-flex justify-content-center"
+                    onClick={() => setIsStockChange(true)}
+                    style={{ background: "none", border: "none", padding: "0px" }}
+                  >
+                    <BsFillDashCircleFill color={"red"} />
+                  </Button>
+                  {item.quantity}
+                  <Button
+                    className="d-flex justify-content-center"
+                    onClick={() => setIsStockChange(true)}
+                    style={{ background: "none", border: "none", padding: "0px" }}
+                  >
+                    <BsPlusCircleFill color={"lime"} />
+                  </Button>
                 </div>
               </td>
-              <td className="text-center">-</td>
+              <td className="text-center">
+                <div className="d-flex justify-content-center">
+                  <Button
+                    className="d-flex justify-content-center"
+                    onClick={() => { setIsStockChange(true); setShowDeleteModal(true); }}
+                    style={{ background: "none", border: "none", padding: "0px" }}
+                  >
+                    <BsTrashFill />
+                  </Button>
+                </div>
+              </td>
             </tr>
           ))}
-          <tr className="align-middle">
+          {items.length == 0 && <tr className="align-middle">
             <td>No transaction history</td>
             <td className="text-center">-</td>
             <td className="text-center">-</td>
             <td className="text-center">-</td>
-          </tr>
+          </tr>}
         </tbody>
       </Table>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Item</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you wanted to delete this item.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={() => setShowDeleteModal(false)}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

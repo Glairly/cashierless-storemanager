@@ -1,13 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-export interface Item {
-  id: number;
-  shop_id: number;
-  quantity: number;
-  name: string;
-  price: number;
-  type: string;
-}
+import { Item } from "../inference/inferenceSlice";
 
 export interface ItemType  {
   name: string;
@@ -34,13 +26,17 @@ const supplySlice = createSlice({
     },
     setItem(state, action) {
       state.item = action.payload;
-    }
+    },
+    resetSupply(state) {
+      return initialState;
+    },
   },
 });
 
 export const {
   setItemType,
-  setItem
+  setItem,
+  resetSupply,
 } = supplySlice.actions;
 
 export default supplySlice.reducer;

@@ -26,6 +26,7 @@ import {
 import { LoginCapiV1LoginPostRequest } from "../../app/api";
 import { SignUpRequest, SignupCapiV1SignupPostRequest } from '../../app/api';
 import { SignUpWithShopRequest, SignupWithShopCapiV1SignupWithShopPostRequest } from "../../app/api";
+import { resetSupply } from "../supply/supplySlice";
 
 
 export const login =
@@ -53,6 +54,7 @@ export const logout =
   (): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch) => {
     dispatch(resetAuth());
+    dispatch(resetSupply());
   };
 
 export const fetchWallet =
@@ -248,6 +250,7 @@ export const getShopByClientId =
       const { auth } = getState();
 
       if (!auth.user?.id) return false;
+      if (auth.user?.is_shop_owner == false) return false;
 
       const request = {
         clientId: auth.user.id.toString(),

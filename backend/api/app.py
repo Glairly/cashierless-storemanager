@@ -57,7 +57,7 @@ configs = Utils.load_config('api/configs.json')
 app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 
 # service
-model = DetrService("detr_model-22cls-50ep-v1")
+model = DetrService("detr-22cls-200ep-v1")
 decoder = DecoderService()
 inferenceService = InferenceService()
 itemsService = ItemsService()

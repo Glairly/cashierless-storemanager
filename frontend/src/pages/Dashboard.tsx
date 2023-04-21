@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Image, Table } from "react-bootstrap";
 import { BsCurrencyDollar, BsFillCheckCircleFill, BsFillDashCircleFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchWallet } from "../features/auth/authAPI";
+import { fetchWallet, getShopByClientId } from "../features/auth/authAPI";
 import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
 import { RootState } from "../app/store";
 import { getAllItemType } from "../features/supply/supplyApi";
@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction());
+    dispatch<any>(getShopByClientId());
   }, [dispatch]);
 
   const handleDateFormat = (strDate: string): string => {
