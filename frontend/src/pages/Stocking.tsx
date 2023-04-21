@@ -316,7 +316,7 @@ const Stocking: React.FC = () => {
                         name="name"
                         value={values.name}
                         onChange={handleChange}
-                        placeholder="Ex) Oishi Yellow"
+                        placeholder="Oishi Yellow"
                         isValid={touched.name && !errors.name}
                         isInvalid={!!errors.name}
                       />
