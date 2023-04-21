@@ -1,4 +1,4 @@
-import { Button, Card, Col, Container, Form, Modal, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Container, Dropdown, Form, InputGroup, Modal, Row, Table } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -6,19 +6,37 @@ import { RootState } from "../app/store";
 import { BsArrowUpCircle, BsCashCoin, BsCurrencyBitcoin, BsFillDashCircleFill, BsFillXSquareFill, BsPlusCircleFill, BsTrashFill } from "react-icons/bs";
 import { getAllItemType, getItemByShopId } from "../features/supply/supplyApi";
 import { Item } from "../features/inference/inferenceSlice";
+import { Formik } from "formik";
+import * as Yup from "yup";
+
+const schema = Yup.object().shape({
+  name: Yup.string().required(),
+  quantity: Yup.number().required(),
+  price: Yup.number().required(),
+  type: Yup.string().required()
+});
+
+const initialValue = {
+  name: "",
+  quantity: 0,
+  price: 0,
+  type: ""
+}
 
 const Stocking: React.FC = () => {
   const dispatch = useDispatch();
-  const [isStockChange, setIsStockChange] = useState(false);
-  const [isEditStock, setIsEditStock] = useState(false);
-  const [isCountSpanClick, setIsCountSpanClick] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
-  const [stock, setStock] = useState<Item[] | null>(null);
-  const [requestStock, setRequestStock] = useState<Item[] | null>(null);
 
   const items = useSelector((state: RootState) => state.supply.item);
   const shop = useSelector((state: RootState) => state.auth.shop);
   const itemTypes = useSelector((state: RootState) => state.supply.itemType);
+
+  const [isStockChange, setIsStockChange] = useState(false);
+  const [isEditStock, setIsEditStock] = useState(false);
+  const [isAddModal, setIsAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
+  const [stock, setStock] = useState<Item[] | null>(null);
+  const [requestStock, setRequestStock] = useState<Item[] | null>(null);
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleItemType = (item_id: number): string | undefined => {
     const obj = itemTypes?.find(key => key.id === item_id)
@@ -67,7 +85,17 @@ const Stocking: React.FC = () => {
   }
 
   const handleAddStock = () => {
+    setSelectedOption("")
+    const avaibleItemType = itemTypes.filter((type) => !requestStock?.some((item) => item.type === type.id))
+    console.log(avaibleItemType);
+  }
 
+  // const handleChangeInAddModal = (event: React.ChangeEvent<any>) => {
+  //   setAddItem({ ...addItem, [event.target.name]: event.target.value });
+  // };
+
+  const handleAvaibleItemType = () => {
+    return itemTypes.filter((type) => !requestStock?.some((item) => item.type === type.id));
   }
 
   useEffect(() => {
@@ -150,8 +178,15 @@ const Stocking: React.FC = () => {
             <Button className="text-white" onClick={() => setIsEditStock(true)}>Edit your stock</Button>
           ) : (
             <div>
-              <Button variant="success" className="text-white me-2">Add Item</Button>
-              <Button className="text-white me-2"
+              <Button
+                variant="success"
+                className="text-white me-2"
+                onClick={() => setIsAddModal(true)}
+              >
+                Add Item
+              </Button>
+              <Button
+                className="text-white me-2"
                 disabled={!isStockChange}
                 onClick={() => {
                   setIsEditStock(false);
@@ -251,6 +286,118 @@ const Stocking: React.FC = () => {
           }
         </tbody>
       </Table>
+      <Modal show={isAddModal} onHide={() => setIsAddModal(false)}>
+        <Formik
+          validationSchema={schema}
+          onSubmit={handleAddStock}
+          initialValues={initialValue}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            touched,
+            isValid,
+            errors,
+            setFieldValue
+          }) => (
+            <Form noValidate onSubmit={handleSubmit}>
+              <Modal.Header closeButton>
+                <Modal.Title>Add Item</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Row className="mb-3">
+                  <Form.Group as={Col} md="4" controlId="name">
+                    <Form.Label>Item name</Form.Label>
+                    <InputGroup hasValidation>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        value={values.name}
+                        onChange={handleChange}
+                        placeholder="Ex) Oishi Yellow"
+                        isValid={touched.name && !errors.name}
+                        isInvalid={!!errors.name}
+                      />
+                      <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.name}
+                      </Form.Control.Feedback>
+                    </InputGroup>
+                  </Form.Group>
+
+                  <Form.Group as={Col} md="4" controlId="quantity">
+                    <Form.Label>Quantity</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="quantity"
+                      value={values.quantity}
+                      onChange={handleChange}
+                      isValid={touched.quantity && !errors.quantity}
+                      isInvalid={!!errors.quantity}
+                    />
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.quantity}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} md="4" controlId="price">
+                    <Form.Label>Price</Form.Label>
+                    <Form.Control
+                      type="number"
+                      name="price"
+                      value={values.price}
+                      onChange={handleChange}
+                      isValid={touched.price && !errors.price}
+                      isInvalid={!!errors.price}
+                    />
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.price}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Row>
+                <Form.Group className="mb-3">
+                  <Form.Label className="me-2">Item Type</Form.Label>
+                  {selectedOption === '' && (
+                    <Form.Text className="text-danger">
+                      * Please select an option
+                    </Form.Text>
+                  )}
+                  <Dropdown className="border rounded-2">
+                    <Dropdown.Toggle variant="secondary" id="type" className="form-control" disabled={handleAvaibleItemType().length == 0}>
+                      {selectedOption || "Select an option"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="form-control">
+                      {handleAvaibleItemType().map((option) => (
+                        <Dropdown.Item
+                          key={option.id}
+                          onClick={() => {
+                            setFieldValue("type", option);
+                            setSelectedOption(option.name)
+                          }}
+                        >
+                          {option.name}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setIsAddModal(false)}>
+                  Close
+                </Button>
+                <Button variant="primary" className="text-white" type="submit">
+                  Save Changes
+                </Button>
+              </Modal.Footer>
+            </Form>
+          )}
+        </Formik>
+      </Modal>
     </Container>
   );
 }
