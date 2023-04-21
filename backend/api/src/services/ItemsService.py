@@ -1,12 +1,13 @@
 from functools import reduce
 
 from fastapi import HTTPException
-from sqlalchemy import and_
+from sqlalchemy import and_, update
 
 from ..model.requests.AddItemRequest import *
 from ..model.requests.AddBarcodeRequest import *
 from ..model.requests.TransactionsRequest import *
 from ..model.requests.AddItemTypeRequest import *
+from ..model.requests.EditItemRequest import *
 
 from ..model.BBox import *
 from ..model.BBoxType import *
@@ -171,3 +172,32 @@ class ItemsService:
     
     def get_all_item_type(self):
         return db.session.query(ItemType).all()
+    
+    def edit_item(self, items: EditItemRequest):
+        try:
+            db_items = db.session.query(Item).filter(Item.shop_id == items.shop_id).all()
+            db_item_ids = [item.id for item in db_items]
+            input_item_ids = [item.id for item in items.items]
+
+            # create new items
+            for item in items.items:
+                if item.id not in db_item_ids:
+                    db_item = Item(name=item.name, quantity=item.quantity, price=item.price, type=item.type, shop_id=items.shop_id)
+                    db.session.add(db_item)
+            # update existing items
+            for item in items.items:
+                if item.id in db_item_ids:
+                    db_item = db.session.query(Item).filter(Item.id == item.id).first()
+                    db_item.name = item.name
+                    db_item.price = item.price
+                    db_item.quantity = item.quantity
+            # delete missing items
+            for item in db_items:
+                if item.id not in input_item_ids:
+                    db.session.delete(item)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise HTTPException(status_code=500,detail=str(e))
+        return {"message" : "Items updated successfully"}
+        # client = db.session.query(Client).filter(Client.id == payload.id).first()

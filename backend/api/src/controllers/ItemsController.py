@@ -12,6 +12,7 @@ from ..model.results.DecodeResult import *
 
 from ..model.models import *
 from ..model.requests.AddItemTypeRequest import *
+from ..model.requests.EditItemRequest import *
 
 class ItemsController:
     router = APIRouter(prefix="/smapi/v1")
@@ -26,6 +27,7 @@ class ItemsController:
         self.router.add_api_route("/get_item_by_shop_id", self.get_item_by_shop_id, methods=["GET"])
         self.router.add_api_route("/get_all_item_type", self.get_all_item_type, methods=["GET"])
         self.router.add_api_route("/add_item_type", self.add_item_type, methods=["POST"])
+        self.router.add_api_route("/edit_item", self.edit_item, methods=["POST"])
 
     def get_item_by_barcode(self, barcode: str):
         return self.__itemsService.get_item_by_barcode(barcode)
@@ -47,3 +49,6 @@ class ItemsController:
     
     def add_item_type(self, payload: AddItemTypeRequest):
         return self.__itemsService.add_item_type(payload)
+    
+    def edit_item(self, payload: EditItemRequest):
+        return self.__itemsService.edit_item(payload)
