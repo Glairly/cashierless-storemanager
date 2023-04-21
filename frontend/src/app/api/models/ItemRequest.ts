@@ -24,12 +24,6 @@ export interface ItemRequest {
      * @type {number}
      * @memberof ItemRequest
      */
-    id: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ItemRequest
-     */
     shopId: number;
     /**
      * 
@@ -62,7 +56,6 @@ export interface ItemRequest {
  */
 export function instanceOfItemRequest(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "id" in value;
     isInstance = isInstance && "shopId" in value;
     isInstance = isInstance && "quantity" in value;
     isInstance = isInstance && "name" in value;
@@ -82,7 +75,6 @@ export function ItemRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean
     }
     return {
         
-        'id': json['id'],
         'shopId': json['shop_id'],
         'quantity': json['quantity'],
         'name': json['name'],
@@ -100,7 +92,6 @@ export function ItemRequestToJSON(value?: ItemRequest | null): any {
     }
     return {
         
-        'id': value.id,
         'shop_id': value.shopId,
         'quantity': value.quantity,
         'name': value.name,
