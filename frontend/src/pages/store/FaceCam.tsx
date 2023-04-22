@@ -17,6 +17,7 @@ import {
 const FaceCam: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
   const [imgSrc, setImgSrc] = useState<string>("");
+  const [faceCameraDeviceId, setFaceCameraDeviceId] = useState('');
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -27,6 +28,17 @@ const FaceCam: React.FC = () => {
   const { customerInfo, pendingStatus, isLoading, error } = useSelector(
     (state: RootState) => state.inference
   );
+
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        const cameras = devices.filter(device => device.kind === 'videoinput');
+        const cameraIds = cameras.map(camera => camera.deviceId);
+        setFaceCameraDeviceId(cameraIds[0]);
+      }).catch(error => {
+        console.error(error);
+      });
+  })
 
   useEffect(() => {
     dispatch<any>(setIdle());
@@ -119,7 +131,7 @@ const FaceCam: React.FC = () => {
           </div>
         </div>
         <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100">
-          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
+          {faceCameraDeviceId && <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={{ deviceId: faceCameraDeviceId }} />}
         </div>
 
         <Popup

@@ -11,9 +11,11 @@ models/DeductDepositRequest.ts
 models/DetectionResult.ts
 models/EditAuthRequest.ts
 models/EditClientRequest.ts
+models/EditItemRequest.ts
 models/HTTPValidationError.ts
 models/InferenceRequest.ts
 models/InferenceResult.ts
+models/ItemRequest.ts
 models/LocationInner.ts
 models/PendingTopupTransactionRequest.ts
 models/PendingTransactionRequest.ts

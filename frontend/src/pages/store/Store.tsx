@@ -21,6 +21,7 @@ interface Data {
 const Store: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
   const [imgSrc, setImgSrc] = useState<string>("");
+  const [objectCameraDeviceId, setObjectCameraDeviceId] = useState('');
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,6 +32,17 @@ const Store: React.FC = () => {
   const { inferenceResult, pendingStatus, isLoading, error } = useSelector(
     (state: RootState) => state.inference
   );
+
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        const cameras = devices.filter(device => device.kind === 'videoinput');
+        const cameraIds = cameras.map(camera => camera.deviceId);
+        setObjectCameraDeviceId(cameraIds[1]);
+      }).catch(error => {
+        console.error(error);
+      });
+  }, [])
 
   useEffect(() => {
     dispatch<any>(setIdle());
@@ -90,11 +102,14 @@ const Store: React.FC = () => {
           </div>
         </div>
         <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100 w-50">
-          <Webcam
+          {objectCameraDeviceId && <Webcam
             audio={false}
             ref={webcamRef}
             screenshotFormat="image/jpeg"
-          />
+            videoConstraints={{
+              deviceId: objectCameraDeviceId
+            }}
+          />}
         </div>
 
         <Popup

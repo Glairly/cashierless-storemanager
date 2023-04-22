@@ -10,6 +10,7 @@ import {
   setPending,
   setSuccess,
   setFailure,
+  setShop,
 } from "./authSlice";
 import { Action } from "redux";
 
@@ -19,11 +20,13 @@ import {
   EditClientCapiV1EditClientPostRequest,
   EditClientRequest,
   EditUserCapiV1EditUserPostRequest,
-  GetClientByIdCapiV1GetClientByIdGetRequest
+  GetClientByIdCapiV1GetClientByIdGetRequest,
+  GetShopByClientIdCapiV1GetShopByClientIdGetRequest
 } from "../../app/api";
 import { LoginCapiV1LoginPostRequest } from "../../app/api";
 import { SignUpRequest, SignupCapiV1SignupPostRequest } from '../../app/api';
 import { SignUpWithShopRequest, SignupWithShopCapiV1SignupWithShopPostRequest } from "../../app/api";
+import { resetSupply } from "../supply/supplySlice";
 
 
 export const login =
@@ -51,6 +54,7 @@ export const logout =
   (): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch) => {
     dispatch(resetAuth());
+    dispatch(resetSupply());
   };
 
 export const fetchWallet =
@@ -238,3 +242,31 @@ export const registerShop = (values: any): ThunkAction<void, RootState, null, Ac
     console.log(error);
   }
 };
+
+export const getShopByClientId =
+  (): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    try {
+      const { auth } = getState();
+
+      if (!auth.user?.id) return false;
+      if (auth.user?.is_shop_owner == false) return false;
+
+      const request = {
+        clientId: auth.user.id.toString(),
+      } as GetShopByClientIdCapiV1GetShopByClientIdGetRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().getShopByClientIdCapiV1GetShopByClientIdGet(
+        request,
+        meta
+      );
+      dispatch(setShop(res));
+    } catch (error) {}
+    };
+  

@@ -24,6 +24,7 @@ import type {
   DetectionResult,
   EditAuthRequest,
   EditClientRequest,
+  EditItemRequest,
   HTTPValidationError,
   InferenceRequest,
   InferenceResult,
@@ -56,6 +57,8 @@ import {
     EditAuthRequestToJSON,
     EditClientRequestFromJSON,
     EditClientRequestToJSON,
+    EditItemRequestFromJSON,
+    EditItemRequestToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
     InferenceRequestFromJSON,
@@ -126,6 +129,10 @@ export interface EditClientCapiV1EditClientPostRequest {
     editClientRequest: EditClientRequest;
 }
 
+export interface EditItemSmapiV1EditItemPostRequest {
+    editItemRequest: EditItemRequest;
+}
+
 export interface EditUserCapiV1EditUserPostRequest {
     editAuthRequest: EditAuthRequest;
 }
@@ -150,6 +157,10 @@ export interface GetItemByBarcodeSmapiV1GetItemByBarcodeGetRequest {
     barcode: string;
 }
 
+export interface GetItemByShopIdSmapiV1GetItemByShopIdGetRequest {
+    shopId: number;
+}
+
 export interface GetItemWithBarcodesSmapiV1GetItemWithBarcodesGetRequest {
     itemId: number;
 }
@@ -164,6 +175,10 @@ export interface GetPendingTransactionFapiV1GetPendingTransactionGetRequest {
 
 export interface GetShopByClientIdCapiV1GetShopByClientIdGetRequest {
     clientId: string;
+}
+
+export interface GetShopTransactionsFapiV1GetShopTransactionsGetRequest {
+    shopId: number;
 }
 
 export interface InferenceImapiV1InferencePostRequest {
@@ -642,6 +657,43 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Edit Item
+     */
+    async editItemSmapiV1EditItemPostRaw(requestParameters: EditItemSmapiV1EditItemPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.editItemRequest === null || requestParameters.editItemRequest === undefined) {
+            throw new runtime.RequiredError('editItemRequest','Required parameter requestParameters.editItemRequest was null or undefined when calling editItemSmapiV1EditItemPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/smapi/v1/edit_item`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditItemRequestToJSON(requestParameters.editItemRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Edit Item
+     */
+    async editItemSmapiV1EditItemPost(requestParameters: EditItemSmapiV1EditItemPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.editItemSmapiV1EditItemPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Edit User
      */
     async editUserCapiV1EditUserPostRaw(requestParameters: EditUserCapiV1EditUserPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -927,6 +979,44 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Item By Shop Id
+     */
+    async getItemByShopIdSmapiV1GetItemByShopIdGetRaw(requestParameters: GetItemByShopIdSmapiV1GetItemByShopIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.shopId === null || requestParameters.shopId === undefined) {
+            throw new runtime.RequiredError('shopId','Required parameter requestParameters.shopId was null or undefined when calling getItemByShopIdSmapiV1GetItemByShopIdGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.shopId !== undefined) {
+            queryParameters['shop_id'] = requestParameters.shopId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/smapi/v1/get_item_by_shop_id`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Item By Shop Id
+     */
+    async getItemByShopIdSmapiV1GetItemByShopIdGet(requestParameters: GetItemByShopIdSmapiV1GetItemByShopIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getItemByShopIdSmapiV1GetItemByShopIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Item With Barcodes
      */
     async getItemWithBarcodesSmapiV1GetItemWithBarcodesGetRaw(requestParameters: GetItemWithBarcodesSmapiV1GetItemWithBarcodesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -1075,6 +1165,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getShopByClientIdCapiV1GetShopByClientIdGet(requestParameters: GetShopByClientIdCapiV1GetShopByClientIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.getShopByClientIdCapiV1GetShopByClientIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Shop Transactions
+     */
+    async getShopTransactionsFapiV1GetShopTransactionsGetRaw(requestParameters: GetShopTransactionsFapiV1GetShopTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.shopId === null || requestParameters.shopId === undefined) {
+            throw new runtime.RequiredError('shopId','Required parameter requestParameters.shopId was null or undefined when calling getShopTransactionsFapiV1GetShopTransactionsGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.shopId !== undefined) {
+            queryParameters['shop_id'] = requestParameters.shopId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fapi/v1/get_shop_transactions`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Shop Transactions
+     */
+    async getShopTransactionsFapiV1GetShopTransactionsGet(requestParameters: GetShopTransactionsFapiV1GetShopTransactionsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getShopTransactionsFapiV1GetShopTransactionsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

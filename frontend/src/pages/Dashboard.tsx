@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Image, Table } from "react-bootstrap";
 import { BsCurrencyDollar, BsFillCheckCircleFill, BsFillDashCircleFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchWallet } from "../features/auth/authAPI";
+import { fetchWallet, getShopByClientId } from "../features/auth/authAPI";
 import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
 import { RootState } from "../app/store";
 import { getAllItemType } from "../features/supply/supplyApi";
@@ -15,18 +15,13 @@ interface shop {
 }
 
 const Dashboard: React.FC = () => {
-  const [shop, setShop] = useState<shop[]>();
-  const [itemType, setItemType] = useState<ItemType[]>();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction());
-    dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
-    dispatch<any>(getAllShop()).then((result: any) => setShop(result));
-    // console.log(itemType);
+    dispatch<any>(getShopByClientId());
   }, [dispatch]);
 
   const handleDateFormat = (strDate: string): string => {
@@ -35,18 +30,8 @@ const Dashboard: React.FC = () => {
     return formattedDate
   }
 
-  const handleShopName = (shop_id: number): string | undefined => {
-    const obj = shop?.find(key => key.id === shop_id)
-    return obj?.name;
-  }
-
-  const handleItemType = (item_id: number): string | undefined => {
-    const obj = itemType?.find(key => key.id === item_id)
-    return obj?.name;
-  }
-
   const setTopup = () => {
-    navigate("/new2");
+    navigate("/Topup");
   }
 
   const wallet = useSelector((state: RootState) => state.auth.wallet);
@@ -77,7 +62,7 @@ const Dashboard: React.FC = () => {
               </div>
             </Card.Body>
           </Card>
-          <span className="fs-5 fw-bold ps-0 my-3">Transaction History</span>
+          <span className="fs-5 fw-bold py-3 ps-0">Transaction History</span>
           <Table border={1}>
             <thead style={{ backgroundColor: "#758096" }} className="text-white">
               <tr>
@@ -100,7 +85,7 @@ const Dashboard: React.FC = () => {
                   <td className="py-3 ps-3">
                     <div className="d-flex">
                       <div className="d-flex flex-column justify-content-center">
-                        <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                        <span className="fw-bold">{transaction.shop_name}</span>
                         <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
                         <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
                       </div>
@@ -109,7 +94,7 @@ const Dashboard: React.FC = () => {
                   <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
                     transaction.transaction_items.map((x) => (
                       <>
-                        {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
+                        {x.item_name} x {x.quantity}
                         <br />
                       </>
                     ))}</td>

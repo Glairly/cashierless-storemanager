@@ -3,6 +3,7 @@ from .BaseRequest import *
 
 class TransactionItemRequest(BaseRequest):
     item_id: int
+    item_name: str = ""
     quantity: int
 
 class AnonymousTransactionRequest(BaseRequest):

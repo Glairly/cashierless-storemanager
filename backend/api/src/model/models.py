@@ -43,6 +43,8 @@ class Client(Base):
 
     shop = relationship("Shop", backref='owner', primaryjoin="Shop.owner_id == Client.id", collection_class=list)
 
+    transactions = relationship("Transaction", order_by="Transaction.id", back_populates="client")
+
     def to_dict(self):
         result = {}
         for prop in self.__mapper__.iterate_properties:
@@ -64,6 +66,7 @@ class Shop(Base):
     wallet = relationship("ShopWallet", back_populates='owner', primaryjoin="ShopWallet.id == Shop.wallet_id")
     # owner = relationship("Client", back_populates='shop')
     items = relationship("Item", backref="shop", primaryjoin="Shop.id == Item.shop_id", collection_class=list)
+    transactions = relationship("Transaction", order_by="Transaction.id", back_populates="shop")
     def to_dict(self):
         result = {}
         for prop in self.__mapper__.iterate_properties:
@@ -120,6 +123,7 @@ class ItemType(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
     base_price = Column(Float, default=0.0)
+    retail_price = Column(Float, default=0.0)
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -132,6 +136,8 @@ class Transaction(Base):
     date = Column(DateTime, default=datetime.datetime.now)
 
     transaction_items = relationship("TransactionItem", backref="transaction", primaryjoin="Transaction.id == TransactionItem.transaction_id", collection_class=list)
+    client = relationship("Client", back_populates="transactions")
+    shop = relationship("Shop", back_populates="transactions")
 
 class TransactionItem(Base):
     __tablename__ = "transaction_items"
@@ -139,6 +145,7 @@ class TransactionItem(Base):
     id= Column(Integer, primary_key=True, index=True)
     transaction_id= Column(Integer, ForeignKey("transactions.id"))
     item_id= Column(Integer)
+    item_name = Column(String)
     quantity= Column(Integer)
     is_barcode= Column(Boolean, default=False)
 

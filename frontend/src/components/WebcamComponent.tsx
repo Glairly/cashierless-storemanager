@@ -1,12 +1,7 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
 import Webcam from "react-webcam";
 
-const videoConstraints = {
-  width: 1280,
-  height: 720,
-  facingMode: "user",
-};
 
 interface Data {
   shop_id: number;
@@ -18,6 +13,8 @@ const WebcamComponent = () => {
   const webcamRef = useRef<Webcam>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [response, setResponse] = useState<any>(null);
+  const [faceCameraDeviceId, setFaceCameraDeviceId] = useState('');
+  const [objectCameraDeviceId, setObjectCameraDeviceId] = useState('');
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -47,9 +44,20 @@ const WebcamComponent = () => {
     }
   }, [webcamRef]);
 
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        const cameras = devices.filter(device => device.kind === 'videoinput');
+        const cameraIds = cameras.map(camera => camera.deviceId);
+        setObjectCameraDeviceId(cameraIds[1]);
+      }).catch(error => {
+        console.error(error);
+      });
+  }, [])
+
   return (
     <>
-      <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
+      <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={{ deviceId: objectCameraDeviceId }} />
       <Button className="text-white" onClick={capture}>
         Capture photo
       </Button>

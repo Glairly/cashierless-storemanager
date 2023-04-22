@@ -107,36 +107,46 @@ const Transaction: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.map((transaction) => (
-            <tr className="align-middle" key={transaction.id}>
-              <td className="py-3 ps-3">
-                <div className="d-flex">
-                  <div className="d-flex flex-column justify-content-center">
-                    <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
-                    <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
-                    <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
-                  </div>
-                </div>
-              </td>
-              <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
-                transaction.transaction_items.map((x) => (
-                  <>
-                    {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
-                    <br />
-                  </>
-                ))}</td>
-              <td className="text-center">{transaction.total_price}</td>
-              <td>
-                <div
-                  className="d-flex flex-column align-items-center"
-                  style={"Complete" === "Complete" ? { color: "#43db00" } : { color: "red" }}
-                >
-                  {"Complete" === "Complete" ? <BsFillCheckCircleFill /> : <BsFillDashCircleFill />}
-                  <small>{"Complete"}</small>
-                </div>
-              </td>
+          {transactions.length == 0 ? (
+            <tr className="align-middle">
+              <td>No transaction history</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
             </tr>
-          ))}
+          ) : (
+            transactions.map((transaction) => (
+              <tr className="align-middle" key={transaction.id}>
+                <td className="py-3 ps-3">
+                  <div className="d-flex">
+                    <div className="d-flex flex-column justify-content-center">
+                      <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                      <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
+                      <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
+                    </div>
+                  </div>
+                </td>
+                <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
+                  transaction.transaction_items.map((x) => (
+                    <>
+                      {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
+                      <br />
+                    </>
+                  ))}</td>
+                <td className="text-center">{transaction.total_price}</td>
+                <td>
+                  <div
+                    className="d-flex flex-column align-items-center"
+                    style={"Complete" === "Complete" ? { color: "#43db00" } : { color: "red" }}
+                  >
+                    {"Complete" === "Complete" ? <BsFillCheckCircleFill /> : <BsFillDashCircleFill />}
+                    <small>{"Complete"}</small>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+
 
         </tbody>
       </Table>

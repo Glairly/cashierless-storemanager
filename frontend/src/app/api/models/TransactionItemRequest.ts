@@ -27,6 +27,12 @@ export interface TransactionItemRequest {
     itemId: number;
     /**
      * 
+     * @type {string}
+     * @memberof TransactionItemRequest
+     */
+    itemName?: string;
+    /**
+     * 
      * @type {number}
      * @memberof TransactionItemRequest
      */
@@ -55,6 +61,7 @@ export function TransactionItemRequestFromJSONTyped(json: any, ignoreDiscriminat
     return {
         
         'itemId': json['item_id'],
+        'itemName': !exists(json, 'item_name') ? undefined : json['item_name'],
         'quantity': json['quantity'],
     };
 }
@@ -69,6 +76,7 @@ export function TransactionItemRequestToJSON(value?: TransactionItemRequest | nu
     return {
         
         'item_id': value.itemId,
+        'item_name': value.itemName,
         'quantity': value.quantity,
     };
 }

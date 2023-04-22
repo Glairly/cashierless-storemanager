@@ -10,7 +10,7 @@ import Transaction from "./pages/Transaction";
 import AdminRegister from "./pages/admin/AdminRegister";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import SalesHistory from "./pages/admin/SalesHistory";
-import Stocking from "./pages/admin/Stocking";
+import AdminStocking from "./pages/admin/Stocking";
 import Store from "./pages/store/Store";
 import CheckOut from "./pages/store/CheckOut";
 import Payment from "./pages/store/Payment";
@@ -24,6 +24,7 @@ import Dashboard from "./pages/Dashboard";
 import Topup from "./pages/Topup";
 import PersonalInfo from "./pages/PersonalInfo";
 import AccountInfo from "./pages/AccountInfo";
+import Stocking from "./pages/Stocking";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
@@ -39,19 +40,15 @@ const App: React.FC = () => {
 
       <Route path="/Login" element={<Login />}></Route>
       <Route path="/Register" element={<Register />}></Route>
-      {user?.is_shop_owner ? (
-        <Route path="/Dashboard" element={<AdminDashboard />}></Route>
-      ) : (
-        <Route path="/Dashboard" element={<Layout navTitle="Dashboard" children={<Dashboard />} />}></Route>
-      )}
+      <Route path="/Dashboard" element={<Layout navTitle="Dashboard" children={<Dashboard />} />}></Route>
       <Route path="/Transaction" element={<Layout navTitle="Transaction" children={<Transaction />} />}></Route>
       <Route path="/Topup" element={<Layout navTitle="Topup" children={<Topup />} />} />
       <Route path="/PersonalInfo" element={<Layout navTitle="Personal Info" children={<PersonalInfo />} />}></Route>
       <Route path="/AccountInfo" element={<Layout navTitle="Account Info" children={<AccountInfo />} />}></Route>
-      {/* <Route path="/Profile" element={<Profile />}></Route> */}
+      <Route path="/Stocking" element={<Layout navTitle="Stocking" children={<Stocking />} />}></Route>
       <Route path="/Admin/Register" element={<AdminRegister />}></Route>
       <Route path="/Admin/SalesHistory" element={<SalesHistory />}></Route>
-      <Route path="/Admin/Stocking" element={<Stocking />}></Route>
+      <Route path="/Admin/Stocking" element={<AdminStocking />}></Route>
 
       <Route path="/Store/Setup" element={<Setup />}></Route>
       {inference.shop_id && inference.machine_id && (

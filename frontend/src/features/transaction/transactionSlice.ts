@@ -4,6 +4,7 @@ export interface TransactionItem {
   id: number;
   transaction_id: number;
   item_id: number;
+  item_name: string;
   quantity: number;
   is_barcode: boolean;
 }
@@ -16,6 +17,8 @@ export interface Transaction {
   total_items: number;
   date: string;
   transaction_items: TransactionItem[];
+  client_name: string;
+  shop_name: string;
 }
 
 

@@ -1,12 +1,13 @@
 from functools import reduce
 
 from fastapi import HTTPException
-from sqlalchemy import and_
+from sqlalchemy import and_, update
 
 from ..model.requests.AddItemRequest import *
 from ..model.requests.AddBarcodeRequest import *
 from ..model.requests.TransactionsRequest import *
 from ..model.requests.AddItemTypeRequest import *
+from ..model.requests.EditItemRequest import *
 
 from ..model.BBox import *
 from ..model.BBoxType import *
@@ -19,7 +20,7 @@ from ..singleton.ItemType import ITEMTYPE_CACHE
 
 class ItemsService:
     def add_item_type(self, payload: AddItemTypeRequest):
-        item_type = ItemType(name= payload.name, base_price= payload.base_price)
+        item_type = ItemType(name= payload.name, base_price= payload.base_price, retail_price= payload.retail_price)
         db.session.add(item_type)
 
         db.session.commit()
@@ -36,6 +37,9 @@ class ItemsService:
     def get_item_by_barcode(self, barcode: str):
         item = db.session.query(Item).join(Barcode).filter(Barcode.barcode == barcode).first()
         return item
+    
+    def get_item_by_shop_id(self, shop_id: int):
+        return db.session.query(Item).filter(Item.shop_id == shop_id).order_by(Item.id).all()
 
     def add_item_to_shop(self, payload: AddItemRequest):
         shop = db.session.query(Shop).filter(Shop.id == payload.shop_id).first()
@@ -168,3 +172,32 @@ class ItemsService:
     
     def get_all_item_type(self):
         return db.session.query(ItemType).all()
+    
+    def edit_item(self, items: EditItemRequest):
+        try:
+            db_items = db.session.query(Item).filter(Item.shop_id == items.shop_id).all()
+            db_item_types = [item.type for item in db_items]
+            input_item_type = [item.type for item in items.items]
+
+            # create new items
+            for item in items.items:
+                if item.type not in db_item_types:
+                    db_item = Item(name=item.name, quantity=item.quantity, price=item.price, type=item.type, shop_id=items.shop_id)
+                    db.session.add(db_item)
+            # update existing items
+            for item in items.items:
+                if item.type in db_item_types:
+                    db_item = db.session.query(Item).filter(Item.type == item.type, Item.shop_id == items.shop_id).first()
+                    db_item.name = item.name
+                    db_item.price = item.price
+                    db_item.quantity = item.quantity
+            # delete missing items
+            for item in db_items:
+                if item.type not in input_item_type:
+                    db.session.delete(item)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise HTTPException(status_code=500,detail=str(e))
+        return {"message" : "Items updated successfully"}
+        # client = db.session.query(Client).filter(Client.id == payload.id).first()

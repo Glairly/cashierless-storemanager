@@ -16,58 +16,66 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface AddItemTypeRequest
+ * @interface ItemRequest
  */
-export interface AddItemTypeRequest {
+export interface ItemRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof ItemRequest
+     */
+    quantity: number;
     /**
      * 
      * @type {string}
-     * @memberof AddItemTypeRequest
+     * @memberof ItemRequest
      */
     name: string;
     /**
      * 
      * @type {number}
-     * @memberof AddItemTypeRequest
+     * @memberof ItemRequest
      */
-    basePrice: number;
+    price: number;
     /**
      * 
      * @type {number}
-     * @memberof AddItemTypeRequest
+     * @memberof ItemRequest
      */
-    retail: number;
+    type: number;
 }
 
 /**
- * Check if a given object implements the AddItemTypeRequest interface.
+ * Check if a given object implements the ItemRequest interface.
  */
-export function instanceOfAddItemTypeRequest(value: object): boolean {
+export function instanceOfItemRequest(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "quantity" in value;
     isInstance = isInstance && "name" in value;
-    isInstance = isInstance && "basePrice" in value;
-    isInstance = isInstance && "retail" in value;
+    isInstance = isInstance && "price" in value;
+    isInstance = isInstance && "type" in value;
 
     return isInstance;
 }
 
-export function AddItemTypeRequestFromJSON(json: any): AddItemTypeRequest {
-    return AddItemTypeRequestFromJSONTyped(json, false);
+export function ItemRequestFromJSON(json: any): ItemRequest {
+    return ItemRequestFromJSONTyped(json, false);
 }
 
-export function AddItemTypeRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): AddItemTypeRequest {
+export function ItemRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): ItemRequest {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
+        'quantity': json['quantity'],
         'name': json['name'],
-        'basePrice': json['base_price'],
-        'retail': json['retail'],
+        'price': json['price'],
+        'type': json['type'],
     };
 }
 
-export function AddItemTypeRequestToJSON(value?: AddItemTypeRequest | null): any {
+export function ItemRequestToJSON(value?: ItemRequest | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -76,9 +84,10 @@ export function AddItemTypeRequestToJSON(value?: AddItemTypeRequest | null): any
     }
     return {
         
+        'quantity': value.quantity,
         'name': value.name,
-        'base_price': value.basePrice,
-        'retail': value.retail,
+        'price': value.price,
+        'type': value.type,
     };
 }
 
