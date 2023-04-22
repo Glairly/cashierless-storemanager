@@ -107,6 +107,7 @@ class Item(Base):
     name= Column(String)
     price= Column(Float)
     type= Column(Integer, ForeignKey("item_types.id"), default=None, nullable=True)
+    active = Column(Boolean, default=True)
 
     barcodes = relationship("Barcode", backref="item", primaryjoin="Item.id == Barcode.item_id", collection_class=list)
 

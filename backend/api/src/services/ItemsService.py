@@ -39,7 +39,7 @@ class ItemsService:
         return item
     
     def get_item_by_shop_id(self, shop_id: int):
-        return db.session.query(Item).filter(Item.shop_id == shop_id).order_by(Item.id).all()
+        return db.session.query(Item).filter(Item.shop_id == shop_id, Item.active == True).order_by(Item.id).all()
 
     def add_item_to_shop(self, payload: AddItemRequest):
         shop = db.session.query(Shop).filter(Shop.id == payload.shop_id).first()
@@ -144,11 +144,12 @@ class ItemsService:
             name = item.name
             price = item.price
             _type = item.type
+            active = item.active
             id = item.id
             if name in output_dict:
                 output_dict[name].quantity += 1
             else:
-                output_dict[name] = Item(id=id,name= name, quantity=1, price= price, type= _type)
+                output_dict[name] = Item(id=id,name= name, quantity=1, price= price, type= _type, active=active)
 
         return list(output_dict.values())
         
@@ -175,7 +176,7 @@ class ItemsService:
     
     def edit_item(self, items: EditItemRequest):
         try:
-            db_items = db.session.query(Item).filter(Item.shop_id == items.shop_id).all()
+            db_items = db.session.query(Item).filter(Item.shop_id == items.shop_id, Item.active == True).all()
             db_item_types = [item.type for item in db_items]
             input_item_type = [item.type for item in items.items]
 
@@ -193,8 +194,11 @@ class ItemsService:
                     db_item.quantity = item.quantity
             # delete missing items
             for item in db_items:
+                # if item.type not in input_item_type:
+                #     db.session.delete(item)
                 if item.type not in input_item_type:
-                    db.session.delete(item)
+                    db_item = db.session.query(Item).filter(Item.type == item.type, Item.shop_id == items.shop_id).first()
+                    db_item.active = False
             db.session.commit()
         except Exception as e:
             db.session.rollback()
