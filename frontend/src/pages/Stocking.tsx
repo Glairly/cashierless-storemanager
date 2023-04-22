@@ -166,7 +166,7 @@ const Stocking: React.FC = () => {
     <Container className="mt-3">
       <Row lg={3} className="px-1 py-1 ">
         <Col>
-          <Card className="rounded-4" style={{
+          <Card className="rounded-4 mb-2" style={{
             backgroundColor: "#0195ff", borderStyle: "none"
           }}>
             <div className="d-flex flex-row px-3">
@@ -186,7 +186,7 @@ const Stocking: React.FC = () => {
           </Card>
         </Col>
         <Col>
-          <Card className="rounded-4" style={{
+          <Card className="rounded-4 mb-2" style={{
             backgroundColor: "#01c283", borderStyle: "none"
           }}>
             <div className="d-flex flex-row px-3">
@@ -206,7 +206,7 @@ const Stocking: React.FC = () => {
           </Card>
         </Col>
         <Col>
-          <Card className="rounded-4" style={{
+          <Card className="rounded-4 mb-2" style={{
             backgroundColor: "#884dff", borderStyle: "none"
           }}>
             <div className="d-flex flex-row px-3">
@@ -238,7 +238,7 @@ const Stocking: React.FC = () => {
               Edit your stock
             </Button>
           ) : (
-            <div>
+            <div className="d-flex flex-row">
               <Button
                 variant="success"
                 className="text-white me-2"

@@ -25,7 +25,7 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
   return (
     <div className="bg-light d-flex flex-column p-2 vh-100">
       <span className="d-flex mb-3 align-items-center pe-3 mb-4 d-none d-sm-inline fs-4 text-uppercase text-nowrap">
-        🛒 Cashierless Store
+        🛒 Cashierless
       </span>
       <span className="fs-5 fw-bold ps-2 d-none d-sm-inline">Pages</span>
       <ul className="nav nav-pills flex-column mt-2 mb-4">
