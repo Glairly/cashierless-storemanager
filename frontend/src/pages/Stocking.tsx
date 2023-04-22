@@ -8,6 +8,9 @@ import { editItem, getAllItemType, getItemByShopId } from "../features/supply/su
 import { Item } from "../features/inference/inferenceSlice";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import Popup from "../components/Popup";
+import { useNavigate } from "react-router-dom";
+import { setIdle } from "../features/supply/supplySlice";
 
 const schema = Yup.object().shape({
   name: Yup.string().required(),
@@ -25,18 +28,22 @@ const initialValue = {
 
 const Stocking: React.FC = () => {
   const dispatch = useDispatch();
+  let navigate = useNavigate();
 
-  const items = useSelector((state: RootState) => state.supply.item);
+  const { pendingStatus, isLoading, error } = useSelector((state: RootState) => state.supply);
   const shop = useSelector((state: RootState) => state.auth.shop);
   const itemTypes = useSelector((state: RootState) => state.supply.itemType);
 
   const [isStockChange, setIsStockChange] = useState(false);
   const [isEditStock, setIsEditStock] = useState(false);
   const [isAddModal, setIsAddModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState<number | null>(null);
   const [stock, setStock] = useState<Item[]>([]);
   const [requestStock, setRequestStock] = useState<Item[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalStatus, setModalStatus] = useState(true);
+  const [modalBody, setModalBody] = useState("success");
+  const [complete, setComplete] = useState("");
 
   const handleItemType = (item_id: number): string | undefined => {
     const obj = itemTypes?.find(key => key.id === item_id)
@@ -78,6 +85,20 @@ const Stocking: React.FC = () => {
     }
   };
 
+  const handlePriceSpan = (id: number) => {
+    setIsStockChange(true);
+    const price = prompt('Enter price:');
+    if (price) {
+      const updatedPrice = stock?.map(item => {
+        if (item.id === id) {
+          return { ...item, price: parseInt(price) };
+        }
+        return item;
+      });
+      setStock(updatedPrice || null)
+    }
+  };
+
   const handleDelete = (id: number) => {
     setIsStockChange(true);
     const updatedCount = stock?.filter((item) => item.id !== id);
@@ -98,20 +119,21 @@ const Stocking: React.FC = () => {
       type: value.type,
     };
     setStock((prev) => [...prev, tempItem] as Item[]);
-    console.log(value)
-    console.log(stock);
-    console.log(requestStock);
   }
 
   const handleAvaibleItemType = () => {
     return itemTypes.filter((type) => !requestStock?.some((item) => item.type === type.id));
   }
 
-  const handleSubmit = () => {
-    // dispatch<any>(editItem(requestStock as ItemRequest))
+  const handleSubmitEditItem = () => {
+    setIsEditStock(false);
+    setIsStockChange(false);
+    setRequestStock(stock);
+    dispatch<any>(editItem(stock)).then((result: any) => { setComplete(result) });
   }
 
   useEffect(() => {
+    dispatch<any>(setIdle());
     dispatch<any>(getItemByShopId())
       .then((result: any) => {
         setStock(result);
@@ -120,9 +142,25 @@ const Stocking: React.FC = () => {
     dispatch<any>(getAllItemType());
   }, [dispatch])
 
-  // useEffect(() => {
-  //   console.log(requestStock)
-  // }, [requestStock])
+  useEffect(() => {
+    if (error) {
+      setShouldShowModal(true);
+      setModalStatus(false);
+      setModalBody("Not found any faces or error has occured please try again");
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (pendingStatus == "idle") return;
+    setShouldShowModal(true);
+    setModalStatus(true);
+    setModalBody("Edit Item Successful!");
+
+    setTimeout(() => {
+      dispatch<any>(setIdle());
+      window.location.reload();
+    }, 5000);
+  }, [complete]);
 
   return (
     <Container className="mt-3">
@@ -192,7 +230,13 @@ const Stocking: React.FC = () => {
         <Col className="d-flex justify-content-between py-3">
           <span className="fs-5 fw-bold">Manage Panel</span>
           {!isEditStock ? (
-            <Button className="text-white" onClick={() => setIsEditStock(true)}>Edit your stock</Button>
+            <Button
+              className="text-white"
+              onClick={() => setIsEditStock(true)}
+              disabled={isLoading}
+            >
+              Edit your stock
+            </Button>
           ) : (
             <div>
               <Button
@@ -204,14 +248,10 @@ const Stocking: React.FC = () => {
               </Button>
               <Button
                 className="text-white me-2"
-                disabled={!isStockChange}
-                onClick={() => {
-                  setIsEditStock(false);
-                  setIsStockChange(false);
-                  setRequestStock(stock);
-                }}
+                disabled={!isStockChange || isLoading}
+                onClick={handleSubmitEditItem}
               >
-                Save you stock
+                Save your stock
               </Button>
               <Button
                 className="text-white"
@@ -242,12 +282,12 @@ const Stocking: React.FC = () => {
               <td>
                 <div className="d-flex flex-column">
                   <span className="fw-bold">{item.name}</span>
-                  <small style={{ color: "#758096" }} >Item Id: {item.id}</small>
+                  <small style={{ color: "#758096" }} >Item Id: {item.id == 9999999 ? "Temporary Id" : item.id}</small>
                 </div>
               </td>
               <td>{handleItemType(item.type)}</td>
-              <td className="text-center">{item.price}</td>
-              <td className="">
+              <td className="text-center" style={{ cursor: "pointer" }} onClick={() => handlePriceSpan(item.id)}>{item.price}</td>
+              <td>
                 {isEditStock ? (
                   <div className="d-flex flex-row justify-content-between align-items-center">
                     <Button
@@ -415,6 +455,18 @@ const Stocking: React.FC = () => {
           )}
         </Formik>
       </Modal>
+      <Popup
+        show={shouldShowModal}
+        onHide={function (): void {
+          setShouldShowModal(false);
+          dispatch<any>(setIdle());
+        }}
+        title={"Result"}
+        body={modalBody}
+        status={modalStatus}
+        footer={<div></div>}
+        isCloseBtn={false}
+      />
     </Container>
   );
 }

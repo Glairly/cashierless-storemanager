@@ -2,8 +2,11 @@ import { ThunkAction } from "redux-thunk";
 import { RootState } from "../../app/store";
 import { Action } from "redux";
 import {
+  setFailure,
   setItem,
-  setItemType
+  setItemType,
+  setPending,
+  setSuccess
 } from "./supplySlice";
 import {
   AddItemRequest,
@@ -37,8 +40,9 @@ export const getItemByShopId =
     }
 
 export const editItem = 
-  (items: ItemRequest[]): ThunkAction<void, RootState, null, Action<string>> =>
+  (items: any): ThunkAction<void, RootState, null, Action<string>> =>
     async (dispatch, getState) => { 
+      dispatch(setPending())
       try {
         const { auth } = getState();
         if (!auth.shop?.id) return false;
@@ -56,6 +60,9 @@ export const editItem =
         },
       } as RequestInit;
         const res = await new DefaultApi().editItemSmapiV1EditItemPost(request, meta);
+        dispatch(setSuccess());
         return res;
-      } catch (error) { }
+      } catch (error) { 
+        dispatch(setFailure("Error has occurred"));
+      }
     }

@@ -38,7 +38,6 @@ const Store: React.FC = () => {
       .then(devices => {
         const cameras = devices.filter(device => device.kind === 'videoinput');
         const cameraIds = cameras.map(camera => camera.deviceId);
-        console.log(cameraIds);
         setObjectCameraDeviceId(cameraIds[1]);
       }).catch(error => {
         console.error(error);
