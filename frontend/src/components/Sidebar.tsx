@@ -66,12 +66,12 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
                 <span className={(props.active === "Stocking" ? "blue" : "gray") + " d-none d-sm-inline"}>Stocking</span>
               </li>
             </Link>
-            <Link to="" className={(props.active === "Shop Transaction" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
+            <Link to="/ShopTransaction" className={(props.active === "Shop Transaction" && "active ") + "p-1 text-decoration-none py-3 my-1"}>
               <li
                 className={"nav-item p-2 py-0 ms-1"}
               >
-                <BsTable className={(props.active === "Stocking" ? "blue " : "gray ") + "me-2"} />
-                <span className={(props.active === "Stocking" ? "blue" : "gray") + " d-none d-sm-inline"}>Shop Transaction</span>
+                <BsTable className={(props.active === "Shop Transaction" ? "blue " : "gray ") + "me-2"} />
+                <span className={(props.active === "Shop Transaction" ? "blue" : "gray") + " d-none d-sm-inline"}>Shop Transaction</span>
               </li>
             </Link>
           </ul>
