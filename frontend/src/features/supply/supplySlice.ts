@@ -3,7 +3,8 @@ import { Item } from "../inference/inferenceSlice";
 
 export interface ItemType  {
   name: string;
-  base_price: string;
+  base_price: number;
+  retail_price: number;
   id: number;
 }
 

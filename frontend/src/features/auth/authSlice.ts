@@ -38,7 +38,6 @@ interface AuthState {
   user: Client | null;
   wallet: Wallet | null;
   shop: Shop | null;
-  shop_wallet: Wallet | null;
   auth: Auth | null;
   pendingStatus: "idle" | "pending" | "fulfilled" | "rejected";
   isLoading: boolean;
@@ -51,7 +50,6 @@ const initialState: AuthState = {
   user: null,
   wallet: null,
   shop: null,
-  shop_wallet: null,
   auth: null,
   pendingStatus: "idle",
   isLoading: false,

@@ -9,8 +9,10 @@ import { Item } from "../features/inference/inferenceSlice";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Popup from "../components/Popup";
-import { useNavigate } from "react-router-dom";
 import { setIdle } from "../features/supply/supplySlice";
+import { fetchShopTransaction } from "../features/transaction/transactionAPI";
+import { Transaction } from "../features/transaction/transactionSlice";
+import { getShopByClientId } from "../features/auth/authAPI";
 
 const schema = Yup.object().shape({
   name: Yup.string().required(),
@@ -28,7 +30,6 @@ const initialValue = {
 
 const Stocking: React.FC = () => {
   const dispatch = useDispatch();
-  let navigate = useNavigate();
 
   const { pendingStatus, isLoading, error } = useSelector((state: RootState) => state.supply);
   const shop = useSelector((state: RootState) => state.auth.shop);
@@ -44,10 +45,53 @@ const Stocking: React.FC = () => {
   const [modalStatus, setModalStatus] = useState(true);
   const [modalBody, setModalBody] = useState("success");
   const [complete, setComplete] = useState("");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
 
-  const handleItemType = (item_id: number): string | undefined => {
+  const handleItemType = (item_id: number): string => {
     const obj = itemTypes?.find(key => key.id === item_id)
-    return obj?.name;
+    if (!obj) return "";
+    return obj.name;
+  }
+
+  const getItemType = (item_id: number): number => {
+    const obj = items?.find(key => key.id === item_id)
+    if (!obj) return 0;
+    return obj.type;
+  }
+
+  const getRetailPrice = (type: number): number => {
+    const obj = itemTypes?.find(key => key.id === type)
+    if (!obj) return 0;
+    return obj.retail_price;
+  }
+
+  const handleMonthlySale = (): number => {
+    let monthlySales = 0;
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    for (const transaction of transactions) {
+      const date = new Date(transaction.date)
+      if (date >= firstDayOfMonth && date <= today) {
+        monthlySales += transaction.total_price
+      }
+    }
+    return monthlySales;
+  }
+
+  const handleMonthlyProfit = (): number => {
+    let totalRetailPrice = 0;
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    for (const transaction of transactions) {
+      const date = new Date(transaction.date)
+      if (date >= firstDayOfMonth && date <= today) {
+        for (const item of transaction.transaction_items) {
+          totalRetailPrice += (getRetailPrice(getItemType(item.item_id)))
+        }
+      }
+    }
+    return handleMonthlySale() - totalRetailPrice;
   }
 
   const handleStockCountIncrease = (id: number) => {
@@ -138,8 +182,11 @@ const Stocking: React.FC = () => {
       .then((result: any) => {
         setStock(result);
         setRequestStock(result);
+        setItems(result);
       });
     dispatch<any>(getAllItemType());
+    dispatch<any>(fetchShopTransaction()).then((result: any) => { setTransactions(result) });
+    dispatch<any>(getShopByClientId());
   }, [dispatch])
 
   useEffect(() => {
@@ -199,7 +246,7 @@ const Stocking: React.FC = () => {
               <div className="d-flex justify-content-between py-3">
                 <div className="d-flex flex-column justify-content-center">
                   <span className="text-white">Monthly Sale</span>
-                  <span className="fs-2 fw-bold text-white">${(3453).toFixed(2)}</span>
+                  <span className="fs-2 fw-bold text-white">${handleMonthlySale().toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -219,7 +266,7 @@ const Stocking: React.FC = () => {
               <div className="d-flex justify-content-between py-3">
                 <div className="d-flex flex-column justify-content-center">
                   <span className="text-white">Monthly Profit</span>
-                  <span className="fs-2 fw-bold text-white">${shop?.wallet.balance.toFixed(2)}</span>
+                  <span className="fs-2 fw-bold text-white">${handleMonthlyProfit().toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -286,7 +333,10 @@ const Stocking: React.FC = () => {
                 </div>
               </td>
               <td>{handleItemType(item.type)}</td>
-              <td className="text-center" style={{ cursor: "pointer" }} onClick={() => handlePriceSpan(item.id)}>{item.price}</td>
+              {isEditStock ?
+                <td className="text-center" style={{ cursor: "pointer" }} onClick={() => handlePriceSpan(item.id)}>{item.price}</td> :
+                <td className="text-center">{item.price}</td>
+              }
               <td>
                 {isEditStock ? (
                   <div className="d-flex flex-row justify-content-between align-items-center">

@@ -135,7 +135,7 @@ class ItemsService:
         return totalPrice, totalItems
     
     def get_item_by_shop_id_and_type(self, shop_id: int, type: ItemType):
-        return db.session.query(Item).filter(and_(Item.shop_id == shop_id, Item.type == type)).first()
+        return db.session.query(Item).filter(and_(Item.shop_id == shop_id, Item.type == type, Item.active == True)).first()
 
     def merge_items(self, items: List[Item]):
         output_dict = {}
