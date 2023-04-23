@@ -45,8 +45,8 @@ RUN pip install face_recognition
 COPY . .
 
 # Expose the default FastAPI port (80)
-EXPOSE 80
+EXPOSE 8000
 
 # Run the FastAPI application when the container starts
 # RUN uvicorn --app-dir=fastapi app:app --host=0.0.0.0 --port=80
-CMD ["uvicorn", "app:app", "--proxy-headers", "--app-dir", "api", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app:app", "--proxy-headers", "--app-dir", "api", "--host", "0.0.0.0", "--port", "8000"]
