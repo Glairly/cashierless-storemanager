@@ -160,7 +160,7 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
           </Nav.Item>
           <DropdownButton
             align="end"
-            variant="primary text-white align-self-center"
+            variant="align-self-center btn-outline-info"
             title={
               <>
                 <Image

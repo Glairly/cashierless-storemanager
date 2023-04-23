@@ -37,6 +37,8 @@ class TransactionService:
         query = db.session.query(Transaction).filter(Transaction.shop_id == shop_id).options(subqueryload(Transaction.transaction_items)).options(subqueryload(Transaction.client)).options(subqueryload(Transaction.shop)).order_by(Transaction.date.desc()).all()
         result = []
         for transaction in query:
+            if transaction.client == None:
+                transaction.client = Client(name="Anonymous")
             result.append({
                 "id": transaction.id,
                 "client_id": transaction.client_id,
@@ -44,9 +46,9 @@ class TransactionService:
                 "total_price": transaction.total_price,
                 "total_item": transaction.total_items,
                 "date": transaction.date,
-                "transaction_items": transaction.transaction_items,
                 "client_name": transaction.client.name,
-                "shop_name": transaction.shop.name
+                "shop_name": transaction.shop.name,
+                "transaction_items": transaction.transaction_items
             })
         return result
 

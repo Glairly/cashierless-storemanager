@@ -7,6 +7,7 @@ import { topup } from "../features/transaction/transactionAPI";
 import { fetchWallet } from "../features/auth/authAPI";
 import PrompyPayLogo from "../assets/prompt-pay-logo.png";
 import CheckMarked from "../components/svgs/CheckMarked";
+import CrossMarked from "../components/svgs/CrossMarked";
 
 interface qrProp {
   qrcode: string;
@@ -19,12 +20,17 @@ const Topup: React.FC = () => {
   const [isTransactionComplete, setTransactionComplete] = useState(false);
   const [isTopupConfirm, setTopupConfirm] = useState(false);
   const [topupAmount, setTopupAmount] = useState(20);
+  const [getPendingStatus, setGetPendingStatus] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const wallet = useSelector((state: RootState) => state.auth.wallet);
   const user = useSelector((state: RootState) => state.auth.user);
+  const {
+    pendingStatus,
+    isLoading
+  } = useSelector((state: RootState) => state.transaction);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const form = event.currentTarget;
@@ -46,7 +52,7 @@ const Topup: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost/fapi/v1/generate_promptpay_qr_topup",
+        "http://localhost:8000/fapi/v1/generate_promptpay_qr_topup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -61,32 +67,35 @@ const Topup: React.FC = () => {
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost/fapi/v1/get_pending_topup_transaction?pending_topup_transaction_id=${id}`
+        `http://localhost:8000/fapi/v1/get_pending_topup_transaction?pending_topup_transaction_id=${id}`
       );
       const data = await response.json();
-      if (data.status == "Complete") {
-        return true;
+      if (data.status == "Complete" || data.status == "Failed") {
+        setGetPendingStatus(data.status);
+        return data.status;
       }
+      setGetPendingStatus(data.status);
     } catch (error) { }
     return false;
   };
 
   const intervalGetTransaction = function () {
     setTimeout(async function () {
-      if (
-        res?.pending_topup_transaction_id &&
-        (await get_pending_transaction(res.pending_topup_transaction_id.toString()))
-      ) {
-        setTransactionComplete(true);
-
-        setTimeout(() => {
-          navigate("/new2");
-          window.location.reload();
-        }, 5000);
-        dispatch<any>(topup(topupAmount));
-        dispatch<any>(fetchWallet());
-      } else {
-        intervalGetTransaction();
+      if (res?.pending_topup_transaction_id) {
+        const response = await get_pending_transaction(res.pending_topup_transaction_id.toString());
+        if (response == "Complete" || response == "Failed") {
+          setTransactionComplete(true);
+          if (response == "Complete") {
+            dispatch<any>(topup(topupAmount));
+          }
+          dispatch<any>(fetchWallet());
+          setTimeout(() => {
+            navigate("/Topup");
+            window.location.reload();
+          }, 5000);
+        } else {
+          intervalGetTransaction();
+        }
       }
     }, 1000);
   };
@@ -178,10 +187,18 @@ const Topup: React.FC = () => {
                   src={PrompyPayLogo}
                 />
               </div>) : (
-              <div className="d-flex flex-column justify-content-center align-items-center">
-                <CheckMarked />
-                <p>Topup Completed</p>
-              </div>
+              getPendingStatus == "Complete" ? (
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                  <CheckMarked />
+                  <p>Transaction Completed</p>
+                </div>
+              ) : (
+                getPendingStatus == "Failed" ? (
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <CrossMarked />
+                    <p>{"Error occurs"}</p>
+                  </div>) : (<></>)
+              )
             )}
           </Card>
         )}

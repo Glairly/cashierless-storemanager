@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Product from "./pages/Product";
 import Register from "./pages/Register";
 import Transaction from "./pages/Transaction";
+import ShopTransaction from "./pages/ShopTransaction";
 import AdminRegister from "./pages/admin/AdminRegister";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import SalesHistory from "./pages/admin/SalesHistory";
@@ -42,6 +43,7 @@ const App: React.FC = () => {
       <Route path="/Register" element={<Register />}></Route>
       <Route path="/Dashboard" element={<Layout navTitle="Dashboard" children={<Dashboard />} />}></Route>
       <Route path="/Transaction" element={<Layout navTitle="Transaction" children={<Transaction />} />}></Route>
+      <Route path="ShopTransaction" element={<Layout navTitle="Shop Transaction" children={<ShopTransaction />} />} />
       <Route path="/Topup" element={<Layout navTitle="Topup" children={<Topup />} />} />
       <Route path="/PersonalInfo" element={<Layout navTitle="Personal Info" children={<PersonalInfo />} />}></Route>
       <Route path="/AccountInfo" element={<Layout navTitle="Account Info" children={<AccountInfo />} />}></Route>

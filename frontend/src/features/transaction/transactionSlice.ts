@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Client, Shop } from "../auth/authSlice";
 
 export interface TransactionItem {
   id: number;

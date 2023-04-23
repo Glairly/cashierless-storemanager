@@ -1,25 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
+import { Container, Pagination, Table } from "react-bootstrap";
 import { BsFillCheckCircleFill, BsFillDashCircleFill, BsFillTrashFill } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
+import { useDispatch } from "react-redux";
+import { fetchShopTransaction } from "../features/transaction/transactionAPI";
 import { Transaction as TransactionSlice } from "../features/transaction/transactionSlice";
 
-interface TransactionProps {
-  id: number;
-  store: string;
-  timestamp: Date;
-  product: string;
-  price: number;
-  status: "Success" | "Failure" | "Pending";
-}
-
-interface shop {
-  id: number;
-  name: string;
-}
-
-const Transaction: React.FC = () => {
+const ShopTransaction: React.FC = () => {
 
   const dispatch = useDispatch();
 
@@ -112,7 +98,7 @@ const Transaction: React.FC = () => {
   }, [activePage, transactions]);
 
   useEffect(() => {
-    dispatch<any>(fetchClientTransaction()).then((result: any) => setTransactions(result));
+    dispatch<any>(fetchShopTransaction()).then((result: any) => setTransactions(result));
   }, [dispatch])
 
   return (
@@ -137,7 +123,7 @@ const Transaction: React.FC = () => {
       <Table border={1}>
         <thead style={{ backgroundColor: "#758096" }} className="text-white">
           <tr>
-            <th className="fw-normal">Shop Name</th>
+            <th className="fw-normal">Client Name</th>
             <th className="fw-normal text-center">Items</th>
             <th className="fw-normal text-center">Price</th>
             <th className="fw-normal text-center">Status</th>
@@ -157,7 +143,7 @@ const Transaction: React.FC = () => {
                 <td className="py-3 ps-3">
                   <div className="d-flex">
                     <div className="d-flex flex-column justify-content-center">
-                      <span className="fw-bold">{transaction.shop_name || "Unkown Shop"}</span>
+                      <span className="fw-bold">{transaction.client_name || "Unkown Shop"}</span>
                       <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
                       <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
                     </div>
@@ -197,4 +183,4 @@ const Transaction: React.FC = () => {
   );
 };
 
-export default Transaction;
+export default ShopTransaction;
