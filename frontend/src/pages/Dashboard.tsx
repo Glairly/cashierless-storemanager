@@ -5,9 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWallet, getShopByClientId } from "../features/auth/authAPI";
 import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
 import { RootState } from "../app/store";
-import { getAllItemType } from "../features/supply/supplyApi";
-import { ItemType } from "../features/supply/supplySlice";
 import { useNavigate } from "react-router-dom";
+import { Transaction } from "../features/transaction/transactionSlice";
 
 interface shop {
   id: number;
@@ -18,9 +17,11 @@ const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [clientTransaction, setClientTransaction] = useState<Transaction[] | null>(null);
+
   useEffect(() => {
     dispatch<any>(fetchWallet());
-    dispatch<any>(fetchClientTransaction());
+    dispatch<any>(fetchClientTransaction()).then((result: any) => setClientTransaction(result));
     dispatch<any>(getShopByClientId());
   }, [dispatch]);
 
@@ -35,9 +36,6 @@ const Dashboard: React.FC = () => {
   }
 
   const wallet = useSelector((state: RootState) => state.auth.wallet);
-  const clientTransaction = useSelector(
-    (state: RootState) => state.transaction.clientTransaction
-  );
 
   return (
     <div className="p-3 bg-light">
@@ -73,7 +71,7 @@ const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {clientTransaction.length == 0 ? (
+              {clientTransaction && (clientTransaction.length == 0 ? (
                 <tr className="align-middle">
                   <td>No transaction history</td>
                   <td className="text-center">-</td>
@@ -109,7 +107,15 @@ const Dashboard: React.FC = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )))}
+              {!clientTransaction &&
+                <tr className="align-middle">
+                  <td>Loading transaction history</td>
+                  <td className="text-center">-</td>
+                  <td className="text-center">-</td>
+                  <td className="text-center">-</td>
+                </tr>
+              }
             </tbody>
           </Table>
         </div>

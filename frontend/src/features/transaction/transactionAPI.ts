@@ -49,6 +49,7 @@ export const fetchClientTransaction =
         );
 
       dispatch(setClientTransaction(res));
+      return res;
     } catch (error) {}
     };
   
@@ -209,8 +210,9 @@ export const DoAnonyTransaction =
 
 export const topup = 
   (totalTopup: number): ThunkAction<void, RootState, null, Action<string>> => 
-    async (_dispatch, getState) => {
+    async (dispatch, getState) => {
       try {
+        dispatch(setPending());
         const { auth } = getState();
 
         if (!auth.user?.id) return false;
@@ -233,8 +235,10 @@ export const topup =
           request,
           meta
         );
+
+      dispatch(setSuccess());
       } catch (error) {
-        
+      dispatch(setFailure("Error has occurred"));
       }
     }
   

@@ -37,7 +37,7 @@ const Stocking: React.FC = () => {
   const [isStockChange, setIsStockChange] = useState(false);
   const [isEditStock, setIsEditStock] = useState(false);
   const [isAddModal, setIsAddModal] = useState(false);
-  const [stock, setStock] = useState<Item[]>([]);
+  const [stock, setStock] = useState<Item[] | null>(null);
   const [requestStock, setRequestStock] = useState<Item[]>([]);
   const [selectedOption, setSelectedOption] = useState("");
   const [shouldShowModal, setShouldShowModal] = useState(false);
@@ -118,7 +118,7 @@ const Stocking: React.FC = () => {
       price: value.price,
       type: value.type,
     };
-    setStock((prev) => [...prev, tempItem] as Item[]);
+    setStock((prev) => (prev && [...prev, tempItem] as Item[]));
   }
 
   const handleAvaibleItemType = () => {
@@ -128,7 +128,7 @@ const Stocking: React.FC = () => {
   const handleSubmitEditItem = () => {
     setIsEditStock(false);
     setIsStockChange(false);
-    setRequestStock(stock);
+    stock && setRequestStock(stock);
     dispatch<any>(editItem(stock)).then((result: any) => { setComplete(result) });
   }
 

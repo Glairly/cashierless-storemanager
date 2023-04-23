@@ -12,22 +12,22 @@
 /* make the customizations */
 
 $primary: #6db0ff;
+$secondary: #6c757d;
 $success: #7ac142;
+$info: #0d6efd;
 $danger: #ae3b2a;
-$theme-colors: (
-  "primary": $primary,
-  // "secondary": $secondary,
-  "success": $success,
-  // "info": $info,
-  // "warning": $warning,
-  "danger": $danger,
-  // "light": $light,
-  // "dark": $dark,
+$theme-colors: ( "primary": $primary,
+// "secondary": $secondary,
+"success": $success,
+"info": $info, // "warning": $warning,
+"danger": $danger, // "light": $light,
+// "dark": $dark,
 );
 body {
-  font-family: "Poppins" !important;
-  min-height: 100vh;
+    font-family: "Poppins" !important;
+    min-height: 100vh;
 }
+
 
 /* import bootstrap to set changes */
 

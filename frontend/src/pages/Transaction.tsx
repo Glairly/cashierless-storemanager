@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Pagination, Row, Table } from "react-bootstrap";
 import { BsFillCheckCircleFill, BsFillDashCircleFill, BsFillTrashFill } from "react-icons/bs";
-import * as Navbar from "../components/Navbar";
-import { RootState } from "../app/store";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllShop } from "../features/transaction/transactionAPI";
-import { ItemType } from "../features/supply/supplySlice";
-import { getAllItemType } from "../features/supply/supplyApi";
+import { fetchClientTransaction, getAllShop } from "../features/transaction/transactionAPI";
+import { Transaction as TransactionSlice } from "../features/transaction/transactionSlice";
 
 interface TransactionProps {
   id: number;
@@ -23,22 +20,21 @@ interface shop {
 }
 
 const Transaction: React.FC = () => {
-  const [activePage, setActivePage] = useState(1);
-  const [transactionsPerPage] = useState(10);
-  const [shop, setShop] = useState<shop[] | null>();
-  const [itemType, setItemType] = useState<ItemType[]>();
-
-  const [paginationItems, setPaginationItems] = useState([] as any[]);
 
   const dispatch = useDispatch();
 
-  const transactions = useSelector(
-    (state: RootState) => state.transaction.clientTransaction
-  );
+  const [activePage, setActivePage] = useState(1);
+  const [transactionsPerPage] = useState(10);
+  const [paginationItems, setPaginationItems] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<TransactionSlice[] | null>(null);
 
-  const handlePageChange = (page: number) => {
-    setActivePage(page);
-  };
+  const indexOfLastTransaction = activePage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const currentTransactions = transactions?.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
+  const [totalPage, setTotalPage] = useState<number>(0);
 
   const handleDateFormat = (strDate: string): string => {
     const date = new Date(strDate);
@@ -46,54 +42,95 @@ const Transaction: React.FC = () => {
     return formattedDate
   }
 
-  const handleShopName = (shop_id: number): string | undefined => {
-    const obj = shop?.find(key => key.id == shop_id)
-    return obj?.name;
-  }
-
-  const handleItemType = (item_id: number): string | undefined => {
-    const obj = itemType?.find(key => key.id === item_id)
-    return obj?.name;
-  }
+  useEffect(() => {
+    const temp: any = [];
+    let totalPages = 0;
+    if (transactions) {
+      totalPages = Math.ceil(transactions.length / transactionsPerPage);
+    }
+    setTotalPage(totalPages)
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        temp.push(
+          <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>
+            {i}
+          </Pagination.Item>
+        );
+      }
+    } else {
+      if (activePage <= 2) {
+        for (let i = 1; i <= 3; i++) {
+          temp.push(
+            <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>
+              {i}
+            </Pagination.Item>
+          );
+        }
+        temp.push(<Pagination.Ellipsis key="ellipsis1" />);
+        temp.push(
+          <Pagination.Item key={totalPages} active={totalPages === activePage} onClick={() => setActivePage(totalPages)}>
+            {totalPages}
+          </Pagination.Item>
+        );
+      } else if (activePage >= totalPages - 1) {
+        temp.push(
+          <Pagination.Item key={1} active={1 === activePage} onClick={() => setActivePage(1)}>
+            {1}
+          </Pagination.Item>
+        );
+        temp.push(<Pagination.Ellipsis key="ellipsis2" />);
+        for (let i = totalPages - 2; i <= totalPages; i++) {
+          temp.push(
+            <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>
+              {i}
+            </Pagination.Item>
+          );
+        }
+      } else {
+        temp.push(
+          <Pagination.Item key={1} active={1 === activePage} onClick={() => setActivePage(1)}>
+            {1}
+          </Pagination.Item>
+        );
+        temp.push(<Pagination.Ellipsis key="ellipsis3" />);
+        for (let i = activePage - 1; i <= activePage + 1; i++) {
+          temp.push(
+            <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>
+              {i}
+            </Pagination.Item>
+          );
+        }
+        temp.push(<Pagination.Ellipsis key="ellipsis4" />);
+        temp.push(
+          <Pagination.Item key={totalPages} active={totalPages === activePage} onClick={() => setActivePage(totalPages)}>
+            {totalPages}
+          </Pagination.Item>
+        );
+      }
+    }
+    setPaginationItems(temp);
+  }, [activePage, transactions]);
 
   useEffect(() => {
-    const temp = [];
-    for (
-      let i = 1;
-      i <= Math.ceil(transactions.length / transactionsPerPage);
-      i++
-    ) {
-      temp.push(
-        <Pagination.Item
-          key={i}
-          active={i === activePage}
-          onClick={() => handlePageChange(i)}
-        >
-          {i}
-        </Pagination.Item>
-      );
-    }
-    dispatch<any>(getAllShop()).then((result: any) => setShop(result));
-    dispatch<any>(getAllItemType()).then((result: any) => setItemType(result));
-    setPaginationItems(temp);
-  }, [transactions]);
+    dispatch<any>(fetchClientTransaction()).then((result: any) => setTransactions(result));
+  }, [dispatch])
 
   return (
     <Container className="my-3">
       <div className="d-flex flex-row justify-content-center">
-        <Pagination className="">
-          <Pagination.First onClick={() => handlePageChange(1)} />
+        <Pagination className="ms-auto">
+          <Pagination.First onClick={() => setActivePage(1)} />
           <Pagination.Prev
-            onClick={() => handlePageChange(activePage - 1)}
+            onClick={() => setActivePage(activePage - 1)}
             disabled={activePage === 1}
           />
           {paginationItems}
           <Pagination.Next
-            onClick={() => handlePageChange(activePage + 1)}
-            disabled={activePage === paginationItems.length}
+            onClick={() => setActivePage(activePage + 1)}
+            disabled={activePage === totalPage}
           />
           <Pagination.Last
-            onClick={() => handlePageChange(paginationItems.length)}
+            onClick={() => setActivePage(totalPage)}
           />
         </Pagination>
       </div>
@@ -107,7 +144,7 @@ const Transaction: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.length == 0 ? (
+          {transactions && (transactions.length == 0 ? (
             <tr className="align-middle">
               <td>No transaction history</td>
               <td className="text-center">-</td>
@@ -115,12 +152,12 @@ const Transaction: React.FC = () => {
               <td className="text-center">-</td>
             </tr>
           ) : (
-            transactions.map((transaction) => (
+            currentTransactions?.map((transaction) => (
               <tr className="align-middle" key={transaction.id}>
                 <td className="py-3 ps-3">
                   <div className="d-flex">
                     <div className="d-flex flex-column justify-content-center">
-                      <span className="fw-bold">{handleShopName(transaction.shop_id) || "Unkown Shop"}</span>
+                      <span className="fw-bold">{transaction.shop_name || "Unkown Shop"}</span>
                       <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
                       <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
                     </div>
@@ -129,7 +166,7 @@ const Transaction: React.FC = () => {
                 <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
                   transaction.transaction_items.map((x) => (
                     <>
-                      {handleItemType(x.item_id) || "Unknow"} x {x.quantity}
+                      {x.item_name || "Unknown Item"} x {x.quantity}
                       <br />
                     </>
                   ))}</td>
@@ -145,9 +182,15 @@ const Transaction: React.FC = () => {
                 </td>
               </tr>
             ))
-          )}
-
-
+          ))}
+          {!transactions &&
+            <tr className="align-middle">
+              <td>Loading transaction history</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
+              <td className="text-center">-</td>
+            </tr>
+          }
         </tbody>
       </Table>
     </Container>
