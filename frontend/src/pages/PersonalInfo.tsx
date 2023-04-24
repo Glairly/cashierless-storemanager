@@ -128,8 +128,8 @@ const PersonalInfo: React.FC = () => {
                       <BootstrapForm.Control
                         type="text"
                         name="fullname"
-                        placeholder="Full Name"
-                        defaultValue={user?.name}
+                        placeholder={isThai ? "Full Name" : "ชื่อเต็ม"}
+                        value={user?.name}
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />

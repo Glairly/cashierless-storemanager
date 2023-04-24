@@ -6,25 +6,15 @@ import * as Yup from "yup";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Popup from "../components/Popup";
 import { setIdle } from "../features/auth/authSlice";
-import { editAuth } from "../features/auth/authAPI";
-
-const initialValuesProfile = {
-  email: "",
-  password: "",
-  confirmPassword: ""
-};
+import { editAuth, editShop } from "../features/auth/authAPI";
 
 const validationSchema = Yup.object({
-  password: Yup.string()
-    .min(6, "* Password is too short!")
-    .max(20, "* Password is too long!")
-    .required("* Required"),
-  confirm_password: Yup.string()
-    .oneOf([Yup.ref('password'), undefined], 'Passwords must match'),
-  email: Yup.string().email("* Invalid email").required("* Required"),
+  // fullname: Yup.string().required("Required"),
+  // phone: Yup.string().required("Required"),
+  // gender: Yup.string().required("Required"),
 });
 
-const AccountInfo: React.FC = () => {
+const ShopSetting: React.FC = () => {
 
   const dispatch = useDispatch();
 
@@ -32,16 +22,20 @@ const AccountInfo: React.FC = () => {
   const [modalStatus, setModalStatus] = useState(true);
 
   const auth = useSelector((state: RootState) => state.auth.auth);
+  const shop = useSelector((state: RootState) => state.auth.shop);
 
   const { pendingStatus, isLoading, error, msg } = useSelector(
     (state: RootState) => state.auth
   );
   const isThai = useSelector((state: RootState) => state.translation.isThai);
 
-  const handleSubmitAccountInfo = async (values: any) => {
-    // if (isLoading) return;
-    console.log("Hello world")
-    dispatch<any>(editAuth(values));
+  const initialValuesShop = {
+    name: "",
+    phone_number: ""
+  };
+
+  const handleSubmitShopSetting = async (values: any) => {
+    dispatch<any>(editShop(values));
   };
 
   const onPopupHide = () => {
@@ -76,9 +70,9 @@ const AccountInfo: React.FC = () => {
       <Card className="rounded-4" style={{ border: "2px solid cyan" }}>
         <Card.Body>
           <Formik
-            initialValues={initialValuesProfile}
+            initialValues={initialValuesShop}
             validationSchema={validationSchema}
-            onSubmit={handleSubmitAccountInfo}
+            onSubmit={handleSubmitShopSetting}
             className="mt-4"
           >
             {({ handleChange, handleBlur, setFieldValue }) => (
@@ -86,48 +80,27 @@ const AccountInfo: React.FC = () => {
                 <Row className="d-flex justify-content-center">
                   <Col md="8">
                     <BootstrapForm.Group className="mb-2">
-                      <BootstrapForm.Label>{isThai ? "Email" : "อีเมล"}</BootstrapForm.Label>
+                      <BootstrapForm.Label>{isThai ? "Shop Name" : "ชื่อร้านค้า"}</BootstrapForm.Label>
                       <BootstrapForm.Control
-                        type="email"
-                        placeholder="Email"
-                        name="email"
-                        value={auth?.email}
+                        type="text"
+                        name="name"
+                        defaultValue={shop?.name}
+                        placeholder="Enter shop name"
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
-                      <ErrorMessage name="email">
-                        {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-                      </ErrorMessage>
                     </BootstrapForm.Group>
 
                     <BootstrapForm.Group className="mb-2">
-                      <BootstrapForm.Label>{isThai ? "Password" : "รหัสผ่าน"}</BootstrapForm.Label>
+                      <BootstrapForm.Label>{isThai ? "Shop Phone Number" : "เบอร์โทรและพร้อมเพย์ร้านค้า"}</BootstrapForm.Label>
                       <BootstrapForm.Control
-                        type="password"
-                        name="password"
-                        placeholder={isThai ? "Has to be 8 letter or longer" : "ต้องมีตัวอักษรมากกว่า 8 ตัว"}
+                        type="tel"
+                        name="phone_number"
+                        defaultValue={shop?.phone_number}
+                        placeholder="Enter your phone number"
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
-                      <ErrorMessage name="password">
-                        {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-                      </ErrorMessage>
-                    </BootstrapForm.Group>
-
-                    <BootstrapForm.Group className="mb-3">
-                      <BootstrapForm.Label>
-                        {isThai ? "Confirm Password" : "ยืนยันรหัสผ่าน"}
-                      </BootstrapForm.Label>
-                      <BootstrapForm.Control
-                        type="password"
-                        name="confirmPassword"
-                        placeholder={isThai ? "Contain 1 uppercase, lowercase and number" : "ต้องมีตัวอักษรใหญ่ เล็ก และตัวเลข"}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <ErrorMessage name="confirm_password">
-                        {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-                      </ErrorMessage>
                     </BootstrapForm.Group>
                     <div className="d-flex justify-content-end align-items-center mt-4">
                       <Button type="submit" className="text-white" disabled={isLoading}>
@@ -155,4 +128,4 @@ const AccountInfo: React.FC = () => {
   );
 }
 
-export default AccountInfo;
+export default ShopSetting;
