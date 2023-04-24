@@ -1,4 +1,6 @@
 from fastapi import HTTPException
+
+from api.src.model.requests.EditShopRequest import EditShopRequest
 from ..model.models import *
 from ..model.requests.ShopCreateRequest import ShopCreateRequest
 
@@ -66,3 +68,24 @@ class ShopService:
             raise HTTPException(status_code=400, detail="Shop not found")
         
         shop.wallet.balance += amount
+
+    def edit_shop(self, payload: EditShopRequest):
+        if payload.phone_number:
+            if not self.__is_valid_phone_number(payload.phone_number):
+                raise HTTPException(status_code=400, detail="Invalid Phone Number")
+            
+        shop = db.session.query(Shop).filter(Shop.id == payload.id).first()
+
+        if not shop:
+            raise HTTPException(status_code=400, detail="Shop not found")
+        
+        if payload.name:
+            shop.name = payload.name
+
+        if payload.phone_number:
+            shop.phone_number = payload.phone_number
+
+        db.session.commit()
+        db.session.refresh(shop)
+
+        return shop.to_dict()
