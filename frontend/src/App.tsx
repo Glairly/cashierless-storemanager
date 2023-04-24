@@ -26,6 +26,7 @@ import Topup from "./pages/Topup";
 import PersonalInfo from "./pages/PersonalInfo";
 import AccountInfo from "./pages/AccountInfo";
 import Stocking from "./pages/Stocking";
+import ShopSetting from "./pages/ShopSetting";
 
 const App: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth.auth);
@@ -47,8 +48,10 @@ const App: React.FC = () => {
       <Route path="/Topup" element={<Layout navTitle="Topup" children={<Topup />} />} />
       <Route path="/PersonalInfo" element={<Layout navTitle="Personal Info" children={<PersonalInfo />} />}></Route>
       <Route path="/AccountInfo" element={<Layout navTitle="Account Info" children={<AccountInfo />} />}></Route>
+      <Route path="/ShopSetting" element={<Layout navTitle="Shop Setting" children={<ShopSetting />} />}></Route>
+
       <Route path="/Stocking" element={<Layout navTitle="Stocking" children={<Stocking />} />}></Route>
-      <Route path="/Admin/Register" element={<AdminRegister />}></Route>
+      <Route path="/ShopRegister" element={<AdminRegister />}></Route>
       <Route path="/Admin/SalesHistory" element={<SalesHistory />}></Route>
       <Route path="/Admin/Stocking" element={<AdminStocking />}></Route>
 

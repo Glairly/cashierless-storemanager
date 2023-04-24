@@ -111,6 +111,18 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
             </span>
           </li>
         </Link>
+        {user?.is_shop_owner &&
+          <Link to="/ShopSetting" className={(props.active === "Shop Setting" && "active-side ") + "p-1 text-decoration-none py-3 my-1"}>
+            <li
+              className={"nav-item p-2 py-0 ms-1"}
+            >
+              <BsLock className={(props.active === "Shop Setting" ? "blue " : "gray ") + "me-2"} />
+              <span className={(props.active === "Shop Setting" ? "blue" : "gray") + " d-none d-sm-inline"}>
+                {isThai ? "Shop Setting" : "ตั้งค่าร้านค้า"}
+              </span>
+            </li>
+          </Link>
+        }
       </ul>
     </div>
   );

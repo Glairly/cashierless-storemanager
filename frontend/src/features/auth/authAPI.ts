@@ -19,6 +19,8 @@ import {
   EditAuthRequest,
   EditClientCapiV1EditClientPostRequest,
   EditClientRequest,
+  EditShopCapiV1EditShopPostRequest,
+  EditShopRequest,
   EditUserCapiV1EditUserPostRequest,
   GetClientByIdCapiV1GetClientByIdGetRequest,
   GetShopByClientIdCapiV1GetShopByClientIdGetRequest
@@ -155,6 +157,40 @@ export const editAuth =
 
       const res = await new DefaultApi().editUserCapiV1EditUserPost(request, meta);
       dispatch(setAuth(res));
+      dispatch(setSuccess());
+    } catch (error) {
+      dispatch(setFailure("Error has Occured please try again"));
+    }
+    };
+
+export const editShop =
+  (values: any): ThunkAction<void, RootState, null, Action<string>> =>
+  async (dispatch, getState) => {
+    dispatch(setPending());
+
+    try {
+      const { auth } = getState();
+
+      if (!auth.shop?.id) return false;
+
+      const request = {
+        editShopRequest: {
+          id: auth.shop.id,
+          name: values.name,
+          phoneNumber: values.phone_number
+        } as EditShopRequest,
+      } as EditShopCapiV1EditShopPostRequest;
+
+      const meta = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      } as RequestInit;
+
+      const res = await new DefaultApi().editShopCapiV1EditShopPost(request, meta);
+      dispatch(setShop(res));
       dispatch(setSuccess());
     } catch (error) {
       dispatch(setFailure("Error has Occured please try again"));

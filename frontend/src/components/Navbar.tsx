@@ -170,7 +170,7 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
   };
 
   return (
-    <Navbar bg="light" style={{ zIndex: "1" }}>
+    <Navbar bg="light" style={{ zIndex: "4" }}>
       <Container>
         <Navbar.Brand className="ms-2 fw-bold">{title}</Navbar.Brand>
         <Nav className="ms-auto py-1">
