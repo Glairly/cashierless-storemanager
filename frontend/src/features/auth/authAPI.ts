@@ -86,12 +86,7 @@ export const fetchWallet =
   };
 
 export const editClient =
-  (
-    fullname: string,
-    phone_number: string,
-    gender: string,
-    profile_image: string,
-  ): ThunkAction<void, RootState, null, Action<string>> =>
+  (values:any): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
     dispatch(setPending());
 
@@ -103,10 +98,10 @@ export const editClient =
       const request = {
         editClientRequest: {
           id: auth.user.id,
-          name: fullname,
-          phoneNumber: phone_number,
-          gender: gender,
-          profileImage: profile_image
+          name: values.fullname,
+          phoneNumber: values.phone_number,
+          gender: values.gender,
+          profileImage: values.profile_image
         } as EditClientRequest,
       } as EditClientCapiV1EditClientPostRequest;
 
@@ -131,11 +126,7 @@ export const editClient =
   };
 
 export const editAuth =
-  (
-    email: string,
-    password: string,
-    confirmPassword: string
-  ): ThunkAction<void, RootState, null, Action<string>> =>
+  (values: any): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch, getState) => {
     dispatch(setPending());
 
@@ -147,10 +138,10 @@ export const editAuth =
       const request = {
         editAuthRequest: {
           id: auth.auth.id,
-          email: email,
+          email: values.email,
           username: auth.auth.username,
-          password: password,
-          confirmPassword: confirmPassword,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
         } as EditAuthRequest,
       } as EditUserCapiV1EditUserPostRequest;
 
@@ -162,14 +153,10 @@ export const editAuth =
         },
       } as RequestInit;
 
-      const res = await new DefaultApi().editUserCapiV1EditUserPost(
-        request,
-        meta
-      );
+      const res = await new DefaultApi().editUserCapiV1EditUserPost(request, meta);
       dispatch(setAuth(res));
       dispatch(setSuccess());
     } catch (error) {
-      console.log(error);
       dispatch(setFailure("Error has Occured please try again"));
     }
     };

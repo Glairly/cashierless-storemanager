@@ -49,6 +49,14 @@ const Store: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (pendingStatus == 'rejected') {
+      setShouldShowModal(true);
+      setModalStatus(false);
+      setModalBody("Out of Stock");
+    }
+  }, [error])
+
+  useEffect(() => {
     if (!inferenceResult) return;
 
     if (!inferenceResult?.items.length) {
