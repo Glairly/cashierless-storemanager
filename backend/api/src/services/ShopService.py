@@ -1,14 +1,28 @@
 from fastapi import HTTPException
 
-from api.src.model.requests.EditShopRequest import EditShopRequest
+from ..model.requests.EditShopRequest import EditShopRequest
 from ..model.models import *
 from ..model.requests.ShopCreateRequest import ShopCreateRequest
 
 from fastapi_sqlalchemy import db
 from sqlalchemy.orm import subqueryload
 
+import re
 
 class ShopService:
+
+    def __is_valid_phone_number(self,phone_number):
+        # Remove any whitespace or special characters from the phone number
+        phone_number = re.sub(r'\s+|\W+', '', phone_number)
+        
+        # Validate the phone number format using regular expressions
+        pattern = r'^[0-9]{10}$'  # Assumes a 10-digit phone number format
+        match = re.match(pattern, phone_number)
+        
+        if match:
+            return True
+        else:
+            return False
 
     def get_shop_by_id(self, shop_id: int):
         shop = db.session.query(Shop).filter(Shop.id == shop_id).first()
