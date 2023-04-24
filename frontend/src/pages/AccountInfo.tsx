@@ -32,6 +32,7 @@ const AccountInfo: React.FC = () => {
   const { pendingStatus, isLoading, error, msg } = useSelector(
     (state: RootState) => state.auth
   );
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   const handleSubmitAccountInfo = async (values: any) => {
     // if (isLoading) return;
@@ -79,9 +80,9 @@ const AccountInfo: React.FC = () => {
             {({ handleChange, handleBlur, setFieldValue }) => (
               <Form>
                 <Row className="d-flex justify-content-center">
-                  <Col md="6">
+                  <Col md="8">
                     <BootstrapForm.Group className="mb-2">
-                      <BootstrapForm.Label>Email</BootstrapForm.Label>
+                      <BootstrapForm.Label>{isThai ? "Email" : "อีเมล"}</BootstrapForm.Label>
                       <BootstrapForm.Control
                         type="email"
                         placeholder="Email"
@@ -93,11 +94,11 @@ const AccountInfo: React.FC = () => {
                     </BootstrapForm.Group>
 
                     <BootstrapForm.Group className="mb-2">
-                      <BootstrapForm.Label>Password</BootstrapForm.Label>
+                      <BootstrapForm.Label>{isThai ? "Password" : "รหัสผ่าน"}</BootstrapForm.Label>
                       <BootstrapForm.Control
                         type="password"
                         name="password"
-                        placeholder="Has to be 8 letter or longer"
+                        placeholder={isThai ? "Has to be 8 letter or longer" : "ต้องมีตัวอักษรมากกว่า 8 ตัว"}
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
@@ -105,19 +106,19 @@ const AccountInfo: React.FC = () => {
 
                     <BootstrapForm.Group className="mb-3">
                       <BootstrapForm.Label>
-                        Confirm Password
+                        {isThai ? "Confirm Password" : "ยืนยันรหัสผ่าน"}
                       </BootstrapForm.Label>
                       <BootstrapForm.Control
                         type="password"
                         name="confirmPassword"
-                        placeholder="Has to be 8 letter or longer"
+                        placeholder={isThai ? "Contain 1 uppercase, lowercase and number" : "ต้องมีตัวอักษรใหญ่ เล็ก และตัวเลข"}
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
                     </BootstrapForm.Group>
                     <div className="d-flex justify-content-end align-items-center mt-4">
                       <Button type="submit" className="text-white" disabled={isLoading}>
-                        {isLoading ? "Pending" : "Save"}
+                        {isLoading ? (isThai ? "Pending" : "กำลังดำเนินการ") : (isThai ? "Save" : "บันทึกการเปลี่ยนแปลง")}
                       </Button>
                     </div>
                   </Col>

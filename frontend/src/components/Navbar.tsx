@@ -162,6 +162,7 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
 
   const user = useSelector((state: RootState) => state.auth.user);
   const wallet = useSelector((state: RootState) => state.auth.wallet);
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   const onLogout = () => {
     dispatch<any>(logout());
@@ -172,10 +173,21 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
     <Navbar bg="light" style={{ zIndex: "1" }}>
       <Container>
         <Navbar.Brand className="ms-2 fw-bold">{title}</Navbar.Brand>
-        <Nav className="ms-auto py-0">
+        <Nav className="ms-auto py-1">
           <Nav.Item className="d-none d-sm-flex align-items-center me-3">
             <BsCurrencyExchange className="me-2 fw-bold" style={{ color: "#758096" }} />
             <span className="fw-bold">${wallet?.balance.toFixed(2)}</span>
+          </Nav.Item>
+          <Nav.Item className="d-flex align-items-center me-3" style={{ cursor: 'pointer' }} onClick={() => dispatch<any>(setIsThai())}>
+            <Image
+              src={isThai ?
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg/1200px-Flag_of_the_United_Kingdom_%281-2%29.svg.png" :
+                "https://cdn.britannica.com/38/4038-004-111388C2/Flag-Thailand.jpg"}
+              roundedCircle
+              style={{ width: "25px", height: "25px" }}
+              className="align-self-center me-2"
+            />
+            {isThai ? "EN" : "TH"}
           </Nav.Item>
           <DropdownButton
             align="end"
@@ -194,7 +206,7 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
             id="dropdown-menu-align-end"
             className="text-white"
           >
-            <Dropdown.Item eventKey="1" onClick={onLogout}>Logout</Dropdown.Item>
+            <Dropdown.Item eventKey="1" onClick={onLogout}>{isThai ? "Logout" : "ออกจากระบบ"}</Dropdown.Item>
           </DropdownButton>
         </Nav>
       </Container>

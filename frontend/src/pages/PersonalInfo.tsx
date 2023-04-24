@@ -34,6 +34,7 @@ const PersonalInfo: React.FC = () => {
   const { pendingStatus, isLoading, error } = useSelector(
     (state: RootState) => state.auth
   );
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   const [selectedOption, setSelectedOption] = useState(user?.gender);
 
@@ -82,7 +83,7 @@ const PersonalInfo: React.FC = () => {
                   <Col md="3">
                     <BootstrapForm.Group>
                       <div className="d-flex flex-column align-items-center">
-                        <p className="mb-2">Photo</p>
+                        <p className="mb-2">{isThai ? "Photo" : "รูปถ่าย"}</p>
                         <Image
                           className="profile-img rounded-5"
                           rounded
@@ -116,14 +117,14 @@ const PersonalInfo: React.FC = () => {
                           htmlFor="profile_image"
                           className="btn btn-primary text-white my-3"
                         >
-                          Change Picture
+                          {isThai ? "Change Profile Picture" : "เปลี่ยนรูปภ่าย"}
                         </label>
                       </div>
                     </BootstrapForm.Group>
                   </Col>
                   <Col md="6">
                     <BootstrapForm.Group className="mb-3">
-                      <BootstrapForm.Label>Full Name</BootstrapForm.Label>
+                      <BootstrapForm.Label>{isThai ? "Full Name" : "ชื่อเต็ม"}</BootstrapForm.Label>
                       <BootstrapForm.Control
                         type="text"
                         name="fullname"
@@ -135,7 +136,7 @@ const PersonalInfo: React.FC = () => {
                     </BootstrapForm.Group>
                     <BootstrapForm.Group className="mb-3">
                       <BootstrapForm.Label>
-                        Phone Number
+                        {isThai ? "Phone Number" : "เบอร์โทรศัพท์"}
                       </BootstrapForm.Label>
                       <BootstrapForm.Control
                         type="tel"
@@ -150,7 +151,7 @@ const PersonalInfo: React.FC = () => {
                       <BootstrapForm.Label>Gender</BootstrapForm.Label>
                       <Dropdown className="border rounded-2" defaultValue={user?.gender}>
                         <Dropdown.Toggle variant="secondary" id="gender" className="form-control">
-                          {selectedOption || "Select an option"}
+                          {selectedOption || (isThai ? "Select an option" : "โปรดเลือกเพศ")}
                         </Dropdown.Toggle>
                         <Dropdown.Menu className="form-control">
                           {genderOptions.map((option) => (
@@ -169,7 +170,7 @@ const PersonalInfo: React.FC = () => {
                     </BootstrapForm.Group>
                     <div className="d-flex justify-content-end align-items-center mt-4">
                       <Button type="submit" className="text-white">
-                        {isLoading ? "Pending" : "Save Personal Info"}
+                        {isLoading ? (isThai ? "Pending" : "กำลังดำเนินงาน") : (isThai ? "Save Personal Info" : "บันทึกการเปลี่ยนแปลง")}
                       </Button>
                     </div>
                   </Col>

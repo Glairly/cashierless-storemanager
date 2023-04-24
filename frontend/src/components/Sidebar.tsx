@@ -24,10 +24,10 @@ const Sidebar: React.FC<SidebarProp> = (props) => {
   const isThai = useSelector((state: RootState) => state.translation.isThai)
 
   return (
-    <div className="sidebar bg-light d-flex flex-column p-2 vh-100">
-      <span className="d-flex mb-3 align-items-center pe-3 mb-4 d-none d-sm-inline fs-4 text-uppercase text-nowrap">
+    <div className="sidebar bg-light d-flex flex-column p-2 vh-100 pt-3">
+      {/* <span className="d-flex mb-3 align-items-center pe-3 mb-4 d-none d-sm-inline fs-4 text-uppercase text-nowrap">
         🛒 Cashierless
-      </span>
+      </span> */}
       <span className="fs-5 fw-bold ps-2 d-none d-sm-inline">{isThai ? "Pages" : "หน้าใช้งาน"}</span>
       <ul className="nav nav-pills flex-column mt-2 mb-4">
         <Link to="/Dashboard" className={(props.active === "Dashboard" && "active-side ") + "p-1 text-decoration-none py-3 my-1"}>

@@ -31,6 +31,7 @@ const Topup: React.FC = () => {
     pendingStatus,
     isLoading
   } = useSelector((state: RootState) => state.transaction);
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const form = event.currentTarget;
@@ -129,15 +130,15 @@ const Topup: React.FC = () => {
           >
             <Card.Body className="d-flex flex-column text-white text-center">
               <span className="fs-1 fw-bold">$ {wallet?.balance.toFixed(2)}</span>
-              <span>Wallet ID : {wallet?.id}</span>
+              <span>{isThai ? "Wallet ID : " : "รหัสกำกับบัญชี: "}{wallet?.id}</span>
             </Card.Body>
           </Card>
           <Card.Body className="text-center">
-            <Card.Title className="fs-4 fw-bold" style={{ color: "#117f00" }}>Topup Service</Card.Title>
+            <Card.Title className="fs-4 fw-bold" style={{ color: "#117f00" }}>{isThai ? "Topup Service" : "บริการเติมเงิน"}</Card.Title>
             <Card.Text>
-              Welcome to Cashierless Topup service!
+              {isThai ? "Welcome to Cashierless Topup service!" : "ยินดีต้อนรับสู่บริการเติมงานของเรา!"}
               <br />
-              Please input Topup Amount
+              {isThai ? "Please input Topup Amount" : "กรุณากรอกจำนวนเงินที่ต้องการเติมในช่องด้านล่าง"}
             </Card.Text>
             <Form
               noValidate
@@ -162,7 +163,7 @@ const Topup: React.FC = () => {
               style={{ width: "250px", backgroundColor: "#117f00" }}
               onClick={handleTopupConfirm}
             >
-              Topup
+              {isThai ? "Topup" : "เติมเงินเลย"}
             </Button>
           </Card.Body>
         </Card>
@@ -190,7 +191,7 @@ const Topup: React.FC = () => {
               getPendingStatus == "Complete" ? (
                 <div className="d-flex flex-column justify-content-center align-items-center">
                   <CheckMarked />
-                  <p>Transaction Completed</p>
+                  <p>{isThai ? "Transaction Completed" : "เติมงานสำเร็จ"}</p>
                 </div>
               ) : (
                 getPendingStatus == "Failed" ? (
