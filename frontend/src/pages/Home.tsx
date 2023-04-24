@@ -6,15 +6,20 @@ import "./Home.scss";
 import CustomerSVG from "./svgs/CustomerSVG";
 import StoreSVG from "./svgs/StoreSVG";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
+import { RootState } from "../app/store";
 
 const Home: React.FC = () => {
+
+  const isThai = useAppSelector((state: RootState) => state.translation.isThai)
+
   return (
     <div className="home-body">
       <Navbar.HomeNavbar />
       <Container className="home-content">
         <Row>
           <Col md>
-            <p className="home-body-title">Experience the Contact Less Store</p>
+            <p className="home-body-title">{isThai ? "Experience the Contact Less Store" : "สัมผัสประสบการณ์กับร้านค้าไร้พนักงาน"}</p>
             <p className="home-body-subtitle">Just grab, pay & go</p>
           </Col>
         </Row>
