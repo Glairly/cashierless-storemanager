@@ -40,9 +40,6 @@ const HomeFooter: React.FC = () => {
                 <Link to={"/About"}>{isThai ? "About Us" : "เกี่ยวกับเรา"}</Link>
               </li>
               <li>
-                <Link to={"/ContactUs"}>{isThai ? "Contact Us" : "ติดตาม"}</Link>
-              </li>
-              <li>
                 <Link to={"/Product"}>{isThai ? "Product" : "สินค้าและบริการ"}</Link>
               </li>
             </ul>

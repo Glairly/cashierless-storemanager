@@ -7,32 +7,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { logout } from "../features/auth/authAPI";
 import { BsCurrencyExchange, BsWalletFill } from "react-icons/bs";
+import { setIsThai } from "../features/translation/translationSlice";
+import { useAppDispatch } from "../app/hooks";
 
 interface item {
   NavText: string;
   NavLink: string;
 }
-const HomeNavbarItem: item[] = [
-  {
-    NavText: "Home",
-    NavLink: "/",
-  },
-  {
-    NavText: "About Us",
-    NavLink: "/AboutUs",
-  },
-  // {
-  //   NavText: "Contact Us",
-  //   NavLink: "/ContactUs",
-  // },
-  {
-    NavText: "Product",
-    NavLink: "/Product",
-  },
-];
 
 export const HomeNavbar: React.FC = () => {
+
+  const dispatch = useAppDispatch();
+
   const user = useSelector((state: RootState) => state.auth.user);
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   return (
     <Navbar bg="white" expand="lg">
@@ -43,29 +31,60 @@ export const HomeNavbar: React.FC = () => {
         <Navbar.Toggle aria-controls="toggle-home-navbar" />
         <Navbar.Collapse id="toggle-home-navbar">
           <Nav className="ms-auto nav-item">
-            {HomeNavbarItem.map((item) => (
-              <ul key={item.NavText} className="item">
-                <Link to={item.NavLink}>
-                  <Button
-                    variant="link"
-                    className="text-decoration-none p-0 text-black"
-                  >
-                    {item.NavText}
-                  </Button>
-                </Link>
-              </ul>
-            ))}
+            <ul className="item">
+              <Link to={"/Home"}>
+                <Button
+                  variant="link"
+                  className="text-decoration-none p-0 text-black"
+                >
+                  {isThai ? "Home" : "หน้าหลัก"}
+                </Button>
+              </Link>
+            </ul>
+            <ul className="item">
+              <Link to={"/AboutUs"}>
+                <Button
+                  variant="link"
+                  className="text-decoration-none p-0 text-black"
+                >
+                  {isThai ? "About Us" : "เกี่ยวกับเรา"}
+                </Button>
+              </Link>
+            </ul>
+            <ul className="item">
+              <Link to={"/Product"}>
+                <Button
+                  variant="link"
+                  className="text-decoration-none p-0 text-black"
+                >
+                  {isThai ? "Product" : "สินค้าและบริการ"}
+                </Button>
+              </Link>
+            </ul>
+            <ul className="mb-0">
+              <a onClick={() => { dispatch<any>(setIsThai()) }} style={{ cursor: "pointer" }}>
+                <Image
+                  src={isThai ?
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg/1200px-Flag_of_the_United_Kingdom_%281-2%29.svg.png" :
+                    "https://cdn.britannica.com/38/4038-004-111388C2/Flag-Thailand.jpg"}
+                  roundedCircle
+                  style={{ width: "25px", height: "25px" }}
+                  className="align-self-center me-2"
+                />
+                {isThai ? "EN" : "TH"}
+              </a>
+            </ul>
             <ul className="mb-0">
               {user?.id ? (
                 <Link to={"/Dashboard"} className=" ">
                   <Button variant="primary" className="text-white">
-                    Your Page
+                    {isThai ? "Your Page" : "หน้าหลักของคุณ"}
                   </Button>
                 </Link>
               ) : (
                 <Link to={"/Login"}>
                   <Button variant="primary" className="text-white">
-                    Login
+                    {isThai ? "Login" : "เข้าใช้งาน"}
                   </Button>
                 </Link>
               )}
