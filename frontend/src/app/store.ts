@@ -20,12 +20,14 @@ import authReducer from "../features/auth/authSlice";
 import transactionReducer from "../features/transaction/transactionSlice";
 import inferenceReducer from "../features/inference/inferenceSlice";
 import supplyReducer from "../features/supply/supplySlice";
+import translationReducer from "../features/translation/translationSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   transaction: transactionReducer,
   inference: inferenceReducer,
-  supply: supplyReducer
+  supply: supplyReducer,
+  translation: translationReducer
 });
 
 const persistConfig = {

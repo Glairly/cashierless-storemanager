@@ -46,6 +46,7 @@ const renderLoginForm: React.FC = (initialValues) => {
   };
 
   const token = useSelector((state: RootState) => state.auth.token);
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   useEffect(() => {
     if (token)
@@ -62,7 +63,7 @@ const renderLoginForm: React.FC = (initialValues) => {
       {({ handleChange, handleBlur }) => (
         <Form>
           <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Username</BootstrapForm.Label>
+            <BootstrapForm.Label>{isThai ? "Username" : "ผู้เข้าใช้งาน"}</BootstrapForm.Label>
             <BootstrapForm.Control
               type="text"
               name="username"
@@ -74,7 +75,7 @@ const renderLoginForm: React.FC = (initialValues) => {
             </ErrorMessage>
           </BootstrapForm.Group>
           <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>Password</BootstrapForm.Label>
+            <BootstrapForm.Label>{isThai ? "Password" : "รหัสผ่าน"}</BootstrapForm.Label>
             <BootstrapForm.Control
               type="password"
               name="password"
@@ -86,10 +87,10 @@ const renderLoginForm: React.FC = (initialValues) => {
             </ErrorMessage>
           </BootstrapForm.Group>
           <BootstrapForm.Group className="mb-3" controlId="formCheckbox">
-            <BootstrapForm.Check type="checkbox" label="Remember Me" />
+            <BootstrapForm.Check type="checkbox" label={isThai ? "Remember Me" : "จดจำรหัสผ่านในครั้งถัดไป"} />
           </BootstrapForm.Group>
           <Button type="submit" variant="primary" className="text-white w-100">
-            Submit
+            {isThai ? "Submit" : "ยืนยัน"}
           </Button>
         </Form>
       )}
@@ -98,6 +99,9 @@ const renderLoginForm: React.FC = (initialValues) => {
 };
 
 const Login: React.FC = () => {
+
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
+
   return (
     <div className="login">
       <Navbar.HomeNavbar />
@@ -110,20 +114,20 @@ const Login: React.FC = () => {
             <Card className="py-5 rounded-5 align-items-center">
               <BsFillBasket2Fill size={30} className="basket-icon" />
               <Card.Body>
-                <h4 className="text-center">Hello there!</h4>
+                <h4 className="text-center">{isThai ? "Hello there!" : "สวัสดีครับ!"}</h4>
                 <p className="text-center">
-                  Welcome to Hardware Shop <br /> Please login to enable to use
-                  the shop
+                  {isThai ? "Welcome to Cashierless Store" : "ยินดีต้อนรับสู่ระบบจัดการร้านค้าไร้พนักงาน"} <br />
+                  {isThai ? "Please login to enable to use the shop" : "โปรดทำงานล็อคอินเพื่อใช้งานร้านค้า"}
                 </p>
                 {renderLoginForm(initialValues)}
                 <Row>
                   <small className="mt-5 text-center">
-                    Don't have an account yet?
+                    {isThai ? "Don't have an account yet?" : "ยังไม่มีบัญชีของเราใช่หรือไม่?"}
                     <Link
                       to={"/Register"}
                       className="ms-2 text-decoration-none"
                     >
-                      Sign Up
+                      {isThai ? "Sign Up!" : "สมัครใช้งานเลย!"}
                     </Link>
                   </small>
                 </Row>

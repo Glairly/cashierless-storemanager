@@ -17,19 +17,12 @@ const Layout: React.FC<LayoutProp> = ({ navTitle, children }) => {
         <Sidebar active={navTitle} />
         <div className="col">
           <NavbarComponent
-            title={navTitle}
+            title={"🛒 CASHIERLESS"}
             balance={248.00}
             name="Supakit Lokaew"
             profileImage="https://simplyilm.com/wp-content/uploads/2017/08/temporary-profile-placeholder-1.jpg"
           />
-          {/* <Routes>
-          <Route path="/new" element={
-            <> */}
           {children}
-          {/* </>
-          }
-          />
-        </Routes> */}
         </div>
       </div>
     </Container>

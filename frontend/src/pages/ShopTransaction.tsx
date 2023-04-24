@@ -4,10 +4,14 @@ import { BsFillCheckCircleFill, BsFillDashCircleFill, BsFillTrashFill } from "re
 import { useDispatch } from "react-redux";
 import { fetchShopTransaction } from "../features/transaction/transactionAPI";
 import { Transaction as TransactionSlice } from "../features/transaction/transactionSlice";
+import { useAppSelector } from "../app/hooks";
+import { RootState } from "../app/store";
 
 const ShopTransaction: React.FC = () => {
 
   const dispatch = useDispatch();
+
+  const isThai = useAppSelector((state: RootState) => state.translation.isThai);
 
   const [activePage, setActivePage] = useState(1);
   const [transactionsPerPage] = useState(10);
@@ -104,6 +108,7 @@ const ShopTransaction: React.FC = () => {
   return (
     <Container className="my-3">
       <div className="d-flex flex-row justify-content-center">
+        <span className="fs-4 fw-bold">{isThai ? "Transaction" : "ประวัติการซื้อขาย"}</span>
         <Pagination className="ms-auto">
           <Pagination.First onClick={() => setActivePage(1)} />
           <Pagination.Prev
@@ -123,16 +128,16 @@ const ShopTransaction: React.FC = () => {
       <Table border={1}>
         <thead style={{ backgroundColor: "#758096" }} className="text-white">
           <tr>
-            <th className="fw-normal">Client Name</th>
-            <th className="fw-normal text-center">Items</th>
-            <th className="fw-normal text-center">Price</th>
-            <th className="fw-normal text-center">Status</th>
+            <th className="fw-normal">{isThai ? "Client Name" : "ชื่อผู้ใช้"}</th>
+            <th className="fw-normal text-center">{isThai ? "Items" : "สินค้า"}</th>
+            <th className="fw-normal text-center">{isThai ? "Price" : "ราคา"}</th>
+            <th className="fw-normal text-center">{isThai ? "Status" : "สถานะชำระ"}</th>
           </tr>
         </thead>
         <tbody>
           {transactions && (transactions.length == 0 ? (
             <tr className="align-middle">
-              <td>No transaction history</td>
+              <td>{isThai ? "No transaction history" : "ไม่มีประวัติการซื้อขาย"}</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
@@ -144,15 +149,15 @@ const ShopTransaction: React.FC = () => {
                   <div className="d-flex">
                     <div className="d-flex flex-column justify-content-center">
                       <span className="fw-bold">{transaction.client_name || "Unkown Shop"}</span>
-                      <small style={{ color: "#758096" }}>Transaction ID: {transaction.id}</small>
-                      <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || "Unknown Date"}</small>
+                      <small style={{ color: "#758096" }}>{isThai ? "Transaction ID: " : "ไม่มีประวิติการซื้อขาย"} {transaction.id}</small>
+                      <small style={{ color: "#758096" }}>{handleDateFormat(transaction.date) || (isThai ? "Unknown Date" : "ไม่ทราบวันที่ซื้อ")}</small>
                     </div>
                   </div>
                 </td>
                 <td className="text-center">{transaction.transaction_items.length === 0 ? "-" :
                   transaction.transaction_items.map((x) => (
                     <>
-                      {x.item_name || "Unknown Item"} x {x.quantity}
+                      {x.item_name || (isThai ? "Unknown Item" : "ไม่ทราบวันชนิดสินค้า")} x {x.quantity}
                       <br />
                     </>
                   ))}</td>
@@ -163,7 +168,7 @@ const ShopTransaction: React.FC = () => {
                     style={"Complete" === "Complete" ? { color: "#43db00" } : { color: "red" }}
                   >
                     {"Complete" === "Complete" ? <BsFillCheckCircleFill /> : <BsFillDashCircleFill />}
-                    <small>{"Complete"}</small>
+                    <small>{isThai ? "Complete" : "ชำระสำเร็จ"}</small>
                   </div>
                 </td>
               </tr>
@@ -171,7 +176,7 @@ const ShopTransaction: React.FC = () => {
           ))}
           {!transactions &&
             <tr className="align-middle">
-              <td>Loading transaction history</td>
+              <td>{isThai ? "Loading transaction history" : "กำลังโหลดประวัติการขาย"}</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>

@@ -83,6 +83,7 @@ const renderForm: React.FC = (props) => {
   const { pendingStatus, isLoading } = useSelector(
     (state: RootState) => state.auth
   );
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
   const genderOptions = ["Male", "Female", "Non-binary", "Other"];
 
   const [shouldShowModal, setShouldShowModal] = useState(false);
@@ -134,7 +135,7 @@ const renderForm: React.FC = (props) => {
         {({ handleChange, handleBlur, setFieldValue }) => (
           <Form>
             <BootstrapForm.Group className="my-3">
-              <BootstrapForm.Label>Username</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Username" : "ผู้ใช้งาน"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="text"
                 name="username"
@@ -147,7 +148,7 @@ const renderForm: React.FC = (props) => {
               </ErrorMessage>
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Password</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Password" : "รหัสผ่าน"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="password"
                 name="password"
@@ -159,7 +160,7 @@ const renderForm: React.FC = (props) => {
               </ErrorMessage>
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Confirm Password</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Confirm Password" : "ยืนยันรหัสผ่าน"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="password"
                 name="confirm_password"
@@ -171,7 +172,7 @@ const renderForm: React.FC = (props) => {
               </ErrorMessage>
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Email</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Email" : "อีเมล"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="email"
                 name="email"
@@ -184,7 +185,7 @@ const renderForm: React.FC = (props) => {
               </ErrorMessage>
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Name</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Name" : "ชื่อเต็ม"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="text"
                 name="name"
@@ -197,7 +198,7 @@ const renderForm: React.FC = (props) => {
               </ErrorMessage>
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Birth Date</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Birth Date" : "วันเกิด"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="date"
                 name="birth_date"
@@ -210,7 +211,7 @@ const renderForm: React.FC = (props) => {
             </BootstrapForm.Group>
 
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Phone Number</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Phone Number" : "เบอร์โทรศัพท์"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="tel"
                 name="phone_number"
@@ -223,10 +224,10 @@ const renderForm: React.FC = (props) => {
               </ErrorMessage>
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Gender</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Gender" : "เพศ"}</BootstrapForm.Label>
               <Dropdown className="border rounded-2">
                 <Dropdown.Toggle variant="secondary" id="gender" className="form-control">
-                  {selectedOption || "Select an option"}
+                  {selectedOption || (isThai ? "Select an option" : "โปรดเลือกตัวเลือก")}
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="form-control">
                   {genderOptions.map((option) => (
@@ -248,7 +249,7 @@ const renderForm: React.FC = (props) => {
             </BootstrapForm.Group>
 
             <BootstrapForm.Group className="mb-3">
-              <BootstrapForm.Label>Profile Picture</BootstrapForm.Label>
+              <BootstrapForm.Label>{isThai ? "Profile Picture" : "เลือกรูปโปรไฟล์"}</BootstrapForm.Label>
               <BootstrapForm.Control
                 type="file"
                 accept="image/"
@@ -276,22 +277,24 @@ const renderForm: React.FC = (props) => {
             </BootstrapForm.Group>
             <BootstrapForm.Group className="mb-4">
               <div className="d-flex flex-column justify-content-center rounded align-items-stretch">
-                <BootstrapForm.Label>Face detection</BootstrapForm.Label>
+                <BootstrapForm.Label>{isThai ? "Face detection" : "ระบบจดจำใบหน้า"}</BootstrapForm.Label>
                 <Button
                   variant={`${!imgSrc ? "danger" : "success"} text-white`}
                   onClick={() => setIsFaceModal(true)}>
-                  {!imgSrc ? "Click to Capture Face Image" : "Capture Image Done!"}
+                  {!imgSrc ?
+                    (isThai ? "Click to Capture Face Image" : "กดเพื่อถ่ายรูป") : (
+                      isThai ? "Capture Image Done!" : "ถ่ายรูปสำเร็จ")}
                 </Button>
               </div>
             </BootstrapForm.Group>
 
             <Button type="submit" variant="primary" className="text-white w-100">
-              Submit
+              {isThai ? "Submit" : "ลงทะเบียน"}
             </Button>
 
             <Modal show={isFaceModal} onHide={() => setIsFaceModal(false)}>
               <Modal.Header closeButton>
-                <Modal.Title>Face detection</Modal.Title>
+                <Modal.Title>{isThai ? "Face detection" : "ระบบจดจำใบหน้า"}</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <div className="d-flex flex-column justify-content-center rounded align-items-stretch h-100">
@@ -300,13 +303,13 @@ const renderForm: React.FC = (props) => {
                     variant={`${!imgSrc ? "danger" : "success"} text-white my-2`}
                     onClick={capture}
                   >
-                    {!imgSrc ? "Capture Image" : "Recapture Image"}
+                    {!imgSrc ? (isThai ? "Capture Image" : "จับภาพถ่าย") : (isThai ? "Recapture Image" : "จับภาพอีกครั้ง")}
                   </Button>
                 </div>
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={() => { setIsFaceModal(false); setFieldValue("face_img", imgSrc); }}>
-                  Close
+                  {isThai ? "Close" : "ยกเลิก"}
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -334,11 +337,13 @@ const Register: React.FC = () => {
     name: "",
     is_shop_owner: false,
     gender: "Male",
-    birth_date: "",
+    birth_date: "2005-01-01",
     phone_number: "",
     face_img: null,
     profile_img: null,
   };
+
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   return (
     <div className="register">
@@ -352,20 +357,25 @@ const Register: React.FC = () => {
             <Card className="py-5 rounded-5 align-items-center">
               <Card.Body>
                 <BsFillBasket2Fill size={30} className="basket-icon mb-3" />
-                <h4>Register</h4>
+                <h4>{isThai ? "Register" : "ลงทะเบียน"}</h4>
                 <small>
-                  Let's get you all set up so you can verify your
-                  <br /> personal account and begin setting up your profile
+                  {isThai ?
+                    (<>Let's get you all set up so you can verify your
+                      < br /> personal account and begin setting up your profile</>
+                    ) : (
+                      <>เพื่อเป็นการเตรียมพร้อมให้คุณเข้าสู่ระบบของเรา <br />
+                        คุณจะต้องกรอกข้อมูลส่วนตัวและข้อมูลบัญชีเพื่อเป็นการยืนยันตน</>
+                    )}
                 </small>
                 {renderForm(initialValues)}
                 <Row>
                   <small className="mt-5 text-center">
-                    Want to register as Store Manager?
+                    {isThai ? "Want to register as Store Manager?" : "ต้องการลงทะเบียนในฐานะร้านค้า?"}
                     <Link
                       to={"/Admin/Register"}
                       className="ms-2 text-decoration-none"
                     >
-                      Sign Up
+                      {isThai ? "Sign Up" : "ลงทะเบียนเลย!"}
                     </Link>
                   </small>
                 </Row>

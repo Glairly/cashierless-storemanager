@@ -34,6 +34,7 @@ const Stocking: React.FC = () => {
   const { pendingStatus, isLoading, error } = useSelector((state: RootState) => state.supply);
   const shop = useSelector((state: RootState) => state.auth.shop);
   const itemTypes = useSelector((state: RootState) => state.supply.itemType);
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   const [isStockChange, setIsStockChange] = useState(false);
   const [isEditStock, setIsEditStock] = useState(false);
@@ -211,8 +212,8 @@ const Stocking: React.FC = () => {
 
   return (
     <Container className="mt-3">
-      <Row lg={3} className="px-1 py-1 ">
-        <Col>
+      <Row md={3} className="px-1 py-1 ">
+        <Col xs={12}>
           <Card className="rounded-4 mb-2" style={{
             backgroundColor: "#0195ff", borderStyle: "none"
           }}>
@@ -225,14 +226,14 @@ const Stocking: React.FC = () => {
 
               <div className="d-flex justify-content-between py-3">
                 <div className="d-flex flex-column justify-content-center">
-                  <span className="text-white">Shop Balance</span>
+                  <span className="text-white">{isThai ? "Shop Balance" : "ยอดเงินคงเหลือ"}</span>
                   <span className="fs-2 fw-bold text-white">${shop?.wallet.balance.toFixed(2)}</span>
                 </div>
               </div>
             </div>
           </Card>
         </Col>
-        <Col>
+        <Col xs={12}>
           <Card className="rounded-4 mb-2" style={{
             backgroundColor: "#01c283", borderStyle: "none"
           }}>
@@ -245,14 +246,14 @@ const Stocking: React.FC = () => {
 
               <div className="d-flex justify-content-between py-3">
                 <div className="d-flex flex-column justify-content-center">
-                  <span className="text-white">Monthly Sale</span>
+                  <span className="text-white">{isThai ? "Monthly Sale" : "ยอดขายประจำเดือน"}</span>
                   <span className="fs-2 fw-bold text-white">${handleMonthlySale().toFixed(2)}</span>
                 </div>
               </div>
             </div>
           </Card>
         </Col>
-        <Col>
+        <Col xs={12}>
           <Card className="rounded-4 mb-2" style={{
             backgroundColor: "#884dff", borderStyle: "none"
           }}>
@@ -265,7 +266,7 @@ const Stocking: React.FC = () => {
 
               <div className="d-flex justify-content-between py-3">
                 <div className="d-flex flex-column justify-content-center">
-                  <span className="text-white">Monthly Profit</span>
+                  <span className="text-white">{isThai ? "Monthly Profit" : "รายได้เดือนนี้"}</span>
                   <span className="fs-2 fw-bold text-white">${handleMonthlyProfit().toFixed(2)}</span>
                 </div>
               </div>
@@ -275,14 +276,14 @@ const Stocking: React.FC = () => {
       </Row>
       <Row>
         <Col className="d-flex justify-content-between py-3">
-          <span className="fs-5 fw-bold">Manage Panel</span>
+          <span className="fs-5 fw-bold">{isThai ? "Manage Panel" : "ตารางการจัดการสต็อค"}</span>
           {!isEditStock ? (
             <Button
               className="text-white"
               onClick={() => setIsEditStock(true)}
               disabled={isLoading}
             >
-              Edit your stock
+              {isThai ? "Edit your stock" : "แก้ไขสต็อค"}
             </Button>
           ) : (
             <div className="d-flex flex-row">
@@ -291,14 +292,14 @@ const Stocking: React.FC = () => {
                 className="text-white me-2"
                 onClick={() => setIsAddModal(true)}
               >
-                Add Item
+                {isThai ? "Add Item" : "เพิ่มสินค้า"}
               </Button>
               <Button
                 className="text-white me-2"
                 disabled={!isStockChange || isLoading}
                 onClick={handleSubmitEditItem}
               >
-                Save your stock
+                {isThai ? "Save your stock" : "บันทึกการเปลี่ยนแปลง"}
               </Button>
               <Button
                 className="text-white"
@@ -307,7 +308,7 @@ const Stocking: React.FC = () => {
                   setIsStockChange(false);
                   setStock(requestStock);
                 }}>
-                Cancel
+                {isThai ? "Cancel" : "ยกเลิก"}
               </Button>
             </div>
           )}
@@ -316,11 +317,11 @@ const Stocking: React.FC = () => {
       <Table border={1}>
         <thead style={{ backgroundColor: "#758096" }} className="text-white">
           <tr>
-            <th className="fw-normal">Item Name</th>
-            <th className="fw-normal">Type</th>
-            <th className="fw-normal text-center">Price</th>
-            <th className="fw-normal text-center">Count</th>
-            {isEditStock && <th className="fw-normal text-center">Delete</th>}
+            <th className="fw-normal">{isThai ? "Item Name" : "รายชื่อสินค้า"}</th>
+            <th className="fw-normal">{isThai ? "Type" : "ประเภทสินค้า"}</th>
+            <th className="fw-normal text-center">{isThai ? "Price" : "ราคา"}</th>
+            <th className="fw-normal text-center">{isThai ? "Count" : "จำนวน"}</th>
+            {isEditStock && <th className="fw-normal text-center">{isThai ? "Delete" : "ลบ"}</th>}
           </tr>
         </thead>
         <tbody>
@@ -329,7 +330,7 @@ const Stocking: React.FC = () => {
               <td>
                 <div className="d-flex flex-column">
                   <span className="fw-bold">{item.name}</span>
-                  <small style={{ color: "#758096" }} >Item Id: {item.id == 9999999 ? "Temporary Id" : item.id}</small>
+                  <small style={{ color: "#758096" }} >{isThai ? "Item Id: " : "เลขกำกับสินค้า: "} {item.id == 9999999 ? "Temporary Id" : item.id}</small>
                 </div>
               </td>
               <td>{handleItemType(item.type)}</td>
@@ -377,7 +378,7 @@ const Stocking: React.FC = () => {
             </tr>
           )) : (
             <tr className="align-middle">
-              <td>No Item</td>
+              <td>{isThai ? "No Item" : "ไม่มีสินค้า"}</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
@@ -385,7 +386,7 @@ const Stocking: React.FC = () => {
           ))}
           {!stock &&
             <tr className="align-middle">
-              <td>Loading Item</td>
+              <td>{isThai ? "Loading Item" : "กำลังโหลดสินค้า"}</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
               <td className="text-center">-</td>
@@ -411,12 +412,12 @@ const Stocking: React.FC = () => {
           }) => (
             <Form noValidate onSubmit={handleSubmit}>
               <Modal.Header closeButton>
-                <Modal.Title>Add Item</Modal.Title>
+                <Modal.Title>{isThai ? "Add Item" : "เพิ่มสินค้า"}</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Row className="mb-3">
                   <Form.Group as={Col} md="4" controlId="name">
-                    <Form.Label>Item name</Form.Label>
+                    <Form.Label>{isThai ? "Item name" : "ชื่อสินค้า"}</Form.Label>
                     <InputGroup hasValidation>
                       <Form.Control
                         type="text"
@@ -427,7 +428,7 @@ const Stocking: React.FC = () => {
                         isValid={touched.name && !errors.name}
                         isInvalid={!!errors.name}
                       />
-                      <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                      <Form.Control.Feedback>{isThai ? "Looks good!" : "ถูกต้อง"}</Form.Control.Feedback>
                       <Form.Control.Feedback type="invalid">
                         {errors.name}
                       </Form.Control.Feedback>
@@ -435,7 +436,7 @@ const Stocking: React.FC = () => {
                   </Form.Group>
 
                   <Form.Group as={Col} md="4" controlId="quantity">
-                    <Form.Label>Quantity</Form.Label>
+                    <Form.Label>{isThai ? "Quantity" : "จำนวน"}</Form.Label>
                     <Form.Control
                       type="number"
                       name="quantity"
@@ -444,14 +445,14 @@ const Stocking: React.FC = () => {
                       isValid={touched.quantity && !errors.quantity}
                       isInvalid={!!errors.quantity}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>{isThai ? "Looks good!" : "ถูกต้อง"}</Form.Control.Feedback>
                     <Form.Control.Feedback type="invalid">
                       {errors.quantity}
                     </Form.Control.Feedback>
                   </Form.Group>
 
                   <Form.Group as={Col} md="4" controlId="price">
-                    <Form.Label>Price</Form.Label>
+                    <Form.Label>{isThai ? "Price" : "ราคา"}</Form.Label>
                     <Form.Control
                       type="number"
                       name="price"
@@ -460,22 +461,22 @@ const Stocking: React.FC = () => {
                       isValid={touched.price && !errors.price}
                       isInvalid={!!errors.price}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback>{isThai ? "Looks good!" : "ถูกต้อง"}</Form.Control.Feedback>
                     <Form.Control.Feedback type="invalid">
                       {errors.price}
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Row>
                 <Form.Group className="mb-3">
-                  <Form.Label className="me-2">Item Type</Form.Label>
+                  <Form.Label className="me-2">{isThai ? "Item Type" : "ชนิดสินค้า"}</Form.Label>
                   {selectedOption === '' && (
                     <Form.Text className="text-danger">
-                      * Please select an option
+                      {isThai ? "* Please select an option" : "* โปรดเลือกชนิดสินค้า"}
                     </Form.Text>
                   )}
                   <Dropdown className="border rounded-2">
                     <Dropdown.Toggle variant="secondary" id="type" className="form-control" disabled={handleAvaibleItemType().length == 0}>
-                      {selectedOption || "Select an option"}
+                      {selectedOption || (isThai ? "Select an option" : "กรุณาเลือกชนิดสินค้า")}
                     </Dropdown.Toggle>
                     <Dropdown.Menu className="form-control">
                       {handleAvaibleItemType().map((option) => (
@@ -495,10 +496,10 @@ const Stocking: React.FC = () => {
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={() => setIsAddModal(false)}>
-                  Close
+                  {isThai ? "Close" : "ยกเลิก"}
                 </Button>
                 <Button variant="primary" className="text-white" type="submit">
-                  Save Changes
+                  {isThai ? "Save Changes" : "บันทึกสินค้า"}
                 </Button>
               </Modal.Footer>
             </Form>
