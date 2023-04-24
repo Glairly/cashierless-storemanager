@@ -19,8 +19,8 @@ const Home: React.FC = () => {
       <Container className="home-content">
         <Row>
           <Col md>
-            <p className="home-body-title">{isThai ? "Experience the Contact Less Store" : "สัมผัสประสบการณ์กับร้านค้าไร้พนักงาน"}</p>
-            <p className="home-body-subtitle">Just grab, pay & go</p>
+            <p className="home-body-title">{isThai ? "Experience the Contact Less Store" : "สัมผัสประสบการณ์ใหม่กับร้านค้าไร้พนักงาน"}</p>
+            <p className="home-body-subtitle">{isThai ? "Just grab, pay & go" : "เพียง หยิบวาง จ่ายเงิน เสร็จสิ้นกระบวนการ"}</p>
           </Col>
         </Row>
         <Row className="px-5 my-5">
@@ -33,12 +33,21 @@ const Home: React.FC = () => {
                 <CustomerSVG />
                 <br />
                 <br />
-                Get the most out of our product. <b>Singup now!</b> to create
-                your account and enjoy the ultimate shopping experience!
+                {isThai ? (
+                  <span>
+                    Get the most out of our product. <b>Signup now!</b> to create
+                    your account and enjoy the ultimate shopping experience!
+                  </span>
+                ) : (
+                  <span>
+                    หากต้องการใช้งานได้อย่างเต็มรูปแบบเพียง<b>ลงทะเบียนเข้าใช้งาน! </b>
+                    เพื่อรับประสบการณ์ที่ไม่เหมือนใครในการช็อปปิ้งกับระบบของเรา
+                  </span>
+                )}
               </h4>
               <Link to="/Register">
                 <Button variant="primary" className="text-white register-btn">
-                  Go to Sign Up
+                  {isThai ? "Go to Sign Up" : "ลงทะเบียน"}
                 </Button>
               </Link>
             </div>
@@ -49,12 +58,21 @@ const Home: React.FC = () => {
                 <StoreSVG />
                 <br />
                 <br />
-                Get our machine. <b>Register Your Shop now!</b> and get started
-                your new contact-Less business.
+                {isThai ? (
+                  <span>
+                    Get our machine. <b>Register Your Shop now!</b> and get started
+                    your new contact-Less business.
+                  </span>
+                ) : (
+                  <span>
+                    รับเครื่องคิดเงินของเราเพื่อใช้งานกับร้านค้าของตนเอง <b>ลงทะเบียนเข้าใช้งานแบบร้านค้า! </b>
+                    เพื่อเริ่มใช้งานระบบร้านค้าไร้พนักงานของเรา
+                  </span>
+                )}
               </h4>
               <Link to="/Admin/Register">
                 <Button variant="primary" className="text-white register-btn">
-                  Register Your Shop
+                  {isThai ? "Register Your Shop" : "ลงทะเบียนแบบร้านค้า"}
                 </Button>
               </Link>
             </div>
