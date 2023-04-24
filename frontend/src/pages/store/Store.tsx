@@ -28,6 +28,7 @@ const Store: React.FC = () => {
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [modalStatus, setModalStatus] = useState(true);
   const [modalBody, setModalBody] = useState("success");
+  const [devToolToggle, setDevToolToggle] = useState(0);
 
   const { inferenceResult, pendingStatus, isLoading, error } = useSelector(
     (state: RootState) => state.inference
@@ -72,6 +73,12 @@ const Store: React.FC = () => {
     }
   }, [inferenceResult]);
 
+  useEffect(() => {
+    if (devToolToggle == 12) {
+      navigate("/Store/Setup");
+    }
+  }, [devToolToggle])
+
   const capture = useCallback(async () => {
     if (isLoading) return;
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -90,7 +97,9 @@ const Store: React.FC = () => {
           <div>
             <h1>Welcome to HW-Store</h1>
             <p style={{ color: "gray" }}>
-              HW-store is cashierless store for your convience store experiece
+              HW-store is cashierless store for
+              <span onClick={() => setDevToolToggle(devToolToggle + 1)}> your </span>
+              convience store experiece
             </p>
           </div>
           <div>Should have a example here</div>
