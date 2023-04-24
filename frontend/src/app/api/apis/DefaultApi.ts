@@ -25,6 +25,7 @@ import type {
   EditAuthRequest,
   EditClientRequest,
   EditItemRequest,
+  EditShopRequest,
   HTTPValidationError,
   InferenceRequest,
   InferenceResult,
@@ -59,6 +60,8 @@ import {
     EditClientRequestToJSON,
     EditItemRequestFromJSON,
     EditItemRequestToJSON,
+    EditShopRequestFromJSON,
+    EditShopRequestToJSON,
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
     InferenceRequestFromJSON,
@@ -131,6 +134,10 @@ export interface EditClientCapiV1EditClientPostRequest {
 
 export interface EditItemSmapiV1EditItemPostRequest {
     editItemRequest: EditItemRequest;
+}
+
+export interface EditShopCapiV1EditShopPostRequest {
+    editShopRequest: EditShopRequest;
 }
 
 export interface EditUserCapiV1EditUserPostRequest {
@@ -690,6 +697,43 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async editItemSmapiV1EditItemPost(requestParameters: EditItemSmapiV1EditItemPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.editItemSmapiV1EditItemPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Edit Shop
+     */
+    async editShopCapiV1EditShopPostRaw(requestParameters: EditShopCapiV1EditShopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.editShopRequest === null || requestParameters.editShopRequest === undefined) {
+            throw new runtime.RequiredError('editShopRequest','Required parameter requestParameters.editShopRequest was null or undefined when calling editShopCapiV1EditShopPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/capi/v1/edit_shop`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EditShopRequestToJSON(requestParameters.editShopRequest),
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Edit Shop
+     */
+    async editShopCapiV1EditShopPost(requestParameters: EditShopCapiV1EditShopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.editShopCapiV1EditShopPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

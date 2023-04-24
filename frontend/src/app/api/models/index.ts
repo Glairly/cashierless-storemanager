@@ -11,6 +11,7 @@ export * from './DetectionResult';
 export * from './EditAuthRequest';
 export * from './EditClientRequest';
 export * from './EditItemRequest';
+export * from './EditShopRequest';
 export * from './HTTPValidationError';
 export * from './InferenceRequest';
 export * from './InferenceResult';
