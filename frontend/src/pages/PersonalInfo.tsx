@@ -39,10 +39,8 @@ const PersonalInfo: React.FC = () => {
 
   const handleSubmitPersonalInfo = async (values: any) => {
     if (isLoading) return;
-    const { fullname, phone, gender } = values;
-    let { profile_image } = values;
-    if (profile_image == "") profile_image = user?.profile_image && "";
-    dispatch<any>(editClient(fullname, phone, gender, profile_image));
+    if (values.profile_image == "") values.profile_image = user?.profile_image && "";
+    dispatch<any>(editClient(values));
   };
 
   const onPopupHide = () => {

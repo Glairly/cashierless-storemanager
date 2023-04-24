@@ -30,7 +30,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
       <Modal.Body>
         <div className="d-flex flex-column justify-content-center align-items-center">
           {status ? <CheckMarked /> : <CrossMarked />}
-          {body}
+          <span className="text-center">{body}</span>
         </div>
       </Modal.Body>
       <Modal.Footer>

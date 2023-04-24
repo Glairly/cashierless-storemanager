@@ -4,14 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import * as Yup from "yup";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { editClient } from "../features/auth/authAPI";
 import Popup from "../components/Popup";
 import { setIdle } from "../features/auth/authSlice";
+import { editAuth } from "../features/auth/authAPI";
 
 const initialValuesProfile = {
-  name: "",
-  gender: "",
-  profile_image: ""
+  email: "",
+  password: "",
+  confirmPassword: ""
 };
 
 const validationSchema = Yup.object({
@@ -26,30 +26,26 @@ const AccountInfo: React.FC = () => {
 
   const [shouldShowModal, setShouldShowModal] = useState(false);
   const [modalStatus, setModalStatus] = useState(true);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  const genderOptions = ["Male", "Female", "Non-binary", "Other"];
-
-  const user = useSelector((state: RootState) => state.auth.user);
   const auth = useSelector((state: RootState) => state.auth.auth);
 
-  const { pendingStatus, isLoading, error } = useSelector(
+  const { pendingStatus, isLoading, error, msg } = useSelector(
     (state: RootState) => state.auth
   );
 
-  const [selectedOption, setSelectedOption] = useState(user?.gender);
-
   const handleSubmitAccountInfo = async (values: any) => {
-    if (isLoading) return;
-    const { fullname, phone, gender } = values;
-    let { profile_image } = values;
-    if (profile_image == "") profile_image = user?.profile_image && "";
-    dispatch<any>(editClient(fullname, phone, gender, profile_image));
+    // if (isLoading) return;
+    console.log("Hello world")
+    dispatch<any>(editAuth(values));
   };
 
   const onPopupHide = () => {
     dispatch<any>(setIdle());
   };
+
+  useEffect(() => {
+    dispatch<any>(setIdle());
+  }, [dispatch])
 
   useEffect(() => {
     switch (pendingStatus) {
@@ -90,7 +86,7 @@ const AccountInfo: React.FC = () => {
                         type="email"
                         placeholder="Email"
                         name="email"
-                        defaultValue={auth?.email}
+                        value={auth?.email}
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
@@ -113,14 +109,14 @@ const AccountInfo: React.FC = () => {
                       </BootstrapForm.Label>
                       <BootstrapForm.Control
                         type="password"
-                        name="confirmpassword"
+                        name="confirmPassword"
                         placeholder="Has to be 8 letter or longer"
                         onChange={handleChange}
                         onBlur={handleBlur}
                       />
                     </BootstrapForm.Group>
                     <div className="d-flex justify-content-end align-items-center mt-4">
-                      <Button type="submit" className="text-white">
+                      <Button type="submit" className="text-white" disabled={isLoading}>
                         {isLoading ? "Pending" : "Save"}
                       </Button>
                     </div>
@@ -135,7 +131,7 @@ const AccountInfo: React.FC = () => {
       <Popup
         show={shouldShowModal}
         title="Result"
-        body={error || ""}
+        body={msg || ""}
         status={modalStatus}
         onHide={() => {
           onPopupHide();

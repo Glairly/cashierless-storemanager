@@ -48,7 +48,7 @@ export const fetchClientTransaction =
           meta
         );
 
-      dispatch(setClientTransaction(res));
+      // dispatch(setClientTransaction(res));
       return res;
     } catch (error) {}
     };
