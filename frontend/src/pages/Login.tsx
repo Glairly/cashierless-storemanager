@@ -20,6 +20,8 @@ import { login } from "../features/auth/authAPI";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../app/store";
+import Popup from "../components/Popup";
+import { setIdle } from "../features/auth/authSlice";
 
 const initialValues = {
   grant_type: "",
@@ -37,64 +39,100 @@ const validationSchema = Yup.object({
 
 
 const renderLoginForm: React.FC = (initialValues) => {
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const token = useSelector((state: RootState) => state.auth.token);
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
+
+  const { pendingStatus, error, isLoading } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  const [shouldShowModal, setShouldShowModal] = useState(false);
+  const [modalStatus, setModalStatus] = useState(false);
+
+  useEffect(() => {
+    switch (pendingStatus) {
+      case "pending":
+        setShouldShowModal(false);
+        break;
+      case "fulfilled":
+        setShouldShowModal(true);
+        setModalStatus(true);
+        break;
+      case "rejected":
+        setShouldShowModal(true);
+        setModalStatus(false);
+        break;
+    }
+  }, [pendingStatus]);
 
   const handleSubmit = async (values: any) => {
     const { username, password } = values;
     dispatch<any>(login(username, password));
   };
 
-  const token = useSelector((state: RootState) => state.auth.token);
-  const isThai = useSelector((state: RootState) => state.translation.isThai);
-
   useEffect(() => {
     if (token)
       navigate("/dashboard")
   }, [token])
 
-
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ handleChange, handleBlur }) => (
-        <Form>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>{isThai ? "Username" : "ผู้เข้าใช้งาน"}</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="text"
-              name="username"
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <ErrorMessage name="username">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3">
-            <BootstrapForm.Label>{isThai ? "Password" : "รหัสผ่าน"}</BootstrapForm.Label>
-            <BootstrapForm.Control
-              type="password"
-              name="password"
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <ErrorMessage name="password">
-              {(msg) => <small style={{ color: "red" }}>{msg}</small>}
-            </ErrorMessage>
-          </BootstrapForm.Group>
-          <BootstrapForm.Group className="mb-3" controlId="formCheckbox">
-            <BootstrapForm.Check type="checkbox" label={isThai ? "Remember Me" : "จดจำรหัสผ่านในครั้งถัดไป"} />
-          </BootstrapForm.Group>
-          <Button type="submit" variant="primary" className="text-white w-100">
-            {isThai ? "Submit" : "ยืนยัน"}
-          </Button>
-        </Form>
-      )}
-    </Formik>
+    <div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleChange, handleBlur }) => (
+          <Form>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>{isThai ? "Username" : "ผู้เข้าใช้งาน"}</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="text"
+                name="username"
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <ErrorMessage name="username">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3">
+              <BootstrapForm.Label>{isThai ? "Password" : "รหัสผ่าน"}</BootstrapForm.Label>
+              <BootstrapForm.Control
+                type="password"
+                name="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <ErrorMessage name="password">
+                {(msg) => <small style={{ color: "red" }}>{msg}</small>}
+              </ErrorMessage>
+            </BootstrapForm.Group>
+            <BootstrapForm.Group className="mb-3" controlId="formCheckbox">
+              <BootstrapForm.Check type="checkbox" label={isThai ? "Remember Me" : "จดจำรหัสผ่านในครั้งถัดไป"} />
+            </BootstrapForm.Group>
+            <Button type="submit" variant="primary" disabled={isLoading} className="text-white w-100">
+              {isThai ? "Submit" : "ยืนยัน"}
+            </Button>
+          </Form>
+        )}
+      </Formik>
+      <Popup
+        show={shouldShowModal}
+        title="Notify"
+        body={error || ""}
+        status={modalStatus}
+        onHide={() => {
+          setShouldShowModal(false);
+          dispatch<any>(setIdle());
+        }}
+      />
+    </div>
+
   );
 };
 
