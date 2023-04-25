@@ -38,14 +38,18 @@ const Store: React.FC = () => {
   const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices()
-      .then(devices => {
-        const cameras = devices.filter(device => device.kind === 'videoinput');
-        const cameraIds = cameras.map(camera => camera.deviceId);
-        setObjectCameraDeviceId(cameraIds[1]);
-      }).catch(error => {
-        console.error(error);
-      });
+    navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(s => {
+      const stream = s
+      navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+          const cameras = devices.filter(device => device.kind === 'videoinput');
+          const cameraIds = cameras.map(camera => camera.deviceId);
+          // console.log(cameraIds);
+          setObjectCameraDeviceId(cameraIds[1]);
+        }).catch(error => {
+          console.error(error);
+        });
+    });
   }, [])
 
   useEffect(() => {
