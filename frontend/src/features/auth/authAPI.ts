@@ -38,6 +38,7 @@ export const login =
   ): ThunkAction<void, RootState, null, Action<string>> =>
   async (dispatch) => {
     try {
+      dispatch(setPending())
       const request = {
         username: username,
         password: password,
@@ -49,7 +50,10 @@ export const login =
       dispatch(setToken(access_token));
       dispatch(setUser(user));
       dispatch(setAuth(auth));
-    } catch (error) {}
+      dispatch(setSuccess());
+    } catch (error) {
+      dispatch(setFailure("Error Occurs"));
+    }
   };
 
 export const logout =
