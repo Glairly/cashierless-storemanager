@@ -18,6 +18,8 @@ const CheckOut: React.FC = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
+
   const [shouldShowModal, setShouldShowModal] = useState(false);
 
   const [data, setData] = useState<CheckOutProps>();
@@ -67,7 +69,7 @@ const CheckOut: React.FC = () => {
               }}
             >
               <Card.Body>
-                <h6 className="fw-bold">Customer Info</h6>
+                <h6 className="fw-bold">{isThai ? "Customer Info" : "ข้อมูลลูกค้า"}</h6>
                 <div style={{ borderBottom: "solid" }} className="mb-3" />
                 <div className="d-flex flex-row w-100">
                   {customerInfo?.user ? (
@@ -89,23 +91,23 @@ const CheckOut: React.FC = () => {
                           {customerInfo.user.name}
                         </p>
                         <small className="mb-0" style={{ color: "gray" }}>
-                          {customerInfo.user.phone_number || "no phone number"}
+                          {customerInfo.user.phone_number || (isThai ? "no phone number" : "ไม่พบหมายเลขโทรศัพท์")}
                         </small>
                         <p
                           className="mb-0" style={{ fontSize: "16px" }}
                         >
-                          Balance: {customerInfo.wallet?.balance}
+                          {isThai ? "Balance: " : "ยอดคงเหลือ: "}{customerInfo.wallet?.balance}
                         </p>
                       </div>
                       <Link to="/store/login" className="align-self-center h-100">
                         <Button className="text-white w-100 h-100" variant="danger">
-                          Logout
+                          {isThai ? "Logout" : "ล็อคเอ้าท์"}
                         </Button>
                       </Link>
                     </>
                   ) : (
                     <Link to="/store/login" className="w-100">
-                      <Button className="text-white w-100">Sign in</Button>
+                      <Button className="text-white w-100">{isThai ? "Log with Face ids" : "ล็อคอินผ่านระบบจดจำใบหน้า"}</Button>
                     </Link>
                   )}
                 </div>
@@ -120,7 +122,7 @@ const CheckOut: React.FC = () => {
             >
               <Card.Body className="d-flex flex-column">
                 <div className="flex-grow-1">
-                  <h4 className="fw-bold">Products List</h4>
+                  <h4 className="fw-bold">{isThai ? "Products List" : "รายการสินค้า"}</h4>
                   <div style={{ borderBottom: "solid" }} className="mb-3" />
                   {inferenceResult?.items.map((item) => {
                     const _item = item as Item;
@@ -146,7 +148,7 @@ const CheckOut: React.FC = () => {
                     className="d-flex flex-row justify-content-between mt-3 mb-2"
                     style={{ fontSize: "1.55rem", fontWeight: "bold" }}
                   >
-                    <span>Total</span>
+                    <span>{isThai ? "Total" : "รวม"}</span>
                     <span>
                       x{inferenceResult?.totalItems}{" "}
                       {inferenceResult?.totalPrice}B
@@ -163,7 +165,7 @@ const CheckOut: React.FC = () => {
                       }}
                       onClick={onRetry}
                     >
-                      Retry
+                      {isThai ? "Retry" : "ลองอีกครั้ง"}
                     </Button>
                     <Button
                       className="me-2 text-white w-50"
@@ -176,7 +178,7 @@ const CheckOut: React.FC = () => {
                       disabled={isLoading}
                       onClick={handlePayment}
                     >
-                      Pay
+                      {isThai ? "Pay" : "จ่าย"}
                     </Button>
                   </div>
                 </div>

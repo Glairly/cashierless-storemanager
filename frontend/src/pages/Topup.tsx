@@ -53,7 +53,7 @@ const Topup: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/fapi/v1/generate_promptpay_qr_topup",
+        "http://localhost/fapi/v1/generate_promptpay_qr_topup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -68,7 +68,7 @@ const Topup: React.FC = () => {
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/fapi/v1/get_pending_topup_transaction?pending_topup_transaction_id=${id}`
+        `http://localhost/fapi/v1/get_pending_topup_transaction?pending_topup_transaction_id=${id}`
       );
       const data = await response.json();
       if (data.status == "Complete" || data.status == "Failed") {

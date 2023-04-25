@@ -7,6 +7,7 @@ import { fetchClientTransaction, getAllShop } from "../features/transaction/tran
 import { RootState } from "../app/store";
 import { useNavigate } from "react-router-dom";
 import { Transaction } from "../features/transaction/transactionSlice";
+import { setIdle } from "../features/auth/authSlice";
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const Dashboard: React.FC = () => {
     dispatch<any>(fetchWallet());
     dispatch<any>(fetchClientTransaction()).then((result: any) => setClientTransaction(result));
     dispatch<any>(getShopByClientId());
+    dispatch<any>(setIdle());
   }, [dispatch]);
 
   const handleDateFormat = (strDate: string): string => {

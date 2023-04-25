@@ -32,7 +32,7 @@ export const HomeNavbar: React.FC = () => {
         <Navbar.Collapse id="toggle-home-navbar">
           <Nav className="ms-auto nav-item">
             <ul className="item">
-              <Link to={"/Home"}>
+              <Link to={"/"}>
                 <Button
                   variant="link"
                   className="text-decoration-none p-0 text-black"
@@ -208,6 +208,32 @@ export const NavbarComponent: React.FC<NavbarProps> = ({ title, balance, name, p
           >
             <Dropdown.Item eventKey="1" onClick={onLogout}>{isThai ? "Logout" : "ออกจากระบบ"}</Dropdown.Item>
           </DropdownButton>
+        </Nav>
+      </Container>
+    </Navbar>
+  );
+};
+
+export const StoreNavbar: React.FC = () => {
+  const dispatch = useDispatch();
+
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
+
+  return (
+    <Navbar bg="light" style={{ zIndex: "4" }}>
+      <Container>
+        <Nav className="ms-auto py-1">
+          <Nav.Item className="d-flex align-items-center me-3" style={{ cursor: 'pointer' }} onClick={() => dispatch<any>(setIsThai())}>
+            <Image
+              src={isThai ?
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg/1200px-Flag_of_the_United_Kingdom_%281-2%29.svg.png" :
+                "https://cdn.britannica.com/38/4038-004-111388C2/Flag-Thailand.jpg"}
+              roundedCircle
+              style={{ width: "25px", height: "25px" }}
+              className="align-self-center me-2"
+            />
+            {isThai ? "EN" : "TH"}
+          </Nav.Item>
         </Nav>
       </Container>
     </Navbar>

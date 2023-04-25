@@ -194,7 +194,7 @@ export const editShop =
       } as RequestInit;
 
       const res = await new DefaultApi().editShopCapiV1EditShopPost(request, meta);
-      dispatch(setShop(res));
+      dispatch(getShopByClientId());
       dispatch(setSuccess());
     } catch (error) {
       dispatch(setFailure("Error has Occured please try again"));

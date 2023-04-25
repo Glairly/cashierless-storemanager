@@ -11,6 +11,8 @@ import {
   setIdle,
   setInferenceResult,
 } from "../../features/inference/inferenceSlice";
+import { StoreNavbar } from "../../components/Navbar";
+import { setIsThai } from "../../features/translation/translationSlice";
 
 interface Data {
   shop_id: number;
@@ -33,6 +35,7 @@ const Store: React.FC = () => {
   const { inferenceResult, pendingStatus, isLoading, error } = useSelector(
     (state: RootState) => state.inference
   );
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices()
@@ -91,56 +94,77 @@ const Store: React.FC = () => {
   }, [webcamRef]);
 
   return (
-    <Container className="align-items-center p-5 w-100 h-100">
-      <div className="d-flex flex-row justify-content-center align-items-stretch h-100">
-        <div className="d-flex flex-column justify-content-between pe-5 flex-grow-1">
-          <div>
-            <h1>Welcome to HW-Store</h1>
-            <p style={{ color: "gray" }}>
-              HW-store is cashierless store for
-              <span onClick={() => setDevToolToggle(devToolToggle + 1)}> your </span>
-              convience store experiece
-            </p>
-          </div>
-          <div>Should have a example here</div>
-          <div>
-            <h4 className="mt-5">Place your item in the frame</h4>
-            <div className="mb-4 bg-primary border-bottom border-gray pb-1"></div>
+    <>
+      <Container className="align-items-center p-5 w-100 h-100">
+        <div className="d-flex flex-row justify-content-center align-items-stretch h-100">
+          <div className="d-flex flex-column justify-content-between pe-5 flex-grow-1">
             <div>
-              <Button
-                className="text-white w-100"
-                style={{ height: "144px", fontSize: "32px", fontWeight: 800 }}
-                disabled={isLoading}
-                onClick={capture}
-              >
-                {isLoading ? "Please wait" : "Checking Out"}
-              </Button>
+              <div className="d-flex align-items-center mb-3" style={{ cursor: 'pointer' }} onClick={() => dispatch<any>(setIsThai())}>
+                <Image
+                  src={isThai ?
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Flag_of_the_United_Kingdom_%281-2%29.svg/1200px-Flag_of_the_United_Kingdom_%281-2%29.svg.png" :
+                    "https://cdn.britannica.com/38/4038-004-111388C2/Flag-Thailand.jpg"}
+                  roundedCircle
+                  style={{ width: "25px", height: "25px" }}
+                  className="align-self-center me-2"
+                />
+                {isThai ? "EN" : "TH"}
+              </div>
+              <h1>{isThai ? "Welcome to Cashierless-Store" : "ยินดีต้อนรับเข้าสู่ร้านค้าไร้พนักงาน"}</h1>
+              {isThai ? (
+                <p style={{ color: "gray" }}>
+                  Cashierless-store is a store for
+                  <span onClick={() => setDevToolToggle(devToolToggle + 1)}> your </span>
+                  convience store experiece
+                </p>
+              ) : (
+                <p style={{ color: "gray" }}>
+                  ร้านค้าไร้พนักงาน เป็นร้านค้ารูปแบบใหม่ ที่จะสร้างประสบการณ์ที่ยอดเยี่ยมให้แก่
+                  <span onClick={() => setDevToolToggle(devToolToggle + 1)}>คุณ</span>
+                </p>
+              )}
+            </div>
+            <div className="fs-4 text-danger">{isThai ? "* Please place goods facing up to the camera."
+              : "* กรุณาวางสินค้าให้ฉลากหงายขึ้นเข้าหากล้อง"}</div>
+            <div>
+              <h4 className="mt-5">{isThai ? "Place your item in the frame" : "กรุณาวางสินค้าให้อยู่ในกล้องด้านขวามือ"}</h4>
+              <div className="mb-4 bg-primary border-bottom border-gray pb-1"></div>
+              <div>
+                <Button
+                  className="text-white w-100"
+                  style={{ height: "144px", fontSize: "32px", fontWeight: 800 }}
+                  disabled={isLoading}
+                  onClick={capture}
+                >
+                  {isLoading ? (isThai ? "Please wait" : "กำลังคำนวน") : (isThai ? "Checking Out" : "ยืนยัน")}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100 w-50">
-          {objectCameraDeviceId && <Webcam
-            audio={false}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            videoConstraints={{
-              deviceId: objectCameraDeviceId
-            }}
-          />}
-        </div>
+          <div className="d-flex flex-column justify-content-center bg-black rounded  align-items-stretch h-100 w-50">
+            {objectCameraDeviceId && <Webcam
+              audio={false}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              videoConstraints={{
+                deviceId: objectCameraDeviceId
+              }}
+            />}
+          </div>
 
-        <Popup
-          show={shouldShowModal}
-          onHide={function (): void {
-            setShouldShowModal(false);
-            dispatch<any>(setInferenceResult(null));
-          }}
-          title={"Result"}
-          body={modalBody}
-          status={modalStatus}
-        />
-      </div>
-    </Container>
+          <Popup
+            show={shouldShowModal}
+            onHide={function (): void {
+              setShouldShowModal(false);
+              dispatch<any>(setInferenceResult(null));
+            }}
+            title={"Result"}
+            body={modalBody}
+            status={modalStatus}
+          />
+        </div>
+      </Container>
+    </>
   );
 };
 

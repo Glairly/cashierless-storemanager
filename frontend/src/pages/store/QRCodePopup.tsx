@@ -56,6 +56,8 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
     isLoading
   } = useSelector((state: RootState) => state.transaction);
 
+  const isThai = useSelector((state: RootState) => state.translation.isThai);
+
   const toRequestItem = (item: Item) => {
     return {
       item_id: item.id,
@@ -86,7 +88,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/fapi/v1/generate_promptpay_qr",
+        "http://localhost/fapi/v1/generate_promptpay_qr",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -101,7 +103,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
   const get_pending_transaction = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
+        `http://localhost/fapi/v1/get_pending_transaction?pending_transaction_id=${id}`
       );
       const data = await response.json();
       if (data.status == "Complete" || data.status == "Failed") {
@@ -179,7 +181,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
 
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>Scan Here</Modal.Header>
+      <Modal.Header closeButton>{isThai ? "Scan Here" : "โปรดสแกน"}</Modal.Header>
       <Modal.Body>
         {!isTransactionComplete ? (
           <div className="d-flex flex-column align-items-center  justify-content-center">
@@ -192,7 +194,7 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
                 />
               </>
             ) : (
-              "Loading..."
+              isThai ? "Loading..." : "กำลังโหลด..."
             )}
             <Image
               className="mx-auto my-2"
@@ -205,26 +207,26 @@ const QRCodePopup: React.FC<QRCodePopupProps> = ({ show, onHide }) => {
                 disabled={isLoading}
                 onClick={handlePayWithWallet}
               >
-                Checkout with wallet
+                {isThai ? "Checkout with wallet" : "ชำระเงินด้วยวอลเล็ท"}
               </Button>}
           </div>
         ) : (
           pendingStatus == "fulfilled" || getPendingStatus == "Complete" ? (
             <div className="d-flex flex-column justify-content-center align-items-center">
               <CheckMarked />
-              <p>Transaction Completed</p>
+              <p>{isThai ? "Transaction Completed" : "ชำระเงินสำเร็จ"}</p>
             </div>
           ) : (
             pendingStatus == "rejected" || getPendingStatus == "Failed" ? (
               <div className="d-flex flex-column justify-content-center align-items-center">
                 <CrossMarked />
-                <p>{error || "Error occurs"}</p>
+                <p>{error || (isThai ? "Error occurs" : "ไม่สามารถทำรายการได้")}</p>
               </div>) : (<></>)
           ))}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
-          Cancel
+          {isThai ? "Cancel" : "ยกเลิก"}
         </Button>
       </Modal.Footer>
     </Modal>

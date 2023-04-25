@@ -179,6 +179,7 @@ const Stocking: React.FC = () => {
 
   useEffect(() => {
     dispatch<any>(setIdle());
+    dispatch<any>(getShopByClientId());
     dispatch<any>(getItemByShopId())
       .then((result: any) => {
         setStock(result);
@@ -187,7 +188,6 @@ const Stocking: React.FC = () => {
       });
     dispatch<any>(getAllItemType());
     dispatch<any>(fetchShopTransaction()).then((result: any) => { setTransactions(result) });
-    dispatch<any>(getShopByClientId());
   }, [dispatch])
 
   useEffect(() => {
@@ -334,10 +334,10 @@ const Stocking: React.FC = () => {
                 </div>
               </td>
               <td>{handleItemType(item.type)}</td>
-              {isEditStock ?
-                <td className="text-center" style={{ cursor: "pointer" }} onClick={() => handlePriceSpan(item.id)}>{item.price}</td> :
-                <td className="text-center">{item.price}</td>
-              }
+              {/* {isEditStock ?
+                <td className="text-center" style={{ cursor: "pointer" }} onClick={() => handlePriceSpan(item.id)}>{item.price}</td> : */}
+              <td className="text-center">{item.price}</td>
+              {/* } */}
               <td>
                 {isEditStock ? (
                   <div className="d-flex flex-row justify-content-between align-items-center">

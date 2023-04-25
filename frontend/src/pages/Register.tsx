@@ -372,7 +372,7 @@ const Register: React.FC = () => {
                   <small className="mt-5 text-center">
                     {isThai ? "Want to register as Store Manager?" : "ต้องการลงทะเบียนในฐานะร้านค้า?"}
                     <Link
-                      to={"/Admin/Register"}
+                      to={"/ShopRegister"}
                       className="ms-2 text-decoration-none"
                     >
                       {isThai ? "Sign Up" : "ลงทะเบียนเลย!"}
